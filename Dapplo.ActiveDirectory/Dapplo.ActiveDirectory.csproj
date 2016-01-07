@@ -46,9 +46,8 @@
     <Compile Include="ComputerProperties.cs" />
     <Compile Include="Entities\Comparison.cs" />
     <Compile Include="Entities\PropertyComparison.cs" />
-    <Compile Include="Entities\Query.cs" />
+    <Compile Include="Query.cs" />
     <Compile Include="Entities\Operator.cs" />
-    <Compile Include="QueryBuilder.cs" />
     <Compile Include="Internal\EnumExtensions.cs" />
     <Compile Include="ObjectCategories.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

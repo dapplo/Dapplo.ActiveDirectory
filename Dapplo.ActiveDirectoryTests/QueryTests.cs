@@ -18,7 +18,7 @@
 	GNU General Public License for more details.
 
 	You should have received a copy of the GNU General Public License
-	along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
+	along with Dapplo.ActiveDirectory.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 using Dapplo.ActiveDirectory;
@@ -28,17 +28,17 @@ using System;
 namespace Dapplo.ActiveDirectoryTests
 {
 	[TestClass]
-	public class QueryBuilderTests
+	public class QueryTests
 	{
 		[TestMethod]
 		public void TestQueryBuilder()
 		{
 			var targetFilter = $"(&(objectCategory=user)(sAMAccountname={Environment.UserName}))";
 
-			var userFilterComplex = QueryBuilder.And().UserCategory().Compare(UserProperties.Username, Environment.UserName).Build();
+			var userFilterComplex = Query.And().UserCategory().Compare(UserProperties.Username, Environment.UserName).Build();
 			Assert.AreEqual(targetFilter, userFilterComplex);
 
-			var userFilterSimple = QueryBuilder.UsernameFilter(Environment.UserName).Build();
+			var userFilterSimple = Query.UsernameFilter(Environment.UserName).Build();
 			Assert.AreEqual(targetFilter, userFilterSimple);
 		}
 	}
