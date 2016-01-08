@@ -25,17 +25,20 @@ using System.Collections.Generic;
 using System.Text;
 using Dapplo.ActiveDirectory.Entities;
 using Dapplo.ActiveDirectory.Internal;
+using System;
 
 namespace Dapplo.ActiveDirectory
 {
 	/// <summary>
 	/// This specifies a query
 	/// </summary>
-	public class Query
+	public class Query : QueryElement
 	{
-		private readonly Query _parent;
-		private readonly IList<PropertyComparison> _comparisons = new List<PropertyComparison>();
+		private readonly IList<QueryElement> _elements = new List<QueryElement>();
 
+		/// <summary>
+		/// The operator for this query
+		/// </summary>
 		public Operators Operator
 		{
 			get;
@@ -48,7 +51,7 @@ namespace Dapplo.ActiveDirectory
 		/// <returns>Query</returns>
 		public static Query UsernameFilter(string username)
 		{
-			return And().UserCategory().Compare(UserProperties.Username, username);
+			return CreateAnd().IsUser().EqualTo(UserProperties.Username, username);
 		}
 
 		/// <summary>
@@ -58,112 +61,288 @@ namespace Dapplo.ActiveDirectory
 		/// <returns>Query</returns>
 		public static Query ComputerFilter(string hostname)
 		{
-			return And().ComputerCategory().Compare(ComputerProperties.HostName, hostname);
+			return CreateAnd().IsComputer().EqualTo(ComputerProperties.HostName, hostname);
 		}
 
 		/// <summary>
-		/// Add a query
+		/// Create a query
 		/// </summary>
 		/// <returns>Query</returns>
-		private static Query Create(Operators queryOperator)
+		private static Query Create(Operators queryOperator, Query parent = null)
 		{
-			return new Query(queryOperator);
+			return new Query(queryOperator, parent);
 		}
 
 		/// <summary>
-		/// Add an AND query
+		/// Create an AND query
 		/// </summary>
 		/// <returns>Query</returns>
-		public static Query And()
+		public static Query CreateAnd()
 		{
 			return Create(Operators.And);
 		}
 
 		/// <summary>
-		/// Add an OR query
+		/// Create an OR query
 		/// </summary>
 		/// <returns>Query</returns>
-		public static Query Or()
+		public static Query CreateOr()
 		{
 			return Create(Operators.Or);
 		}
 
-		internal Query(Operators queryOperator = Operators.And, Query parent = null)
+		/// <summary>
+		/// Internal constructor, used by Or/And and Create
+		/// </summary>
+		/// <param name="queryOperator"></param>
+		/// <param name="parent"></param>
+		internal Query(Operators queryOperator = Operators.And, Query parent = null) : base(parent)
 		{
-			_parent = parent;
 			Operator = queryOperator;
 		}
 
-		public Query Compare(string property, string value = null, Comparisons comparison = Comparisons.Equals)
+		/// <summary>
+		/// Add an AND sub query to the current query
+		/// </summary>
+		/// <returns>Query which is a sub-query of the parent</returns>
+		public Query And()
 		{
-			var propertyEqual = new PropertyComparison(property, value, comparison);
-			_comparisons.Add(propertyEqual);
+			var andQuery = Create(Operators.And, this);
+			_elements.Add(andQuery);
+			return andQuery;
+		}
+
+		/// <summary>
+		/// Add an OR sub query to the current query
+		/// </summary>
+		/// <returns>Query which is a sub-query of the parent</returns>
+		public Query Or()
+		{
+			var orQuery = Create(Operators.Or, this);
+			_elements.Add(orQuery);
+			return orQuery;
+		}
+
+		/// <summary>
+		/// Add a compare to the current query for a property and value
+		/// </summary>
+		/// <param name="property"></param>
+		/// <param name="value"></param>
+		/// <param name="comparison">Comparisons to specify how to compare</param>
+		/// <returns>Query</returns>
+		public Query Compare(string property, string value, Comparisons comparison)
+		{
+			var propertyEqual = new PropertyComparison(property, value, comparison, this);
+			_elements.Add(propertyEqual);
 			return this;
 		}
 
-		public Query Compare(UserProperties userProperty, string value = null, Comparisons comparison = Comparisons.Equals)
+		/// <summary>
+		/// Add a compare to the current query for a property and value
+		/// </summary>
+		/// <param name="property">Enum</param>
+		/// <param name="value"></param>
+		/// <param name="comparison">Comparisons to specify how to compare</param>
+		/// <returns>Query</returns>
+		public Query Compare(Enum property, string value, Comparisons comparison)
 		{
-			return Compare(userProperty.EnumMemberOf(), value, comparison);
+			return Compare(property.EnumValueOf(), value, comparison);
 		}
 
-		public Query Compare(ComputerProperties computerProperty, string value = null, Comparisons comparison = Comparisons.Equals)
+		/// <summary>
+		/// Property should not be equal to the value
+		/// </summary>
+		/// <param name="property"></param>
+		/// <param name="value"></param>
+		/// <returns>Query</returns>
+		public Query NotEqualTo(string property, string value = null)
 		{
-			return Compare(computerProperty.EnumMemberOf(), value, comparison);
+			return Compare(property, value, Comparisons.NotEqualTo);
+		}
+
+		/// <summary>
+		/// Property should not be equal to the value
+		/// </summary>
+		/// <param name="property"></param>
+		/// <param name="value"></param>
+		/// <returns>Query</returns>
+		public Query NotEqualTo(Enum property, string value = null)
+		{
+			return Compare(property, value, Comparisons.NotEqualTo);
+		}
+
+		/// <summary>
+		/// Property should be equal to the value
+		/// </summary>
+		/// <param name="property">Enum instance</param>
+		/// <param name="value"></param>
+		/// <returns>Query</returns>
+		public Query EqualTo(string property, string value = null)
+		{
+			return Compare(property, value, Comparisons.EqualTo);
+		}
+
+		/// <summary>
+		/// Property should be equal to the value
+		/// </summary>
+		/// <param name="property"></param>
+		/// <param name="value"></param>
+		/// <returns>Query</returns>
+		public Query EqualTo(Enum property, string value = null)
+		{
+			return Compare(property, value, Comparisons.EqualTo);
+		}
+
+		/// <summary>
+		/// Check for an absent property
+		/// </summary>
+		/// <param name="property"></param>
+		/// <returns>Query</returns>
+		public Query None(string property)
+		{
+			return Compare(property, "*", Comparisons.NotEqualTo);
+		}
+
+		/// <summary>
+		/// Check for an absent property
+		/// </summary>
+		/// <param name="property">Enum</param>
+		/// <returns>Query</returns>
+		public Query None(Enum property)
+		{
+			return Compare(property, "*", Comparisons.NotEqualTo);
+		}
+
+		/// <summary>
+		/// Check for the existance of a property
+		/// </summary>
+		/// <param name="property"></param>
+		/// <returns>Query</returns>
+		public Query Any(string property)
+		{
+			return Compare(property, "*", Comparisons.EqualTo);
+		}
+
+		/// <summary>
+		/// Check for the existance of a property
+		/// </summary>
+		/// <param name="property">Enum</param>
+		/// <returns>Query</returns>
+		public Query Any(Enum property)
+		{
+			return Compare(property, "*", Comparisons.EqualTo);
+		}
+
+		/// <summary>
+		/// Check if the property is equal to or less than the value
+		/// </summary>
+		/// <param name="property"></param>
+		/// <param name="value"></param>
+		/// <returns>Query</returns>
+		public Query LessThanOrEqualTo(string property, string value)
+		{
+			return Compare(property, value, Comparisons.LessThanOrEqualTo);
+		}
+
+		/// <summary>
+		/// Check if the property is equal to or less than the value
+		/// </summary>
+		/// <param name="property">Enum</param>
+		/// <param name="value"></param>
+		/// <returns>Query</returns>
+		public Query LessThanOrEqualTo(Enum property, string value)
+		{
+			return Compare(property, value, Comparisons.LessThanOrEqualTo);
+		}
+
+		/// <summary>
+		/// Check if the property is equal to or greater than the value
+		/// </summary>
+		/// <param name="property"></param>
+		/// <param name="value"></param>
+		/// <returns>Query</returns>
+		public Query GreaterOrEquals(string property, string value)
+		{
+			return Compare(property, value, Comparisons.GreaterThanOrEqualTo);
+		}
+
+		/// <summary>
+		/// Check if the property is equal to or greater than the value
+		/// </summary>
+		/// <param name="property">Enum</param>
+		/// <param name="value"></param>
+		/// <returns>Query</returns>
+		public Query GreaterOrEquals(Enum property, string value)
+		{
+			return Compare(property, value, Comparisons.GreaterThanOrEqualTo);
 		}
 
 		/// <summary>
 		/// Add an comparison for the objectCatefory, default is user
 		/// </summary>
 		/// <param name="category">value from the ObjectCategories enum</param>
-		/// <param name="comparison">specify the comparison to make</param>
 		/// <returns>Query</returns>
-		public Query ObjectCategory(ObjectCategories category, Comparisons comparison = Comparisons.Equals)
+		public Query IsObjectCategory(ObjectCategories category)
 		{
-			var propertyEqual = new PropertyComparison("objectCategory", category.EnumMemberOf(), comparison);
-			_comparisons.Add(propertyEqual);
-			return this;
+			return Compare("objectCategory", category.EnumValueOf(), Comparisons.EqualTo);
 		}
 
 		/// <summary>
 		/// Make the query look for the user objectCategory
 		/// </summary>
-		/// <param name="comparison">specify the comparison to make</param>
 		/// <returns>Query</returns>
-		public Query UserCategory(Comparisons comparison = Comparisons.Equals)
+		public Query IsUser()
 		{
-			var propertyEqual = new PropertyComparison("objectCategory", ObjectCategories.User.EnumMemberOf(), comparison);
-			_comparisons.Add(propertyEqual);
-			return this;
+			return Compare("objectCategory", ObjectCategories.User.EnumValueOf(), Comparisons.EqualTo);
 		}
 
 		/// <summary>
 		/// Make the query look for the computer objectCategory
 		/// </summary>
-		/// <param name="comparison">specify the comparison to make</param>
 		/// <returns>Query</returns>
-		public Query ComputerCategory(Comparisons comparison = Comparisons.Equals)
+		public Query IsComputer()
 		{
-			var propertyEqual = new PropertyComparison("objectCategory", ObjectCategories.Computer.EnumMemberOf(), comparison);
-			_comparisons.Add(propertyEqual);
-			return this;
+			return Compare("objectCategory", ObjectCategories.Computer.EnumValueOf(), Comparisons.EqualTo);
 		}
 
+		/// <summary>
+		/// Build this query element as a string
+		/// </summary>
+		/// <returns></returns>
 		public override string ToString()
 		{
-			var stringBuilder = new StringBuilder($"({Operator.EnumMemberOf()}");
-			foreach (var comparison in _comparisons)
+			var stringBuilder = new StringBuilder();
+
+			// Opening bracket & operator
+			if (_elements.Count > 0)
 			{
-				stringBuilder.Append(comparison);
+				stringBuilder.Append($"({Operator.EnumValueOf()}");
 			}
-			stringBuilder.Append(")");
+
+			foreach (var element in _elements)
+			{
+				stringBuilder.Append(element);
+			}
+
+			// Closing bracket
+			if (_elements.Count > 0)
+			{
+				stringBuilder.Append(")");
+			}
+			
 			return stringBuilder.ToString();
 		}
 
+		/// <summary>
+		/// Build the query to a string.
+		/// This will go up the parent chain until there is none specified and starts calling ToString() on all elements going down the chain again.
+		/// </summary>
+		/// <returns>string with the complete query</returns>
 		public string Build()
 		{
-			if (_parent != null)
+			if (Parent != null)
 			{
-				return _parent.Build();
+				return Parent.Build();
 			}
 			return ToString();
 		}

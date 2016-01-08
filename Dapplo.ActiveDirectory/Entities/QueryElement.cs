@@ -21,23 +21,25 @@
 	along with Dapplo.ActiveDirectory.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using System.Runtime.Serialization;
-
 namespace Dapplo.ActiveDirectory.Entities
 {
-	public enum Comparisons
+	/// <summary>
+	/// This is the base class for all elements in a query
+	/// </summary>
+	public abstract class QueryElement
 	{
-		[EnumMember(Value = "=")]
-		Equals,
-		[EnumMember(Value = ">=")]
-		GreaterOrEquals,
-		[EnumMember(Value = "<=")]
-		LessOrEquals,
-		[EnumMember(Value = "=")]
-		NotEquals,
-		[EnumMember(Value = ">=")]
-		NotGreaterOrEquals,
-		[EnumMember(Value = "<=")]
-		NotLessOrEquals,
+		public QueryElement(Query parent)
+		{
+			Parent = parent;
+		}
+
+		/// <summary>
+		/// The parent query for this element
+		/// </summary>
+		public Query Parent
+		{
+			get;
+			private set;
+		}
 	}
 }

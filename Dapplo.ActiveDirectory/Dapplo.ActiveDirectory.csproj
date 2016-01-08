@@ -44,10 +44,11 @@
   <ItemGroup>
     <Compile Include="ActiveDirectory.cs" />
     <Compile Include="ComputerProperties.cs" />
-    <Compile Include="Entities\Comparison.cs" />
+    <Compile Include="Entities\Comparisons.cs" />
     <Compile Include="Entities\PropertyComparison.cs" />
+    <Compile Include="Entities\QueryElement.cs" />
     <Compile Include="Query.cs" />
-    <Compile Include="Entities\Operator.cs" />
+    <Compile Include="Entities\Operators.cs" />
     <Compile Include="Internal\EnumExtensions.cs" />
     <Compile Include="ObjectCategories.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

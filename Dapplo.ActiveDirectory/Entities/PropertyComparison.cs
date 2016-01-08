@@ -23,6 +23,7 @@
 
 using Dapplo.ActiveDirectory.Internal;
 using System;
+using System.Text;
 
 namespace Dapplo.ActiveDirectory.Entities
 {
@@ -30,7 +31,7 @@ namespace Dapplo.ActiveDirectory.Entities
 	/// Represents a Property equals "(operatingSystem=Windows XP)"
 	/// There is also a Negate method, which makes "(!operatingSystem=Windows XP)"
 	/// </summary>
-	public class PropertyComparison
+	public class PropertyComparison : QueryElement
 	{
 		public Comparisons Comparison
 		{
@@ -58,40 +59,53 @@ namespace Dapplo.ActiveDirectory.Entities
 			set;
 		}
 
-		internal PropertyComparison(string property, string value = null, Comparisons comparison = Comparisons.Equals)
+		internal PropertyComparison(string property, string value = null, Comparisons comparison = Comparisons.EqualTo, Query parent = null) : base(parent)
 		{
 			Comparison = comparison;
 			Property = property;
 			Value = value;
 		}
 
+		/// <summary>
+		/// Create a string representation of this property comparison
+		/// </summary>
+		/// <returns></returns>
 		public override string ToString()
 		{
-			var negative = Not? "!" : "";
+			var builder = new StringBuilder();
+			if (Not)
+			{
+				builder.Append("(!");
+			}
 			var value = string.IsNullOrEmpty(Value) ? "*" : Value;
-			return $"({negative}{Property}{Comparison.EnumMemberOf()}{value})";
+			builder.Append($"({Property}{Comparison.EnumValueOf()}{value})");
+			if (Not)
+			{
+				builder.Append(")");
+			}
+			return builder.ToString();
 		}
 
 		public void Negate()
 		{
 			switch (Comparison)
 			{
-				case Comparisons.NotEquals:
-					Comparison = Comparisons.Equals;
+				case Comparisons.NotEqualTo:
+					Comparison = Comparisons.EqualTo;
 					break;
 				case Comparisons.NotGreaterOrEquals:
-					Comparison = Comparisons.GreaterOrEquals;
+					Comparison = Comparisons.GreaterThanOrEqualTo;
 					break;
 				case Comparisons.NotLessOrEquals:
-					Comparison = Comparisons.LessOrEquals;
+					Comparison = Comparisons.LessThanOrEqualTo;
 					break;
-				case Comparisons.Equals:
-					Comparison = Comparisons.NotEquals;
+				case Comparisons.EqualTo:
+					Comparison = Comparisons.NotEqualTo;
 					break;
-				case Comparisons.GreaterOrEquals:
+				case Comparisons.GreaterThanOrEqualTo:
 					Comparison = Comparisons.NotGreaterOrEquals;
 					break;
-				case Comparisons.LessOrEquals:
+				case Comparisons.LessThanOrEqualTo:
 					Comparison = Comparisons.NotLessOrEquals;
 					break;
 				default:

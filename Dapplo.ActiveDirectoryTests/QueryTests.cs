@@ -35,11 +35,32 @@ namespace Dapplo.ActiveDirectoryTests
 		{
 			var targetFilter = $"(&(objectCategory=user)(sAMAccountname={Environment.UserName}))";
 
-			var userFilterComplex = Query.And().UserCategory().Compare(UserProperties.Username, Environment.UserName).Build();
+			var userFilterComplex = Query.CreateAnd().IsUser().EqualTo(UserProperties.Username, Environment.UserName).Build();
 			Assert.AreEqual(targetFilter, userFilterComplex);
 
 			var userFilterSimple = Query.UsernameFilter(Environment.UserName).Build();
 			Assert.AreEqual(targetFilter, userFilterSimple);
 		}
+
+		[TestMethod]
+		public void TestSubQueryBuilder()
+		{
+			var targetFilter = "(&(objectClass=person)(|(ou:dn:=ResearchAndDevelopment)(ou:dn:=HumanResources)))";
+
+			var userFilterComplex = Query.CreateAnd().EqualTo("objectClass", "person").Or().EqualTo("ou:dn:", "ResearchAndDevelopment").EqualTo("ou:dn:", "HumanResources").Build();
+
+			Assert.AreEqual(targetFilter, userFilterComplex);
+		}
+
+		[TestMethod]
+		public void TestSubQueryBuilder_MoreComplex()
+		{
+			var targetFilter = "(&(&(!(cn:dn:=jbond))(|(ou:dn:=ResearchAndDevelopment)(ou:dn:=HumanResources)))(objectclass=Person))";
+
+			var userFilterComplex = Query.CreateAnd().And().NotEqualTo("cn:dn:", "jbond").Or().EqualTo("ou:dn:", "ResearchAndDevelopment").EqualTo("ou:dn:", "HumanResources").Parent.Parent.EqualTo("objectclass", "Person");
+
+			Assert.AreEqual(targetFilter, userFilterComplex.Build());
+		}
+
 	}
 }

@@ -21,21 +21,26 @@
 	along with Dapplo.ActiveDirectory.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using System;
-using System.Globalization;
 using System.Runtime.Serialization;
 
-namespace Dapplo.ActiveDirectory.Internal
+namespace Dapplo.ActiveDirectory.Entities
 {
 	/// <summary>
-	/// Extensions for working with some enums
+	/// The comparisons for a property
 	/// </summary>
-	internal static class EnumExtension
+	public enum Comparisons
 	{
-		public static string EnumValueOf(this Enum enumerationValue)
-		{
-			var attributes = (EnumMemberAttribute[])enumerationValue.GetType().GetField(enumerationValue.ToString()).GetCustomAttributes(typeof(EnumMemberAttribute), false);
-			return attributes.Length > 0 ? attributes[0].Value : enumerationValue.ToString();
-		}
+		[EnumMember(Value = "=")]
+		EqualTo,
+		[EnumMember(Value = ">=")]
+		GreaterThanOrEqualTo,
+		[EnumMember(Value = "<=")]
+		LessThanOrEqualTo,
+		[EnumMember(Value = "=")]
+		NotEqualTo,
+		[EnumMember(Value = ">=")]
+		NotGreaterOrEquals,
+		[EnumMember(Value = "<=")]
+		NotLessOrEquals,
 	}
 }
