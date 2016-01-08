@@ -155,7 +155,7 @@ namespace Dapplo.ActiveDirectory
 		/// <param name="property"></param>
 		/// <param name="value"></param>
 		/// <returns>Query</returns>
-		public Query NotEqualTo(string property, string value = null)
+		public Query NotEqualTo(string property, string value)
 		{
 			return Compare(property, value, Comparisons.NotEqualTo);
 		}
@@ -166,7 +166,7 @@ namespace Dapplo.ActiveDirectory
 		/// <param name="property"></param>
 		/// <param name="value"></param>
 		/// <returns>Query</returns>
-		public Query NotEqualTo(Enum property, string value = null)
+		public Query NotEqualTo(Enum property, string value)
 		{
 			return Compare(property, value, Comparisons.NotEqualTo);
 		}
@@ -177,7 +177,7 @@ namespace Dapplo.ActiveDirectory
 		/// <param name="property">Enum instance</param>
 		/// <param name="value"></param>
 		/// <returns>Query</returns>
-		public Query EqualTo(string property, string value = null)
+		public Query EqualTo(string property, string value)
 		{
 			return Compare(property, value, Comparisons.EqualTo);
 		}
@@ -188,7 +188,7 @@ namespace Dapplo.ActiveDirectory
 		/// <param name="property"></param>
 		/// <param name="value"></param>
 		/// <returns>Query</returns>
-		public Query EqualTo(Enum property, string value = null)
+		public Query EqualTo(Enum property, string value)
 		{
 			return Compare(property, value, Comparisons.EqualTo);
 		}
@@ -198,7 +198,7 @@ namespace Dapplo.ActiveDirectory
 		/// </summary>
 		/// <param name="property"></param>
 		/// <returns>Query</returns>
-		public Query None(string property)
+		public Query Empty(string property)
 		{
 			return Compare(property, "*", Comparisons.NotEqualTo);
 		}
@@ -208,7 +208,7 @@ namespace Dapplo.ActiveDirectory
 		/// </summary>
 		/// <param name="property">Enum</param>
 		/// <returns>Query</returns>
-		public Query None(Enum property)
+		public Query Empty(Enum property)
 		{
 			return Compare(property, "*", Comparisons.NotEqualTo);
 		}

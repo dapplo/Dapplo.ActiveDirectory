@@ -78,6 +78,7 @@ namespace Dapplo.ActiveDirectory.Entities
 				builder.Append("(!");
 			}
 			var value = string.IsNullOrEmpty(Value) ? "*" : Value;
+
 			builder.Append($"({Property}{Comparison.EnumValueOf()}{value})");
 			if (Not)
 			{
