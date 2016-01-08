@@ -9,7 +9,7 @@ assembly_info:
   assembly_version: '{version}'
   assembly_file_version: '{version}'
   assembly_informational_version: '{version}-$(GIT_HASH)'
-before_build:
+install:
   - ps: $env:GIT_HASH = $env:APPVEYOR_REPO_COMMIT.Substring(0, 10)
 build:
   project: Dapplo.ActiveDirectory.sln
