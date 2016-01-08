@@ -38,6 +38,16 @@ namespace Dapplo.ActiveDirectory
 		/// Use the ActiveDirectory with the supplied domain to query
 		/// </summary>
 		/// <param name="query">Query</param>
+		/// <returns>IEnumerable with a dictionary for the properties</returns>
+		public static IEnumerable<IDictionary<string, object>> FindAll(this Query query)
+		{
+			return FindAll(query.Build(), null, null);
+		}
+
+		/// <summary>
+		/// Use the ActiveDirectory with the supplied domain to query
+		/// </summary>
+		/// <param name="query">Query</param>
 		/// <param name="domain">Domain for the LDAP server, if null the Environment.UserDomainName is used</param>
 		/// <param name="propertiesToLoad">An enumerable with the properties (as enum elements) to load</param>
 		/// <returns>IEnumerable with a dictionary for the properties</returns>
@@ -67,7 +77,7 @@ namespace Dapplo.ActiveDirectory
 		/// <param name="domain">Domain for the LDAP server, if null the Environment.UserDomainName is used</param>
 		/// <param name="propertiesToLoad">An enumerable with the properties to load, defaults include some user properties</param>
 		/// <returns>IEnumerable with a dictionary for the properties</returns>
-		public static IEnumerable<IDictionary<string, object>> FindAll(string query, string domain = null, IEnumerable<string> propertiesToLoad = null)
+		private static IEnumerable<IDictionary<string, object>> FindAll(string query, string domain = null, IEnumerable<string> propertiesToLoad = null)
 		{
 			if (propertiesToLoad == null)
 			{
