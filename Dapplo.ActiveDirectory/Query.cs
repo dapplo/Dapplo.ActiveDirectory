@@ -124,6 +124,20 @@ namespace Dapplo.ActiveDirectory
 		}
 
 		/// <summary>
+		/// Add a compare to the current query for a property and DistinguishedName value
+		/// </summary>
+		/// <param name="property"></param>
+		/// <param name="value">DistinguishedName</param>
+		/// <param name="comparison">Comparisons to specify how to compare</param>
+		/// <returns>Query</returns>
+		public Query Compare(string property, DistinguishedName value, Comparisons comparison)
+		{
+			var propertyEqual = new PropertyComparison(property, value.ToString(), comparison, this);
+			_elements.Add(propertyEqual);
+			return this;
+		}
+
+		/// <summary>
 		/// Add a compare to the current query for a property and value
 		/// </summary>
 		/// <param name="property"></param>

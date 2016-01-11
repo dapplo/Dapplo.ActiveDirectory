@@ -96,10 +96,11 @@ namespace Dapplo.ActiveDirectory
 					var properties =
 						(from propertyName
 						 in result.Properties.PropertyNames.Cast<string>()
+						 let props = result.Properties[propertyName] as ResultPropertyValueCollection
 						 select new
 						 {
 							 name = propertyName,
-							 value = result.Properties[propertyName][0]
+							 value = props.Count > 1 ? props.Cast<string>().Select(x => DistinguishedName.CreateFrom(x)): props[0]
 						 }).ToDictionary(x => x.name, x => x.value);
 					yield return properties;
 				}

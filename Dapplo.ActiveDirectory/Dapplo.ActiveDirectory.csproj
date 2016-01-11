@@ -40,6 +40,8 @@
   <ItemGroup>
     <Compile Include="ActiveDirectoryExtensions.cs" />
     <Compile Include="ComputerProperties.cs" />
+    <Compile Include="DistinguishedName.cs" />
+    <Compile Include="DistinguishedNameAttributes.cs" />
     <Compile Include="Entities\Comparisons.cs" />
     <Compile Include="Entities\PropertyComparison.cs" />
     <Compile Include="Entities\QueryElement.cs" />
