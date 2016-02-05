@@ -25,6 +25,7 @@ using Dapplo.ActiveDirectory;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Linq;
+using Dapplo.LogFacade;
 
 namespace Dapplo.ActiveDirectoryTests
 {
@@ -34,12 +35,20 @@ namespace Dapplo.ActiveDirectoryTests
 	//[TestClass]
 	public class ManualIntegrationTests
 	{
+		private static readonly LogSource Log = new LogSource();
+
 		[TestMethod]
 		public void TestActiveDirectoryCall()
 		{
+			Query.UsernameFilter(Environment.UserName);
 			var query = Query.CreateAnd().IsUser().EqualTo(UserProperties.Username, Environment.UserName);
-			var result = query.FindAll<QueryResult>(Environment.UserDomainName);
+			var result = query.Execute<QueryResult>(Environment.UserDomainName);
 			Assert.IsTrue(result.Any());
+
+			foreach (var user in query.Execute<QueryResult>())
+			{
+				Log.Info().WriteLine("Found {0}", user.Name);
+			}
 		}
 	}
 }

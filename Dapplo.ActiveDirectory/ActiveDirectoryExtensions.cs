@@ -43,11 +43,10 @@ namespace Dapplo.ActiveDirectory
 		/// <typeparam name="T">Type to fill, use AdPropertyAttribute to specify the mapping</typeparam>
 		/// <param name="query">Query</param>
 		/// <param name="domain">Domain for the LDAP server, if null the Environment.UserDomainName is used</param>
-		/// <returns>IList with the specified type</returns>
-		public static IList<T> FindAll<T>(this Query query, string domain = null) where T : class
+		/// <returns>IEnumerable with the specified type</returns>
+		public static IEnumerable<T> Execute<T>(this Query query, string domain = null) where T : class
 		{
-			var queryString = query.Build();
-			return FindInAd<T>(queryString, domain);
+			return Execute<T>(query.Build(), domain);
 		}
 
 		/// <summary>
@@ -57,9 +56,8 @@ namespace Dapplo.ActiveDirectory
 		/// <param name="query">Query as string</param>
 		/// <param name="domain">Domain for the LDAP server, if null the Environment.UserDomainName is used</param>
 		/// <returns>IList with the specified type</returns>
-		private static IList<T> FindInAd<T>(string query, string domain = null) where T : class
+		private static IEnumerable<T> Execute<T>(string query, string domain = null) where T : class
 		{
-			var result = new List<T>();
 			var typeMap = ProcessType(typeof(T));
 			Log.Info().WriteLine("Querying domain {0} with {1} into {2}", domain, query, typeof(T).Name);
 			using (var rootDirectory = new DirectoryEntry($"LDAP://{domain ?? Environment.UserDomainName}"))
@@ -103,10 +101,9 @@ namespace Dapplo.ActiveDirectory
 							typeMap[propertyName].SetValue(instance, value);
 						}
 					}
-					result.Add(instance);
+					yield return instance;
 				}
 			}
-			return result;
 		}
 
 		/// <summary>
