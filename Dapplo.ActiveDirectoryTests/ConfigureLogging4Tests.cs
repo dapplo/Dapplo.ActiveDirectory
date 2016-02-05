@@ -12,7 +12,7 @@
 	the Free Software Foundation, either version 3 of the License, or
 	(at your option) any later version.
 
-	Dapplo.Exchange is distributed in the hope that it will be useful,
+	Dapplo.ActiveDirectory is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
@@ -21,21 +21,22 @@
 	along with Dapplo.ActiveDirectory.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using System;
-using System.Globalization;
-using System.Runtime.Serialization;
+using Dapplo.LogFacade;
+using Dapplo.LogFacade.Loggers;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Dapplo.ActiveDirectory.Internal
+namespace Dapplo.ActiveDirectoryTests
 {
 	/// <summary>
-	/// Extensions for working with some enums
+	/// This initializes the logger for all tests
 	/// </summary>
-	internal static class EnumExtension
+	[TestClass]
+	public class ConfigureLogging4Tests
 	{
-		public static string EnumValueOf(this Enum enumerationValue)
+		[AssemblyInitialize]
+		public static void ConfigureLogging(TestContext context)
 		{
-			var attributes = (EnumMemberAttribute[])enumerationValue.GetType().GetField(enumerationValue.ToString()).GetCustomAttributes(typeof(EnumMemberAttribute), false);
-			return attributes.Length > 0 ? attributes[0].Value : enumerationValue.ToString();
+			LogSettings.Logger = new TraceLogger { Level = LogLevel.Verbose };
 		}
 	}
 }

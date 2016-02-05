@@ -12,7 +12,7 @@
 	the Free Software Foundation, either version 3 of the License, or
 	(at your option) any later version.
 
-	Dapplo.Exchange is distributed in the hope that it will be useful,
+	Dapplo.ActiveDirectory is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
@@ -21,7 +21,7 @@
 	along with Dapplo.ActiveDirectory.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using Dapplo.ActiveDirectory.Internal;
+using Dapplo.LogFacade;
 using System;
 using System.Text;
 
