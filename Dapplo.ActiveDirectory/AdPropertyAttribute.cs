@@ -21,35 +21,36 @@
 	along with Dapplo.ActiveDirectory.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using Dapplo.ActiveDirectory;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 
-namespace Dapplo.ActiveDirectoryTests
+namespace Dapplo.ActiveDirectory
 {
 	/// <summary>
-	/// Test the DistinguishedName class
+	/// Attribute to specify which AD property is stored in which property.
 	/// </summary>
-	[TestClass]
-	public class DistinguishedNameTests
+	[AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
+	public class AdPropertyAttribute : Attribute
 	{
-		private const string TestDn = "CN=Karen Berge,CN=admin,DC=corp,DC=Fabrikam,DC=COM";
-
-		[TestMethod]
-		public void TestDistinguishedName()
+		/// <summary>
+		/// Specify an Enum value, which correspons to an AD propertname, to make maping to this class property possible.
+		/// </summary>
+		/// <param name="adPropertyName"></param>
+		public AdPropertyAttribute(object adPropertyName)
 		{
-			var dn = DistinguishedName.CreateFrom(TestDn);
-			Assert.AreEqual(5, dn.RelativeDistinguishedNames.Count);
-			Assert.AreEqual(TestDn, dn.ToString());
+			if (adPropertyName == null)
+			{
+				throw new ArgumentNullException(nameof(adPropertyName));
+			}
+			if (!adPropertyName.GetType().IsEnum)
+			{
+				throw new ArgumentException("Should be an enum value", nameof(adPropertyName));
+			}
+			AdProperty = (Enum)adPropertyName;
 		}
 
-		[TestMethod]
-		public void TestBuildDistinguishedName()
-		{
-			
-			var dn = DistinguishedName.Create().CN("Karen Berge").CN("admin").DC("corp").DC("Fabrikam").DC("COM");
-
-			Assert.AreEqual(5, dn.RelativeDistinguishedNames.Count);
-			Assert.AreEqual(TestDn, dn.ToString());
-		}
+		/// <summary>
+		/// The AD property name for this property 
+		/// </summary>
+		public Enum AdProperty{ get;}
 	}
 }

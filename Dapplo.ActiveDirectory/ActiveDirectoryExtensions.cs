@@ -27,7 +27,6 @@ using System.DirectoryServices;
 using System.Linq;
 using Dapplo.LogFacade;
 using System.Reflection;
-using System.Runtime.Serialization;
 
 namespace Dapplo.ActiveDirectory
 {
@@ -41,10 +40,9 @@ namespace Dapplo.ActiveDirectory
 		/// <summary>
 		/// Use the ActiveDirectory with the supplied domain to query
 		/// </summary>
-		/// <typeparam name="T">Type to fill</typeparam>
+		/// <typeparam name="T">Type to fill, use AdPropertyAttribute to specify the mapping</typeparam>
 		/// <param name="query">Query</param>
 		/// <param name="domain">Domain for the LDAP server, if null the Environment.UserDomainName is used</param>
-		/// <param name="propertiesToLoad">An enumerable with the properties (as enum elements) to load</param>
 		/// <returns>IList with the specified type</returns>
 		public static IList<T> FindAll<T>(this Query query, string domain = null) where T : class
 		{
@@ -55,10 +53,9 @@ namespace Dapplo.ActiveDirectory
 		/// <summary>
 		/// Query the LDAP server for the supplied domain
 		/// </summary>
-		/// <typeparam name="T">Type to fill, use DataMemberAttribute to mark the properties</typeparam>
+		/// <typeparam name="T">Type to fill, use AdPropertyAttribute to specify the mapping</typeparam>
 		/// <param name="query">Query as string</param>
 		/// <param name="domain">Domain for the LDAP server, if null the Environment.UserDomainName is used</param>
-		/// <param name="propertiesToLoad">An enumerable with the properties to load, defaults include some user properties</param>
 		/// <returns>IList with the specified type</returns>
 		private static IList<T> FindInAd<T>(string query, string domain = null) where T : class
 		{
@@ -75,23 +72,35 @@ namespace Dapplo.ActiveDirectory
 					{
 						continue;
 					}
-					T instance = Activator.CreateInstance<T>();
-					foreach(var propertyName in searchResult.Properties.PropertyNames.Cast<string>())
+					var instance = Activator.CreateInstance<T>();
+					foreach(var propertyName in searchResult.Properties.PropertyNames.Cast<string>().Select(x => x.ToLowerInvariant()))
 					{
 						if (!typeMap.ContainsKey(propertyName))
 						{
 							Log.Verbose().WriteLine("No property {0} in {1}", propertyName, typeof(T).Name);
 							continue;
 						}
-						var properties = searchResult.Properties[propertyName] as ResultPropertyValueCollection;
-
+						var properties = searchResult.Properties[propertyName];
+						var propertyInfo = typeMap[propertyName];
 						if (properties.Count > 1)
 						{
-							typeMap[propertyName].SetValue(instance, properties.Cast<string>().Select(x => DistinguishedName.CreateFrom(x)).ToList());
+							var values = properties.Cast<string>();
+							if (!propertyInfo.PropertyType.IsGenericType)
+							{
+								if (propertyInfo.PropertyType.GenericTypeArguments[0] == typeof (DistinguishedName))
+								{
+									typeMap[propertyName].SetValue(instance, values.Select(DistinguishedName.CreateFrom).ToList());
+								}
+								else
+								{
+									typeMap[propertyName].SetValue(instance, values.Select(x => Convert.ChangeType(x, propertyInfo.PropertyType)).ToList());
+								}
+							}
 						}
 						else
 						{
-							typeMap[propertyName].SetValue(instance, properties[0]);
+							var value = Convert.ChangeType(properties[0], propertyInfo.PropertyType);
+							typeMap[propertyName].SetValue(instance, value);
 						}
 					}
 					result.Add(instance);
@@ -111,10 +120,10 @@ namespace Dapplo.ActiveDirectory
 
 			foreach(var propertyInfo in typeToFill.GetProperties())
 			{
-				var dataMemberAttribute = propertyInfo.GetCustomAttribute<DataMemberAttribute>(true);
-				if (dataMemberAttribute != null)
+				var adPropertyAttribute = propertyInfo.GetCustomAttribute<AdPropertyAttribute>(true);
+				if (adPropertyAttribute != null)
 				{
-					result.Add(dataMemberAttribute.Name.ToLowerInvariant(), propertyInfo);
+					result.Add(adPropertyAttribute.AdProperty.EnumValueOf().ToLowerInvariant(), propertyInfo);
 				}
 			}
 			return result;

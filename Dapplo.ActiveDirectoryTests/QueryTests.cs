@@ -45,7 +45,7 @@ namespace Dapplo.ActiveDirectoryTests
 		[TestMethod]
 		public void TestSubQueryBuilder()
 		{
-			var targetFilter = "(&(objectClass=person)(|(ou:dn:=ResearchAndDevelopment)(ou:dn:=HumanResources)))";
+			const string targetFilter = "(&(objectClass=person)(|(ou:dn:=ResearchAndDevelopment)(ou:dn:=HumanResources)))";
 
 			var userFilterComplex = Query.CreateAnd().EqualTo("objectClass", "person").Or().EqualTo("ou:dn:", "ResearchAndDevelopment").EqualTo("ou:dn:", "HumanResources").Build();
 
@@ -55,7 +55,7 @@ namespace Dapplo.ActiveDirectoryTests
 		[TestMethod]
 		public void TestSubQueryBuilder_MoreComplex()
 		{
-			var targetFilter = "(&(&(!(cn:dn:=jbond))(|(ou:dn:=ResearchAndDevelopment)(ou:dn:=HumanResources)))(objectclass=Person))";
+			const string targetFilter = "(&(&(!(cn:dn:=jbond))(|(ou:dn:=ResearchAndDevelopment)(ou:dn:=HumanResources)))(objectclass=Person))";
 
 			var userFilterComplex = Query.CreateAnd().And().NotEqualTo("cn:dn:", "jbond").Or().EqualTo("ou:dn:", "ResearchAndDevelopment").EqualTo("ou:dn:", "HumanResources").Parent.Parent.EqualTo("objectclass", "Person");
 

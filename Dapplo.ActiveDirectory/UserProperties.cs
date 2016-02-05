@@ -48,7 +48,7 @@ namespace Dapplo.ActiveDirectory
 		[EnumMember(Value = "initials")]
 		Initials,
 		[EnumMember(Value = "ipPhone")]
-		IPTelephoneNumber,
+		IpTelephoneNumber,
 		[EnumMember(Value = "lastLogonTimestamp")]
 		LastLogonTimestamp,
 		[EnumMember(Value = "l")]
