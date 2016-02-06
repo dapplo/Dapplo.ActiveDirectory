@@ -58,10 +58,10 @@ namespace Dapplo.ActiveDirectory
 		/// <returns>IList with the specified type</returns>
 		private static IEnumerable<T> Execute<T>(string query, string domain = null) where T : class
 		{
-			var typeMap = ProcessType(typeof(T));
-			Log.Info().WriteLine("Querying domain {0} with {1} into {2}", domain, query, typeof(T).Name);
+			var typeMap = ProcessType(typeof (T));
+			Log.Info().WriteLine("Querying domain {0} with {1} into {2}", domain, query, typeof (T).Name);
 			using (var rootDirectory = new DirectoryEntry($"LDAP://{domain ?? Environment.UserDomainName}"))
-			using (var searcher = new DirectorySearcher(rootDirectory, query, typeMap.Keys.ToArray()))
+			using (var searcher = new DirectorySearcher(rootDirectory, query, typeMap.Select(x => x.Key).ToArray()))
 			using (var results = searcher.FindAll())
 			{
 				foreach (SearchResult searchResult in results)
@@ -71,34 +71,37 @@ namespace Dapplo.ActiveDirectory
 						continue;
 					}
 					var instance = Activator.CreateInstance<T>();
-					foreach(var propertyName in searchResult.Properties.PropertyNames.Cast<string>().Select(x => x.ToLowerInvariant()))
+					foreach (var propertyName in searchResult.Properties.PropertyNames.Cast<string>().Select(x => x.ToLowerInvariant()))
 					{
-						if (!typeMap.ContainsKey(propertyName))
+						if (!typeMap.Contains(propertyName))
 						{
-							Log.Verbose().WriteLine("No property {0} in {1}", propertyName, typeof(T).Name);
+							Log.Verbose().WriteLine("No property {0} in {1}", propertyName, typeof (T).Name);
 							continue;
 						}
 						var properties = searchResult.Properties[propertyName];
-						var propertyInfo = typeMap[propertyName];
-						if (properties.Count > 1)
+						var propertyInfos = typeMap[propertyName];
+						var values = properties.Cast<string>().ToList();
+						foreach (var propertyInfo in propertyInfos)
 						{
-							var values = properties.Cast<string>();
-							if (!propertyInfo.PropertyType.IsGenericType)
+							if (properties.Count > 1)
 							{
-								if (propertyInfo.PropertyType.GenericTypeArguments[0] == typeof (DistinguishedName))
+								if (!propertyInfo.PropertyType.IsGenericType)
 								{
-									typeMap[propertyName].SetValue(instance, values.Select(DistinguishedName.CreateFrom).ToList());
-								}
-								else
-								{
-									typeMap[propertyName].SetValue(instance, values.Select(x => Convert.ChangeType(x, propertyInfo.PropertyType)).ToList());
+									if (propertyInfo.PropertyType.GenericTypeArguments[0] == typeof (DistinguishedName))
+									{
+										propertyInfo.SetValue(instance, values.Select(DistinguishedName.CreateFrom).ToList());
+									}
+									else
+									{
+										propertyInfo.SetValue(instance, values.Select(x => Convert.ChangeType(x, propertyInfo.PropertyType)).ToList());
+									}
 								}
 							}
-						}
-						else
-						{
-							var value = Convert.ChangeType(properties[0], propertyInfo.PropertyType);
-							typeMap[propertyName].SetValue(instance, value);
+							else
+							{
+								var value = Convert.ChangeType(properties[0], propertyInfo.PropertyType);
+								propertyInfo.SetValue(instance, value);
+							}
 						}
 					}
 					yield return instance;
@@ -111,19 +114,15 @@ namespace Dapplo.ActiveDirectory
 		/// </summary>
 		/// <param name="typeToFill"></param>
 		/// <returns></returns>
-		private static IDictionary<string, PropertyInfo> ProcessType(Type typeToFill)
+		private static ILookup<string, PropertyInfo> ProcessType(Type typeToFill)
 		{
-			var result = new Dictionary<string, PropertyInfo>();
+			return typeToFill.GetProperties().Select(x => new KeyValuePair<string, PropertyInfo>(ReadAdProperty(x), x)).ToLookup(x=> x.Key, x=> x.Value);
+		}
 
-			foreach(var propertyInfo in typeToFill.GetProperties())
-			{
-				var adPropertyAttribute = propertyInfo.GetCustomAttribute<AdPropertyAttribute>(true);
-				if (adPropertyAttribute != null)
-				{
-					result.Add(adPropertyAttribute.AdProperty.EnumValueOf().ToLowerInvariant(), propertyInfo);
-				}
-			}
-			return result;
+		private static string ReadAdProperty(MemberInfo memberInfo)
+		{
+			var adPropertyAttribute = memberInfo.GetCustomAttribute<AdPropertyAttribute>(true);
+			return adPropertyAttribute?.AdProperty.EnumValueOf().ToLowerInvariant();
 		}
 	}
 }
