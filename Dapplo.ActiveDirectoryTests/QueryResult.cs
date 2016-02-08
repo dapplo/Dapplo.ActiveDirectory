@@ -31,6 +31,9 @@ namespace Dapplo.ActiveDirectoryTests
 		[AdProperty(AdProperties.Id)]
 		public string Id { get; set; }
 
+		[AdProperty(UserProperties.DistinguishedName)]
+		public string DistinguishedName { get; set; }
+
 		[AdProperty(UserProperties.DisplayName)]
 		public string Displayname { get; set; }
 

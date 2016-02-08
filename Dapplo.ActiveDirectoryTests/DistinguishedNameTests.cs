@@ -23,6 +23,7 @@
 
 using Dapplo.ActiveDirectory;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Linq;
 
 namespace Dapplo.ActiveDirectoryTests
 {
@@ -49,6 +50,9 @@ namespace Dapplo.ActiveDirectoryTests
 
 			Assert.AreEqual(5, dn.RelativeDistinguishedNames.Count);
 			Assert.AreEqual(TestDnString, dn.ToString());
+
+			var dc = string.Join(".", dn.Where(x => x.Key == DistinguishedNameAttributes.DomainComponent).Select(x => x.Value));
+			Assert.AreEqual("corp.Fabrikam.COM", dc);
 		}
 
 		[TestMethod]

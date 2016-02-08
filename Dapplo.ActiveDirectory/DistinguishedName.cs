@@ -26,6 +26,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Collections;
 
 namespace Dapplo.ActiveDirectory
 {
@@ -33,9 +34,9 @@ namespace Dapplo.ActiveDirectory
 	/// This class helps with processing a DistinguishedName
 	/// See: https://msdn.microsoft.com/en-us/library/windows/desktop/aa366101.aspx
 	/// </summary>
-	public class DistinguishedName
+	public class DistinguishedName : IEnumerable<KeyValuePair<DistinguishedNameAttributes, string>>
 	{
-		private static IDictionary<string, DistinguishedNameAttributes> AttributeLookup = new Dictionary<string, DistinguishedNameAttributes>();
+		private static readonly IDictionary<string, DistinguishedNameAttributes> AttributeLookup = new Dictionary<string, DistinguishedNameAttributes>();
 
 		public IList<KeyValuePair<DistinguishedNameAttributes, string>> RelativeDistinguishedNames
 		{
@@ -177,6 +178,16 @@ namespace Dapplo.ActiveDirectory
 				builder.Length -= 1;
 			}
 			return builder.ToString();
+		}
+
+		public IEnumerator<KeyValuePair<DistinguishedNameAttributes, string>> GetEnumerator()
+		{
+			return RelativeDistinguishedNames.GetEnumerator();
+		}
+
+		IEnumerator IEnumerable.GetEnumerator()
+		{
+			return RelativeDistinguishedNames.GetEnumerator();
 		}
 	}
 }
