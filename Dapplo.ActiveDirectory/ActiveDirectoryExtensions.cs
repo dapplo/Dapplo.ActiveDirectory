@@ -60,8 +60,9 @@ namespace Dapplo.ActiveDirectory
 		{
 			var typeMap = ProcessType(typeof (T));
 			Log.Info().WriteLine("Querying domain {0} with {1} into {2}", domain, query, typeof (T).Name);
+			var queryProperties = typeMap.Select(x => x.Key).ToArray();
 			using (var rootDirectory = new DirectoryEntry($"LDAP://{domain ?? Environment.UserDomainName}"))
-			using (var searcher = new DirectorySearcher(rootDirectory, query, typeMap.Select(x => x.Key).ToArray()))
+			using (var searcher = new DirectorySearcher(rootDirectory, query, queryProperties))
 			using (var results = searcher.FindAll())
 			{
 				foreach (SearchResult searchResult in results)
@@ -75,7 +76,7 @@ namespace Dapplo.ActiveDirectory
 					{
 						if (!typeMap.Contains(propertyName))
 						{
-							Log.Verbose().WriteLine("No property {0} in {1}", propertyName, typeof (T).Name);
+							Log.Verbose().WriteLine("No property {0} in {1}", propertyName, typeof(T).Name);
 							continue;
 						}
 						var properties = searchResult.Properties[propertyName];
@@ -85,9 +86,9 @@ namespace Dapplo.ActiveDirectory
 						{
 							if (properties.Count > 1)
 							{
-								if (!propertyInfo.PropertyType.IsGenericType)
+								if (propertyInfo.PropertyType.IsGenericType)
 								{
-									if (propertyInfo.PropertyType.GenericTypeArguments[0] == typeof (DistinguishedName))
+									if (propertyInfo.PropertyType.GenericTypeArguments[0] == typeof(DistinguishedName))
 									{
 										propertyInfo.SetValue(instance, values.Select(DistinguishedName.CreateFrom).ToList());
 									}

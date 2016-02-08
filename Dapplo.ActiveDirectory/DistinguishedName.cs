@@ -51,6 +51,24 @@ namespace Dapplo.ActiveDirectory
 		}
 
 		/// <summary>
+		/// Add implicit casting from string
+		/// </summary>
+		/// <param name="value">string</param>
+		static public implicit operator DistinguishedName(string value)
+		{
+			return CreateFrom(value);
+		}
+
+		/// <summary>
+		/// Add implicit casting to string
+		/// </summary>
+		/// <param name="value">string</param>
+		static public implicit operator string(DistinguishedName value)
+		{
+			return value.ToString();
+		}
+
+		/// <summary>
 		/// Create a DistinguishedName from a string representation
 		/// </summary>
 		/// <param name="distinguishedName"></param>

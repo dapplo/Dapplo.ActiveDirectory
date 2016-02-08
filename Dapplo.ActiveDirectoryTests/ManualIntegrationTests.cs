@@ -45,9 +45,11 @@ namespace Dapplo.ActiveDirectoryTests
 			var result = query.Execute<QueryResult>(Environment.UserDomainName);
 			Assert.IsTrue(result.Any());
 
+			// Watch out, this creates a second query!!
 			foreach (var user in query.Execute<QueryResult>())
 			{
-				Log.Info().WriteLine("Found {0}", user.Name);
+				Log.Info().WriteLine("Found name: {0}", user.Name);
+				Log.Info().WriteLine("Found groups: {0}", string.Join(Environment.NewLine, user.Groups));
 			}
 		}
 	}

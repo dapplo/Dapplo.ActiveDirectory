@@ -32,24 +32,31 @@ namespace Dapplo.ActiveDirectoryTests
 	[TestClass]
 	public class DistinguishedNameTests
 	{
-		private const string TestDn = "CN=Karen Berge,CN=admin,DC=corp,DC=Fabrikam,DC=COM";
+		private const string TestDnString = "CN=Karen Berge,CN=admin,DC=corp,DC=Fabrikam,DC=COM";
 
 		[TestMethod]
 		public void TestDistinguishedName()
 		{
-			var dn = DistinguishedName.CreateFrom(TestDn);
+			var dn = DistinguishedName.CreateFrom(TestDnString);
 			Assert.AreEqual(5, dn.RelativeDistinguishedNames.Count);
-			Assert.AreEqual(TestDn, dn.ToString());
+			Assert.AreEqual(TestDnString, dn.ToString());
 		}
 
 		[TestMethod]
 		public void TestBuildDistinguishedName()
 		{
-			
 			var dn = DistinguishedName.Create().CN("Karen Berge").CN("admin").DC("corp").DC("Fabrikam").DC("COM");
 
 			Assert.AreEqual(5, dn.RelativeDistinguishedNames.Count);
-			Assert.AreEqual(TestDn, dn.ToString());
+			Assert.AreEqual(TestDnString, dn.ToString());
+		}
+
+		[TestMethod]
+		public void TestCastDistinguishedName()
+		{
+			var dn = (DistinguishedName)TestDnString;
+			Assert.AreEqual(5, dn.RelativeDistinguishedNames.Count);
+			Assert.AreEqual(TestDnString, (string)dn);
 		}
 	}
 }
