@@ -56,7 +56,7 @@ namespace Dapplo.ActiveDirectory
 		[EnumMember(Value = "memberOf")]
 		MemberOfGroups,
 		[EnumMember(Value = "pager")]
-		Page,
+		Pager,
 		[EnumMember(Value = "pwdLastSet")]
 		PwdLastSet,
 		[EnumMember(Value = "postalCode")]
