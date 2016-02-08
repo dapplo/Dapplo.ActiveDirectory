@@ -54,6 +54,7 @@
     <Compile Include="ObjectCategories.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="AdPropertyAttribute.cs" />
+    <Compile Include="AdProperties.cs" />
     <Compile Include="UserProperties.cs" />
   </ItemGroup>
   <ItemGroup>

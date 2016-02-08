@@ -67,6 +67,8 @@ namespace Dapplo.ActiveDirectory
 		StreetAddress,
 		[EnumMember(Value = "telephoneNumber")]
 		TelephoneNumber,
+		[EnumMember(Value = "thumbnailphoto")]
+		Thumbnail,
 		[EnumMember(Value = "userAccountControl")]
 		UserAccountControl,
 		[EnumMember(Value = "sAMAccountname")]

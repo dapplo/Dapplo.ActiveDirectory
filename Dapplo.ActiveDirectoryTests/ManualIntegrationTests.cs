@@ -22,10 +22,10 @@
  */
 
 using Dapplo.ActiveDirectory;
+using Dapplo.LogFacade;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Linq;
-using Dapplo.LogFacade;
 
 namespace Dapplo.ActiveDirectoryTests
 {
@@ -40,16 +40,16 @@ namespace Dapplo.ActiveDirectoryTests
 		[TestMethod]
 		public void TestActiveDirectoryCall()
 		{
-			Query.UsernameFilter(Environment.UserName);
 			var query = Query.CreateAnd().IsUser().EqualTo(UserProperties.Username, Environment.UserName);
-			var result = query.Execute<QueryResult>(Environment.UserDomainName);
+			var result = query.Execute<QueryResult>(Environment.UserDomainName).ToList();
 			Assert.IsTrue(result.Any());
 
-			// Watch out, this creates a second query!!
-			foreach (var user in query.Execute<QueryResult>())
+			// Just something to generate some output
+			foreach (var user in result)
 			{
-				Log.Info().WriteLine("Found name: {0}", user.Name);
-				Log.Info().WriteLine("Found groups: {0}", string.Join(Environment.NewLine, user.Groups));
+				Log.Info().WriteLine("Found name: {0}", user.Displayname);
+				Log.Info().WriteLine("Has thumbnail: {0}", user.Thumbnail != null);
+				Log.Info().WriteLine("Is member of {0} groups", user.Groups.Count());
 			}
 		}
 	}

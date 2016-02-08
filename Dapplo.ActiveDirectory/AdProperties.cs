@@ -18,30 +18,24 @@
 	GNU General Public License for more details.
 
 	You should have received a copy of the GNU General Public License
-	along with Dapplo.ActiveDirectory. If not, see <http://www.gnu.org/licenses/>.
+	along with Dapplo.ActiveDirectory.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using Dapplo.ActiveDirectory;
-using System.Collections.Generic;
+using System.Runtime.Serialization;
 
-namespace Dapplo.ActiveDirectoryTests
+namespace Dapplo.ActiveDirectory
 {
-	public class QueryResult
+	/// <summary>
+	/// Ad generic properties, this is what every entry has
+	/// </summary>
+	public enum AdProperties
 	{
-		[AdProperty(AdProperties.Id)]
-		public string Id { get; set; }
-
-		[AdProperty(UserProperties.DisplayName)]
-		public string Displayname { get; set; }
-
-		[AdProperty(UserProperties.Surname)]
-		public string Name { get; set; }
-
-		[AdProperty(UserProperties.MemberOfGroups)]
-		public IList<DistinguishedName> Groups { get; set; }
-
-		[AdProperty(UserProperties.Thumbnail)]
-		public byte[] Thumbnail { get; set; }
-
+		[EnumMember(Value = "adspath")]
+		Id,
+		/// <summary>
+		/// This is a constructed attribute, get this e.g. by calling directoryEntry.RefreshCache(new[] { AdProperties.AllowedAttributes.EnumValueOf() });
+		/// </summary>
+		[EnumMember(Value = "allowedAttributesEffective")]
+		AllowedAttributes
 	}
 }
