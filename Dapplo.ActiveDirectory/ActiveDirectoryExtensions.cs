@@ -190,10 +190,10 @@ namespace Dapplo.ActiveDirectory
 		/// Create a map for properties & the property name from the AD
 		/// </summary>
 		/// <param name="typeToFill"></param>
-		/// <returns></returns>
+		/// <returns>ILookup with for each found property (key) an IEnumerable with PropertyInfo objects</returns>
 		private static ILookup<string, PropertyInfo> ProcessType(Type typeToFill)
 		{
-			return typeToFill.GetProperties().Select(x => new KeyValuePair<string, PropertyInfo>(ReadAdProperty(x), x)).ToLookup(x=> x.Key, x=> x.Value);
+			return typeToFill.GetProperties().Select(x => new KeyValuePair<string, PropertyInfo>(ReadAdProperty(x), x)).Where(x=> x.Key != null).ToLookup(x=> x.Key, x=> x.Value);
 		}
 
 		/// <summary>
