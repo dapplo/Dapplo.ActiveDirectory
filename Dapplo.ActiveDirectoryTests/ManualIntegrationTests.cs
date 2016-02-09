@@ -38,14 +38,35 @@ namespace Dapplo.ActiveDirectoryTests
 		private static readonly LogSource Log = new LogSource();
 
 		[TestMethod]
-		public void TestActiveDirectoryCall()
+		public void TestActiveDirectoryCall_Computer()
 		{
-			var query = Query.CreateAnd().IsUser().EqualTo(UserProperties.Username, Environment.UserName);
-			var result = query.Execute<QueryResult>(Environment.UserDomainName).ToList();
-			Assert.IsTrue(result.Any());
+			var query = Query.ComputerFilter(Environment.MachineName);
+			var computerResult = query.Execute<Computer>(Environment.UserDomainName).ToList();
+			Assert.IsTrue(computerResult.Any());
 
 			// Just something to generate some output
-			foreach (var user in result)
+			foreach (var computer in computerResult)
+			{
+				Log.Info().WriteLine("Id: {0}", computer.Id);
+				Log.Info().WriteLine("Name: {0}", computer.Hostname);
+				Log.Info().WriteLine("Description: {0}", computer.Description);
+				Log.Info().WriteLine("Location: {0}", computer.Location);
+				Log.Info().WriteLine("OperatingSystem: {0}", computer.OperatingSystem);
+				Log.Info().WriteLine("OperatingSystemServicePack: {0}", computer.OperatingSystemServicePack);
+				Log.Info().WriteLine("WhenCreated: {0}", computer.WhenCreated);
+				ActiveDirectoryExtensions.GetByAdsPath(computer.Id);
+			}
+		}
+
+		[TestMethod]
+		public void TestActiveDirectoryCall_User()
+		{
+			var query = Query.CreateAnd().IsUser().EqualTo(UserProperties.Username, Environment.UserName);
+			var userResult = query.Execute<User>(Environment.UserDomainName).ToList();
+			Assert.IsTrue(userResult.Any());
+
+			// Just something to generate some output
+			foreach (var user in userResult)
 			{
 				Log.Info().WriteLine("Id: {0}", user.Id);
 				Log.Info().WriteLine("Name: {0}", user.Displayname);
@@ -53,6 +74,7 @@ namespace Dapplo.ActiveDirectoryTests
 				Log.Info().WriteLine("Found name: {0}", user.Displayname);
 				Log.Info().WriteLine("Has thumbnail: {0}", user.Thumbnail != null);
 				Log.Info().WriteLine("Is member of {0} groups", user.Groups.Count());
+				ActiveDirectoryExtensions.GetByAdsPath(user.Id);
 			}
 		}
 	}

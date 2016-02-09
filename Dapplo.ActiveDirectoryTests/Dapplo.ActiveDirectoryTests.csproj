@@ -40,6 +40,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.DirectoryServices" />
     <Reference Include="System.Runtime.Serialization" />
   </ItemGroup>
   <Choose>
@@ -57,12 +58,13 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="Computer.cs" />
     <Compile Include="ConfigureLogging4Tests.cs" />
-    <Compile Include="QueryResult.cs" />
     <Compile Include="QueryTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ManualIntegrationTests.cs" />
     <Compile Include="DistinguishedNameTests.cs" />
+    <Compile Include="User.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Dapplo.ActiveDirectory\Dapplo.ActiveDirectory.csproj">

@@ -25,11 +25,28 @@ using System.Runtime.Serialization;
 
 namespace Dapplo.ActiveDirectory
 {
+	/// <summary>
+	/// These are some possible user "attributes", but if you need your own you can just create an enum like this and use it.
+	/// </summary>
 	public enum ComputerProperties
 	{
-		[EnumMember(Value = "operatingSystem")]
-		OperatingSystem,
 		[EnumMember(Value = "dNSHostName")]
 		HostName,
+		[EnumMember(Value = "Name")]
+		Name,
+		[EnumMember(Value = "location")]
+		Location,
+		[EnumMember(Value = "operatingSystem")]
+		OperatingSystem,
+		[EnumMember(Value = "operatingSystemServicePack")]
+		OperatingSystemServicePack,
+		[EnumMember(Value = "operatingSystemVersion")]
+		OperatingSystemVersion,
+		[EnumMember(Value = "description")]
+		Description,
+		[EnumMember(Value = "whenCreated")]
+		WhenCreated,
+		[EnumMember(Value = "whenChanged")]
+		WhenChanged
 	}
 }

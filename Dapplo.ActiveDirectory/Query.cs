@@ -47,7 +47,7 @@ namespace Dapplo.ActiveDirectory
 		/// <summary>
 		/// Create a filter for the username
 		/// </summary>
-		/// <param name="username"></param>
+		/// <param name="username">Windows username (without the domain)</param>
 		/// <returns>Query</returns>
 		public static Query UsernameFilter(string username)
 		{
@@ -55,13 +55,13 @@ namespace Dapplo.ActiveDirectory
 		}
 
 		/// <summary>
-		/// Create a filter for the hostname
+		/// Create a filter for the computer name
 		/// </summary>
-		/// <param name="hostname"></param>
+		/// <param name="hostname">String with the hostname (without domain!)</param>
 		/// <returns>Query</returns>
 		public static Query ComputerFilter(string hostname)
 		{
-			return CreateAnd().IsComputer().EqualTo(ComputerProperties.HostName, hostname);
+			return CreateAnd().IsComputer().EqualTo(ComputerProperties.Name, hostname);
 		}
 
 		/// <summary>
@@ -94,8 +94,8 @@ namespace Dapplo.ActiveDirectory
 		/// <summary>
 		/// Internal constructor, used by Or/And and Create
 		/// </summary>
-		/// <param name="queryOperator"></param>
-		/// <param name="parent"></param>
+		/// <param name="queryOperator">Operators</param>
+		/// <param name="parent">The parent query, if any</param>
 		internal Query(Operators queryOperator = Operators.And, Query parent = null) : base(parent)
 		{
 			Operator = queryOperator;
@@ -124,24 +124,10 @@ namespace Dapplo.ActiveDirectory
 		}
 
 		/// <summary>
-		/// Add a compare to the current query for a property and DistinguishedName value
-		/// </summary>
-		/// <param name="property"></param>
-		/// <param name="value">DistinguishedName</param>
-		/// <param name="comparison">Comparisons to specify how to compare</param>
-		/// <returns>Query</returns>
-		public Query Compare(string property, DistinguishedName value, Comparisons comparison)
-		{
-			var propertyEqual = new PropertyComparison(property, value.ToString(), comparison, this);
-			_elements.Add(propertyEqual);
-			return this;
-		}
-
-		/// <summary>
 		/// Add a compare to the current query for a property and value
 		/// </summary>
-		/// <param name="property"></param>
-		/// <param name="value"></param>
+		/// <param name="property">Property to compair</param>
+		/// <param name="value">Value to compare</param>
 		/// <param name="comparison">Comparisons to specify how to compare</param>
 		/// <returns>Query</returns>
 		public Query Compare(string property, string value, Comparisons comparison)
@@ -154,8 +140,8 @@ namespace Dapplo.ActiveDirectory
 		/// <summary>
 		/// Add a compare to the current query for a property and value
 		/// </summary>
-		/// <param name="property">Enum</param>
-		/// <param name="value"></param>
+		/// <param name="property">property, as enum, to compare</param>
+		/// <param name="value">value to compare</param>
 		/// <param name="comparison">Comparisons to specify how to compare</param>
 		/// <returns>Query</returns>
 		public Query Compare(Enum property, string value, Comparisons comparison)
@@ -166,8 +152,8 @@ namespace Dapplo.ActiveDirectory
 		/// <summary>
 		/// Property should not be equal to the value
 		/// </summary>
-		/// <param name="property"></param>
-		/// <param name="value"></param>
+		/// <param name="property">property to compare</param>
+		/// <param name="value">value to compare</param>
 		/// <returns>Query</returns>
 		public Query NotEqualTo(string property, string value)
 		{
@@ -177,8 +163,8 @@ namespace Dapplo.ActiveDirectory
 		/// <summary>
 		/// Property should not be equal to the value
 		/// </summary>
-		/// <param name="property"></param>
-		/// <param name="value"></param>
+		/// <param name="property">property, as enum, to compare</param>
+		/// <param name="value">value to compare</param>
 		/// <returns>Query</returns>
 		public Query NotEqualTo(Enum property, string value)
 		{
@@ -188,8 +174,8 @@ namespace Dapplo.ActiveDirectory
 		/// <summary>
 		/// Property should be equal to the value
 		/// </summary>
-		/// <param name="property">Enum instance</param>
-		/// <param name="value"></param>
+		/// <param name="property">property, as enum, to compare</param>
+		/// <param name="value">value to compare</param>
 		/// <returns>Query</returns>
 		public Query EqualTo(string property, string value)
 		{
@@ -199,8 +185,8 @@ namespace Dapplo.ActiveDirectory
 		/// <summary>
 		/// Property should be equal to the value
 		/// </summary>
-		/// <param name="property"></param>
-		/// <param name="value"></param>
+		/// <param name="property">property, as enum, to compare</param>
+		/// <param name="value">value to compare</param>
 		/// <returns>Query</returns>
 		public Query EqualTo(Enum property, string value)
 		{
@@ -210,7 +196,7 @@ namespace Dapplo.ActiveDirectory
 		/// <summary>
 		/// Check for an absent property
 		/// </summary>
-		/// <param name="property"></param>
+		/// <param name="property">Property name to check on empty</param>
 		/// <returns>Query</returns>
 		public Query Empty(string property)
 		{
@@ -220,7 +206,7 @@ namespace Dapplo.ActiveDirectory
 		/// <summary>
 		/// Check for an absent property
 		/// </summary>
-		/// <param name="property">Enum</param>
+		/// <param name="property">property, as enum, to check for empty</param>
 		/// <returns>Query</returns>
 		public Query Empty(Enum property)
 		{
@@ -230,7 +216,7 @@ namespace Dapplo.ActiveDirectory
 		/// <summary>
 		/// Check for the existance of a property
 		/// </summary>
-		/// <param name="property"></param>
+		/// <param name="property">property, to check for empty</param>
 		/// <returns>Query</returns>
 		public Query Any(string property)
 		{
@@ -240,7 +226,7 @@ namespace Dapplo.ActiveDirectory
 		/// <summary>
 		/// Check for the existance of a property
 		/// </summary>
-		/// <param name="property">Enum</param>
+		/// <param name="property">property, as enum, to check for any value</param>
 		/// <returns>Query</returns>
 		public Query Any(Enum property)
 		{
@@ -250,8 +236,8 @@ namespace Dapplo.ActiveDirectory
 		/// <summary>
 		/// Check if the property is equal to or less than the value
 		/// </summary>
-		/// <param name="property"></param>
-		/// <param name="value"></param>
+		/// <param name="property">property to compare</param>
+		/// <param name="value">value to compare to</param>
 		/// <returns>Query</returns>
 		public Query LessThanOrEqualTo(string property, string value)
 		{
@@ -261,8 +247,8 @@ namespace Dapplo.ActiveDirectory
 		/// <summary>
 		/// Check if the property is equal to or less than the value
 		/// </summary>
-		/// <param name="property">Enum</param>
-		/// <param name="value"></param>
+		/// <param name="property">property, as enum, to compare</param>
+		/// <param name="value">value to compare to</param>
 		/// <returns>Query</returns>
 		public Query LessThanOrEqualTo(Enum property, string value)
 		{
@@ -272,8 +258,8 @@ namespace Dapplo.ActiveDirectory
 		/// <summary>
 		/// Check if the property is equal to or greater than the value
 		/// </summary>
-		/// <param name="property"></param>
-		/// <param name="value"></param>
+		/// <param name="property">property to compare</param>
+		/// <param name="value">value to compare to</param>
 		/// <returns>Query</returns>
 		public Query GreaterOrEquals(string property, string value)
 		{
@@ -283,8 +269,8 @@ namespace Dapplo.ActiveDirectory
 		/// <summary>
 		/// Check if the property is equal to or greater than the value
 		/// </summary>
-		/// <param name="property">Enum</param>
-		/// <param name="value"></param>
+		/// <param name="property">property, as enum, to compare</param>
+		/// <param name="value">value to compare to</param>
 		/// <returns>Query</returns>
 		public Query GreaterOrEquals(Enum property, string value)
 		{

@@ -159,6 +159,11 @@ namespace Dapplo.ActiveDirectory
 							{
 								propertyInfo.SetValue(instance, value);
 							}
+							else if (valueType == typeof(DateTime) && propertyInfo.PropertyType == typeof(DateTimeOffset))
+							{
+								var dateTime = (DateTime)value;
+								propertyInfo.SetValue(instance, (DateTimeOffset)dateTime);
+							}
 							else if (valueType.IsArray && propertyInfo.PropertyType.IsGenericType)
 							{
 								if (propertyInfo.PropertyType.GenericTypeArguments[0] == typeof(DistinguishedName))

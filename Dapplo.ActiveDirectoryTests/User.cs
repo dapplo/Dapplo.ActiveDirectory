@@ -26,7 +26,10 @@ using System.Collections.Generic;
 
 namespace Dapplo.ActiveDirectoryTests
 {
-	public class QueryResult
+	/// <summary>
+	/// Simple predefined object for user information
+	/// </summary>
+	public class User
 	{
 		[AdProperty(AdProperties.Id)]
 		public string Id { get; set; }
