@@ -38,9 +38,9 @@ namespace Dapplo.ActiveDirectoryTests
 		private static readonly LogSource Log = new LogSource();
 
 		[TestMethod]
-		public void TestActiveDirectoryCall_Computer()
+		public void TestActiveDirectoryQuery_Computer()
 		{
-			var query = Query.ComputerFilter(Environment.MachineName);
+			var query = Query.ForComputer(Environment.MachineName);
 			var computerResult = query.Execute<Computer>(Environment.UserDomainName).ToList();
 			Assert.IsTrue(computerResult.Any());
 
@@ -59,9 +59,9 @@ namespace Dapplo.ActiveDirectoryTests
 		}
 
 		[TestMethod]
-		public void TestActiveDirectoryCall_User()
+		public void TestActiveDirectoryQuery_User()
 		{
-			var query = Query.CreateAnd().IsActiveUser().Any(UserProperties.IpTelephoneNumber).Any(UserProperties.TelephoneNumber);
+			var query = Query.ForUser().WhereAccountEnabled().WhereAny(UserProperties.IpTelephoneNumber).WhereAny(UserProperties.TelephoneNumber);
 			var userResult = query.Execute<User>(Environment.UserDomainName).ToList();
 			Assert.IsTrue(userResult.Any());
 
