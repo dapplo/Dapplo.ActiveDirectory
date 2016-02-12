@@ -30,7 +30,7 @@ using Dapplo.LogFacade;
 namespace Dapplo.ActiveDirectory
 {
 	/// <summary>
-	/// This specifies a query
+	/// Query is a query builder for Active Directory queries
 	/// </summary>
 	public class Query : QueryElement
 	{
@@ -45,11 +45,11 @@ namespace Dapplo.ActiveDirectory
 		}
 
 		/// <summary>
-		/// Create a filter for the username
+		/// Create a query for the username
 		/// </summary>
 		/// <param name="username">Windows username (without the domain)</param>
 		/// <returns>Query</returns>
-		public static Query UsernameFilter(string username)
+		public static Query UsernameFilter(Value username)
 		{
 			return CreateAnd().IsUser().EqualTo(UserProperties.Username, username);
 		}
@@ -57,9 +57,9 @@ namespace Dapplo.ActiveDirectory
 		/// <summary>
 		/// Create a filter for the computer name
 		/// </summary>
-		/// <param name="hostname">String with the hostname (without domain!)</param>
+		/// <param name="hostname">Value with the hostname (without domain!)</param>
 		/// <returns>Query</returns>
-		public static Query ComputerFilter(string hostname)
+		public static Query ComputerFilter(Value hostname)
 		{
 			return CreateAnd().IsComputer().EqualTo(ComputerProperties.Name, hostname);
 		}
@@ -126,11 +126,11 @@ namespace Dapplo.ActiveDirectory
 		/// <summary>
 		/// Add a compare to the current query for a property and value
 		/// </summary>
-		/// <param name="property">Property to compair</param>
+		/// <param name="property">property as Property, enum or string</param>
 		/// <param name="value">Value to compare</param>
 		/// <param name="comparison">Comparisons to specify how to compare</param>
 		/// <returns>Query</returns>
-		public Query Compare(string property, string value, Comparisons comparison)
+		public Query Compare(Property property, Value value, Comparisons comparison)
 		{
 			var propertyEqual = new PropertyComparison(property, value, comparison, this);
 			_elements.Add(propertyEqual);
@@ -138,35 +138,12 @@ namespace Dapplo.ActiveDirectory
 		}
 
 		/// <summary>
-		/// Add a compare to the current query for a property and value
-		/// </summary>
-		/// <param name="property">property, as enum, to compare</param>
-		/// <param name="value">value to compare</param>
-		/// <param name="comparison">Comparisons to specify how to compare</param>
-		/// <returns>Query</returns>
-		public Query Compare(Enum property, string value, Comparisons comparison)
-		{
-			return Compare(property.EnumValueOf(), value, comparison);
-		}
-
-		/// <summary>
 		/// Property should not be equal to the value
 		/// </summary>
-		/// <param name="property">property to compare</param>
+		/// <param name="property">property as Property, enum or string</param>
 		/// <param name="value">value to compare</param>
 		/// <returns>Query</returns>
-		public Query NotEqualTo(string property, string value)
-		{
-			return Compare(property, value, Comparisons.NotEqualTo);
-		}
-
-		/// <summary>
-		/// Property should not be equal to the value
-		/// </summary>
-		/// <param name="property">property, as enum, to compare</param>
-		/// <param name="value">value to compare</param>
-		/// <returns>Query</returns>
-		public Query NotEqualTo(Enum property, string value)
+		public Query NotEqualTo(Property property, Value value)
 		{
 			return Compare(property, value, Comparisons.NotEqualTo);
 		}
@@ -174,21 +151,10 @@ namespace Dapplo.ActiveDirectory
 		/// <summary>
 		/// Property should be equal to the value
 		/// </summary>
-		/// <param name="property">property, as enum, to compare</param>
+		/// <param name="property">property as Property, enum or string</param>
 		/// <param name="value">value to compare</param>
 		/// <returns>Query</returns>
-		public Query EqualTo(string property, string value)
-		{
-			return Compare(property, value, Comparisons.EqualTo);
-		}
-
-		/// <summary>
-		/// Property should be equal to the value
-		/// </summary>
-		/// <param name="property">property, as enum, to compare</param>
-		/// <param name="value">value to compare</param>
-		/// <returns>Query</returns>
-		public Query EqualTo(Enum property, string value)
+		public Query EqualTo(Property property, Value value)
 		{
 			return Compare(property, value, Comparisons.EqualTo);
 		}
@@ -196,61 +162,30 @@ namespace Dapplo.ActiveDirectory
 		/// <summary>
 		/// Check for an absent property
 		/// </summary>
-		/// <param name="property">Property name to check on empty</param>
+		/// <param name="property">property as Property, enum or string</param>
 		/// <returns>Query</returns>
-		public Query Empty(string property)
+		public Query Empty(Property property)
 		{
-			return Compare(property, "*", Comparisons.NotEqualTo);
-		}
-
-		/// <summary>
-		/// Check for an absent property
-		/// </summary>
-		/// <param name="property">property, as enum, to check for empty</param>
-		/// <returns>Query</returns>
-		public Query Empty(Enum property)
-		{
-			return Compare(property, "*", Comparisons.NotEqualTo);
+			return Compare(property, Value.Any, Comparisons.NotEqualTo);
 		}
 
 		/// <summary>
 		/// Check for the existance of a property
 		/// </summary>
-		/// <param name="property">property, to check for empty</param>
+		/// <param name="property">property as Property, enum or string</param>
 		/// <returns>Query</returns>
-		public Query Any(string property)
+		public Query Any(Property property)
 		{
-			return Compare(property, "*", Comparisons.EqualTo);
-		}
-
-		/// <summary>
-		/// Check for the existance of a property
-		/// </summary>
-		/// <param name="property">property, as enum, to check for any value</param>
-		/// <returns>Query</returns>
-		public Query Any(Enum property)
-		{
-			return Compare(property, "*", Comparisons.EqualTo);
+			return Compare(property, Value.Any, Comparisons.EqualTo);
 		}
 
 		/// <summary>
 		/// Check if the property is equal to or less than the value
 		/// </summary>
-		/// <param name="property">property to compare</param>
+		/// <param name="property">property as Property, enum or string</param>
 		/// <param name="value">value to compare to</param>
 		/// <returns>Query</returns>
-		public Query LessThanOrEqualTo(string property, string value)
-		{
-			return Compare(property, value, Comparisons.LessThanOrEqualTo);
-		}
-
-		/// <summary>
-		/// Check if the property is equal to or less than the value
-		/// </summary>
-		/// <param name="property">property, as enum, to compare</param>
-		/// <param name="value">value to compare to</param>
-		/// <returns>Query</returns>
-		public Query LessThanOrEqualTo(Enum property, string value)
+		public Query LessThanOrEqualTo(Property property, Value value)
 		{
 			return Compare(property, value, Comparisons.LessThanOrEqualTo);
 		}
@@ -258,33 +193,33 @@ namespace Dapplo.ActiveDirectory
 		/// <summary>
 		/// Check if the property is equal to or greater than the value
 		/// </summary>
-		/// <param name="property">property to compare</param>
+		/// <param name="property">property as Property, enum or string</param>
 		/// <param name="value">value to compare to</param>
 		/// <returns>Query</returns>
-		public Query GreaterOrEquals(string property, string value)
+		public Query GreaterOrEquals(Property property, Value value)
 		{
 			return Compare(property, value, Comparisons.GreaterThanOrEqualTo);
 		}
 
+
 		/// <summary>
-		/// Check if the property is equal to or greater than the value
+		/// Add an comparison for the objectClass, if possible use IsObjectCategory as this has a higher chance of being indexed.
 		/// </summary>
-		/// <param name="property">property, as enum, to compare</param>
-		/// <param name="value">value to compare to</param>
+		/// <param name="objectClass">string with the objectClass</param>
 		/// <returns>Query</returns>
-		public Query GreaterOrEquals(Enum property, string value)
+		public Query IsObjectClass(Value objectClass)
 		{
-			return Compare(property, value, Comparisons.GreaterThanOrEqualTo);
+			return Compare("objectClass", objectClass, Comparisons.EqualTo);
 		}
 
 		/// <summary>
-		/// Add an comparison for the objectCatefory, default is user
+		/// Add an comparison for the objectCategory
 		/// </summary>
-		/// <param name="category">value from the ObjectCategories enum</param>
+		/// <param name="objectCategory">Value for the objectCategory</param>
 		/// <returns>Query</returns>
-		public Query IsObjectCategory(ObjectCategories category)
+		public Query IsObjectCategory(Value objectCategory)
 		{
-			return Compare("objectCategory", category.EnumValueOf(), Comparisons.EqualTo);
+			return Compare("objectCategory", objectCategory, Comparisons.EqualTo);
 		}
 
 		/// <summary>
@@ -293,8 +228,17 @@ namespace Dapplo.ActiveDirectory
 		/// <returns>Query</returns>
 		public Query IsUser()
 		{
-			return Compare("objectCategory", ObjectCategories.User.EnumValueOf(), Comparisons.EqualTo);
+			return IsObjectClass(ClassNames.User);
 		}
+		/// <summary>
+		/// Make the query look for user objectCategory
+		/// </summary>
+		/// <returns>Query</returns>
+		public Query IsActiveUser()
+		{
+			return IsObjectClass(ClassNames.User).NotEqualTo(Property.BitAnd(UserProperties.UserAccountControl), 2);
+		}
+
 
 		/// <summary>
 		/// Make the query look for the computer objectCategory
@@ -302,7 +246,7 @@ namespace Dapplo.ActiveDirectory
 		/// <returns>Query</returns>
 		public Query IsComputer()
 		{
-			return Compare("objectCategory", ObjectCategories.Computer.EnumValueOf(), Comparisons.EqualTo);
+			return IsObjectCategory(ClassNames.Computer);
 		}
 
 		/// <summary>

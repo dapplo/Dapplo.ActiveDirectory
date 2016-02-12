@@ -61,7 +61,7 @@ namespace Dapplo.ActiveDirectoryTests
 		[TestMethod]
 		public void TestActiveDirectoryCall_User()
 		{
-			var query = Query.CreateAnd().IsUser().EqualTo(UserProperties.Username, Environment.UserName);
+			var query = Query.CreateAnd().IsActiveUser().Any(UserProperties.IpTelephoneNumber).Any(UserProperties.TelephoneNumber);
 			var userResult = query.Execute<User>(Environment.UserDomainName).ToList();
 			Assert.IsTrue(userResult.Any());
 

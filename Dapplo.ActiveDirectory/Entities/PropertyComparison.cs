@@ -47,19 +47,19 @@ namespace Dapplo.ActiveDirectory.Entities
 			}
 		}
 
-		public string Property
+		public Property Property
 		{
 			get;
 			set;
 		}
 
-		public string Value
+		public Value Value
 		{
 			get;
 			set;
 		}
 
-		internal PropertyComparison(string property, string value = null, Comparisons comparison = Comparisons.EqualTo, Query parent = null) : base(parent)
+		internal PropertyComparison(Property property, Value value = null, Comparisons comparison = Comparisons.EqualTo, Query parent = null) : base(parent)
 		{
 			Comparison = comparison;
 			Property = property;
@@ -77,9 +77,7 @@ namespace Dapplo.ActiveDirectory.Entities
 			{
 				builder.Append("(!");
 			}
-			var value = string.IsNullOrEmpty(Value) ? "*" : Value;
-
-			builder.Append($"({Property}{Comparison.EnumValueOf()}{value})");
+			builder.Append($"({Property}{Comparison.EnumValueOf()}{Value.RawValue})");
 			if (Not)
 			{
 				builder.Append(")");
@@ -113,6 +111,5 @@ namespace Dapplo.ActiveDirectory.Entities
 					throw new ArgumentException();
 			}
 		}
-
 	}
 }

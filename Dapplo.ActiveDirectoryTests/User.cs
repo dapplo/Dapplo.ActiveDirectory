@@ -22,7 +22,9 @@
  */
 
 using Dapplo.ActiveDirectory;
+using System;
 using System.Collections.Generic;
+using System.IO;
 
 namespace Dapplo.ActiveDirectoryTests
 {
@@ -49,5 +51,23 @@ namespace Dapplo.ActiveDirectoryTests
 		[AdProperty(UserProperties.Thumbnail)]
 		public byte[] Thumbnail { get; set; }
 
+		public MemoryStream ThumbnailStream
+		{
+			get
+			{
+				if (Thumbnail != null)
+				{
+					try
+					{
+						var memoryStream = new MemoryStream(Thumbnail);
+						return memoryStream;
+					}
+					catch (Exception)
+					{
+					}
+				}
+				return null;
+			}
+		}
 	}
 }

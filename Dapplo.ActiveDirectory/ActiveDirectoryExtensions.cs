@@ -65,9 +65,9 @@ namespace Dapplo.ActiveDirectory
 				{
 					Log.Verbose().WriteLine($"{propertyName} = {{0}}", directoryEntry.Properties[propertyName].Value); //Cast<object>().ToArray());
 				}
-				directoryEntry.RefreshCache(new[] { AdProperties.AllowedAttributes.EnumValueOf() });
+				directoryEntry.RefreshCache(new[] { AdProperties.AllowedAttributesEffective.EnumValueOf() });
 				Log.Verbose().WriteLine("List of all writable properties:");
-				foreach (var writableProperty in directoryEntry.Properties[AdProperties.AllowedAttributes.EnumValueOf()].Cast<string>().OrderBy(x => x))
+				foreach (var writableProperty in directoryEntry.Properties[AdProperties.AllowedAttributesEffective.EnumValueOf()].Cast<string>().OrderBy(x => x))
 				{
 					Log.Verbose().WriteLine("Writeable property: {0}", writableProperty);
 				}
@@ -93,7 +93,7 @@ namespace Dapplo.ActiveDirectory
 			}
 			var adspath = typeMap[AdProperties.Id.EnumValueOf()].First().GetValue(adContainerObject) as string;
 			var directoryEntry = new DirectoryEntry(adspath);
-			directoryEntry.RefreshCache(new[] { AdProperties.AllowedAttributes.EnumValueOf() });
+			directoryEntry.RefreshCache(new[] { AdProperties.AllowedAttributesEffective.EnumValueOf() });
 
 			foreach (var propertyName in typeMap.Select(l => l.Key))
 			{
@@ -129,6 +129,7 @@ namespace Dapplo.ActiveDirectory
 			{
 				foreach (SearchResult searchResult in results)
 				{
+					Log.Verbose().WriteLine("Processing {0}", searchResult.Path);
 					if (searchResult?.Properties?.PropertyNames == null)
 					{
 						continue;
@@ -164,7 +165,7 @@ namespace Dapplo.ActiveDirectory
 								var dateTime = (DateTime)value;
 								propertyInfo.SetValue(instance, (DateTimeOffset)dateTime);
 							}
-							else if (valueType.IsArray && propertyInfo.PropertyType.IsGenericType)
+							else if (valueType.IsArray || propertyInfo.PropertyType.IsGenericType)
 							{
 								if (propertyInfo.PropertyType.GenericTypeArguments[0] == typeof(DistinguishedName))
 								{
