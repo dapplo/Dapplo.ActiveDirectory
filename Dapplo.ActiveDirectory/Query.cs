@@ -231,12 +231,12 @@ namespace Dapplo.ActiveDirectory
 			return IsObjectClass(ClassNames.User);
 		}
 		/// <summary>
-		/// Make the query look for user objectCategory
+		/// Make the query look for active users only
 		/// </summary>
 		/// <returns>Query</returns>
 		public Query IsActiveUser()
 		{
-			return IsObjectClass(ClassNames.User).NotEqualTo(Property.BitAnd(UserProperties.UserAccountControl), 2);
+			return IsObjectClass(ClassNames.User).NotEqualTo(Property.BitAnd(UserProperties.UserAccountControl), (int)UserAccountControlFlags.AccountDisabled);
 		}
 
 
