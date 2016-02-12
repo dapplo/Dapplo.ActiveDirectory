@@ -95,6 +95,7 @@ namespace Dapplo.ActiveDirectory
 			var directoryEntry = new DirectoryEntry(adspath);
 			directoryEntry.RefreshCache(new[] { AdProperties.AllowedAttributesEffective.EnumValueOf() });
 
+			bool needsCommit = false;
 			foreach (var propertyName in typeMap.Select(l => l.Key))
 			{
 				if (!directoryEntry.Properties["allowedAttributesEffective"].Contains(propertyName))
@@ -102,13 +103,17 @@ namespace Dapplo.ActiveDirectory
 					Log.Debug().WriteLine("Skipping non writable property {0}", propertyName);
 					continue;
 				}
+				needsCommit = true;
 				var propertyInfo = typeMap[propertyName].First();
 				var property = directoryEntry.Properties[propertyName];
 
 				Log.Debug().WriteLine("Updating {0}", propertyName);
 				property.Value = propertyInfo.GetValue(adContainerObject);
 			}
-			directoryEntry.CommitChanges();
+			if (needsCommit)
+			{
+				directoryEntry.CommitChanges();
+			}
 		}
 
 		/// <summary>

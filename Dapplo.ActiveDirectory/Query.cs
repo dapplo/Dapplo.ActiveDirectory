@@ -45,23 +45,34 @@ namespace Dapplo.ActiveDirectory
 		}
 
 		/// <summary>
-		/// Create a query for the username
+		/// Create a query for an user, optionally you can specify the name
 		/// </summary>
 		/// <param name="username">Windows username (without the domain)</param>
 		/// <returns>Query</returns>
-		public static Query UsernameFilter(Value username)
+		public static Query ForUser(Value username = null)
 		{
-			return CreateAnd().IsUser().EqualTo(UserProperties.Username, username);
+			var query = AND.WhereIsUser();
+			if (username != null)
+			{
+				query.WhereEqualTo(UserProperties.Username, username);
+			}
+			return query;
 		}
 
 		/// <summary>
-		/// Create a filter for the computer name
+		/// Create a query for a computer, optionally you can specify the name
 		/// </summary>
-		/// <param name="hostname">Value with the hostname (without domain!)</param>
+		/// <param name="hostname">hostname (without domain!)</param>
 		/// <returns>Query</returns>
-		public static Query ComputerFilter(Value hostname)
+		public static Query ForComputer(Value hostname = null)
 		{
-			return CreateAnd().IsComputer().EqualTo(ComputerProperties.Name, hostname);
+			var query = AND.WhereIsUser();
+			if (hostname != null)
+			{
+				query.WhereEqualTo(ComputerProperties.Name, hostname);
+			}
+
+			return query;
 		}
 
 		/// <summary>
@@ -74,21 +85,27 @@ namespace Dapplo.ActiveDirectory
 		}
 
 		/// <summary>
-		/// Create an AND query
+		/// AND query
 		/// </summary>
 		/// <returns>Query</returns>
-		public static Query CreateAnd()
+		public static Query AND
 		{
-			return Create(Operators.And);
+			get
+			{
+				return Create(Operators.And);
+			}
 		}
 
 		/// <summary>
-		/// Create an OR query
+		/// OR query
 		/// </summary>
 		/// <returns>Query</returns>
-		public static Query CreateOr()
+		public static Query OR
 		{
-			return Create(Operators.Or);
+			get
+			{
+				return Create(Operators.Or);
+			}
 		}
 
 		/// <summary>
@@ -105,32 +122,36 @@ namespace Dapplo.ActiveDirectory
 		/// Add an AND sub query to the current query
 		/// </summary>
 		/// <returns>Query which is a sub-query of the parent</returns>
-		public Query And()
+		public Query And
 		{
-			var andQuery = Create(Operators.And, this);
-			_elements.Add(andQuery);
-			return andQuery;
+			get	{
+				var andQuery = Create(Operators.And, this);
+				_elements.Add(andQuery);
+				return andQuery;
+			}
 		}
 
 		/// <summary>
 		/// Add an OR sub query to the current query
 		/// </summary>
 		/// <returns>Query which is a sub-query of the parent</returns>
-		public Query Or()
+		public Query Or
 		{
-			var orQuery = Create(Operators.Or, this);
-			_elements.Add(orQuery);
-			return orQuery;
+			get {
+				var orQuery = Create(Operators.Or, this);
+				_elements.Add(orQuery);
+				return orQuery;
+			}
 		}
 
 		/// <summary>
-		/// Add a compare to the current query for a property and value
+		/// Equal to
 		/// </summary>
 		/// <param name="property">property as Property, enum or string</param>
 		/// <param name="value">Value to compare</param>
 		/// <param name="comparison">Comparisons to specify how to compare</param>
 		/// <returns>Query</returns>
-		public Query Compare(Property property, Value value, Comparisons comparison)
+		public Query Where(Property property, Value value, Comparisons comparison)
 		{
 			var propertyEqual = new PropertyComparison(property, value, comparison, this);
 			_elements.Add(propertyEqual);
@@ -138,14 +159,14 @@ namespace Dapplo.ActiveDirectory
 		}
 
 		/// <summary>
-		/// Property should not be equal to the value
+		/// Not equal to
 		/// </summary>
 		/// <param name="property">property as Property, enum or string</param>
 		/// <param name="value">value to compare</param>
 		/// <returns>Query</returns>
-		public Query NotEqualTo(Property property, Value value)
+		public Query WhereNot(Property property, Value value)
 		{
-			return Compare(property, value, Comparisons.NotEqualTo);
+			return Where(property, value, Comparisons.NotEqualTo);
 		}
 
 		/// <summary>
@@ -154,9 +175,9 @@ namespace Dapplo.ActiveDirectory
 		/// <param name="property">property as Property, enum or string</param>
 		/// <param name="value">value to compare</param>
 		/// <returns>Query</returns>
-		public Query EqualTo(Property property, Value value)
+		public Query WhereEqualTo(Property property, Value value)
 		{
-			return Compare(property, value, Comparisons.EqualTo);
+			return Where(property, value, Comparisons.EqualTo);
 		}
 
 		/// <summary>
@@ -164,9 +185,9 @@ namespace Dapplo.ActiveDirectory
 		/// </summary>
 		/// <param name="property">property as Property, enum or string</param>
 		/// <returns>Query</returns>
-		public Query Empty(Property property)
+		public Query WhereEmpty(Property property)
 		{
-			return Compare(property, Value.Any, Comparisons.NotEqualTo);
+			return Where(property, Value.Any, Comparisons.NotEqualTo);
 		}
 
 		/// <summary>
@@ -174,42 +195,41 @@ namespace Dapplo.ActiveDirectory
 		/// </summary>
 		/// <param name="property">property as Property, enum or string</param>
 		/// <returns>Query</returns>
-		public Query Any(Property property)
+		public Query WhereAny(Property property)
 		{
-			return Compare(property, Value.Any, Comparisons.EqualTo);
+			return Where(property, Value.Any, Comparisons.EqualTo);
 		}
 
 		/// <summary>
-		/// Check if the property is equal to or less than the value
+		/// Less than or equal to
 		/// </summary>
 		/// <param name="property">property as Property, enum or string</param>
 		/// <param name="value">value to compare to</param>
 		/// <returns>Query</returns>
-		public Query LessThanOrEqualTo(Property property, Value value)
+		public Query WhereLte(Property property, Value value)
 		{
-			return Compare(property, value, Comparisons.LessThanOrEqualTo);
+			return Where(property, value, Comparisons.LessThanOrEqualTo);
 		}
 
 		/// <summary>
-		/// Check if the property is equal to or greater than the value
+		/// Greater than or equal to
 		/// </summary>
 		/// <param name="property">property as Property, enum or string</param>
 		/// <param name="value">value to compare to</param>
 		/// <returns>Query</returns>
-		public Query GreaterOrEquals(Property property, Value value)
+		public Query WhereGte(Property property, Value value)
 		{
-			return Compare(property, value, Comparisons.GreaterThanOrEqualTo);
+			return Where(property, value, Comparisons.GreaterThanOrEqualTo);
 		}
-
 
 		/// <summary>
 		/// Add an comparison for the objectClass, if possible use IsObjectCategory as this has a higher chance of being indexed.
 		/// </summary>
 		/// <param name="objectClass">string with the objectClass</param>
 		/// <returns>Query</returns>
-		public Query IsObjectClass(Value objectClass)
+		public Query WhereObjectClassIs(Value objectClass)
 		{
-			return Compare("objectClass", objectClass, Comparisons.EqualTo);
+			return Where("objectClass", objectClass, Comparisons.EqualTo);
 		}
 
 		/// <summary>
@@ -217,26 +237,36 @@ namespace Dapplo.ActiveDirectory
 		/// </summary>
 		/// <param name="objectCategory">Value for the objectCategory</param>
 		/// <returns>Query</returns>
-		public Query IsObjectCategory(Value objectCategory)
+		public Query WhereObjectCategoryIs(Value objectCategory)
 		{
-			return Compare("objectCategory", objectCategory, Comparisons.EqualTo);
+			return Where("objectCategory", objectCategory, Comparisons.EqualTo);
 		}
 
 		/// <summary>
 		/// Make the query look for the user objectCategory
 		/// </summary>
 		/// <returns>Query</returns>
-		public Query IsUser()
+		public Query WhereIsUser()
 		{
-			return IsObjectClass(ClassNames.User);
+			return WhereObjectClassIs(ClassNames.User);
 		}
+
 		/// <summary>
-		/// Make the query look for active users only
+		/// Make the query look for disabled accounts
 		/// </summary>
 		/// <returns>Query</returns>
-		public Query IsActiveUser()
+		public Query WhereAccountEnabled()
 		{
-			return IsObjectClass(ClassNames.User).NotEqualTo(Property.BitAnd(UserProperties.UserAccountControl), (int)UserAccountControlFlags.AccountDisabled);
+			return WhereNot(Property.BitAnd(UserProperties.UserAccountControl), (int)UserAccountControlFlags.AccountDisabled);
+		}
+
+		/// <summary>
+		/// Make the query look for enabled accounts
+		/// </summary>
+		/// <returns>Query</returns>
+		public Query WhereAccountDisabled()
+		{
+			return WhereEqualTo(Property.BitAnd(UserProperties.UserAccountControl), (int)UserAccountControlFlags.AccountDisabled);
 		}
 
 
@@ -244,9 +274,9 @@ namespace Dapplo.ActiveDirectory
 		/// Make the query look for the computer objectCategory
 		/// </summary>
 		/// <returns>Query</returns>
-		public Query IsComputer()
+		public Query WhereIsComputer()
 		{
-			return IsObjectCategory(ClassNames.Computer);
+			return WhereObjectCategoryIs(ClassNames.Computer);
 		}
 
 		/// <summary>

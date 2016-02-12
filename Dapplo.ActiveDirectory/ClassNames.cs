@@ -22,6 +22,8 @@
  */
 
 
+using System.Runtime.Serialization;
+
 namespace Dapplo.ActiveDirectory
 {
 	/// <summary>
@@ -31,6 +33,7 @@ namespace Dapplo.ActiveDirectory
 	/// </summary>
 	public enum ClassNames
 	{
+		[EnumMember(Value = "account")]
 		Account,
 		ACSPolicy,
 		ACSResourceLimits,
@@ -238,6 +241,7 @@ namespace Dapplo.ActiveDirectory
 		OrganizationalRole,
 		OrganizationalUnit,
 		PackageRegistration,
+		[EnumMember(Value = "person")]
 		Person,
 		PhysicalLocation,
 		PKICertificateTemplate,
@@ -287,6 +291,7 @@ namespace Dapplo.ActiveDirectory
 		Top,
 		TrustedDomain,
 		TypeLibrary,
+		[EnumMember(Value = "user")]
 		User,
 		Volume
 	}

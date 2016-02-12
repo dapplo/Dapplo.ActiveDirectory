@@ -2,16 +2,31 @@
 A library for easy Active Directory access
 
 Although it's not hard to access the Active Directory from .NET, sometimes a little bit of help is nice.
+
 The idea behind this library is that you can build queries via a fluent API (some shortcuts available).
 And you don't need to understand all of the details of the Active Directory.
 
 Fluent API:
 ```
-	var query = Query.CreateAnd().IsUser().EqualTo(UserProperties.Username, Environment.UserName);
+	var query = Query.AND.Where("objectClass", "user", Comparisons.EqualTo).Where(UserProperties.Username, Environment.UserName, Comparisons.EqualTo);
 ```
-Shortcut:
+Easier readable:
 ```
-	var query = Query.UsernameFilter(Environment.UserName);
+	var query = Query.AND.WhereIsUser().WhereEqualTo(UserProperties.Username, Environment.UserName);
+```
+Shortest version:
+```
+	var query = Query.ForUser(Environment.UserName);
+```
+
+Or query for at all the active users that have a telephone number:
+Complete version
+```
+	var query = Query.AND.Where("objectClass", "user", Comparisons.EqualTo).WhereNot(Property.BitAnd(UserProperties.UserAccountControl), (int)UserAccountControlFlags.AccountDisabled).Where(UserProperties.TelephoneNumber, Value.Any, Comparisons.EqualTo);
+```
+Shortest version:
+```
+	var query = Query.ForUser().WhereAccountEnabled().WhereAny(UserProperties.TelephoneNumber);
 ```
 
 The properties are defined via enums, some are already pre-defined in the library, but you can use any enum you like.
@@ -26,7 +41,9 @@ Here is an enum example:
 		[EnumMember(Value = "memberOf")]
 		MemberOfGroups,
 		[EnumMember(Value = "sAMAccountname")]
-		Username
+		Username,
+		
+		...
 	}
 ```
 
@@ -39,6 +56,8 @@ Now, we can use this enum in the query but also to define a result object like t
 
 		[AdProperty(UserProperties.MemberOfGroups)]
 		public IList<DistinguishedName> Groups { get; set; }
+		
+		...
 	}
 ```
 
@@ -52,5 +71,13 @@ Short explanation: Execute is called, as an extensions method, on the query and 
 To be able to tell the AD what it needs to return, it will take the properties from the type.
 The result from the AD, with use of the properties, is than mapped into instances of your result type.
 
-P.S.
-Writing is currently not supported, I don't know if I want to add this in the near future but if someone makes a pull-request... I'll gladly merge it.
+Changing values in the active directory is possible, but is far from completed, and works as follows:
+Add ONE property marked with [AdProperty(AdProperties.Id)] to your result object.
+Query for the information you want to change, change the properties and call the ActiveDirectoryExtensions.Update(object, string domain) method.
+It will update all the values that are writable, but there is no conversion in the code yet so it will not always work.
+
+Notes:
+There is no support yet for a single value query, but this should not be used anyway for performance reasons.
+The property names and values are specials classes with implicit cast from enum & string, said differently: you can use enums and strings mixed.
+These classes can help with using special values, like Value.StartsWith and Value.Endwith...
+
