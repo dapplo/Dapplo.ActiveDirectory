@@ -32,6 +32,8 @@ namespace Dapplo.ActiveDirectory
 	{
 		[EnumMember(Value = "adspath")]
 		Id,
+		[EnumMember(Value = "cn")]
+		CommonName,
 		/// <summary>
 		/// This is a constructed attribute, get this e.g. by calling
 		/// <code>directoryEntry.RefreshCache(new[] { AdProperties.AllowedAttributes.EnumValueOf() });</code>

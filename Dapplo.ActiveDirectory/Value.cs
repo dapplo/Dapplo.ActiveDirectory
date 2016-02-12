@@ -108,7 +108,7 @@ namespace Dapplo.ActiveDirectory
 		/// </summary>
 		/// <param name="value">your value</param>
 		/// <returns>Value</returns>
-		public static Value Contain(string value)
+		public static Value Contains(string value)
 		{
 			if (value == null)
 			{
