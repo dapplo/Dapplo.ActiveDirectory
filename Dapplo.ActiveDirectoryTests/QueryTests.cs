@@ -33,7 +33,7 @@ namespace Dapplo.ActiveDirectoryTests
 		[TestMethod]
 		public void TestQueryBuilder()
 		{
-			var targetFilter = $"(&(objectCategory=user)(sAMAccountname={Environment.UserName}))";
+			var targetFilter = $"(&(objectClass=user)(sAMAccountname={Environment.UserName}))";
 
 			var userFilterComplex = Query.CreateAnd().IsUser().EqualTo(UserProperties.Username, Environment.UserName).Build();
 			Assert.AreEqual(targetFilter, userFilterComplex);

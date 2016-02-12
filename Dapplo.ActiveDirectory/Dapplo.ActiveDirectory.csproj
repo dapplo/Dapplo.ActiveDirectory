@@ -51,7 +51,7 @@
     <Compile Include="Entities\QueryElement.cs" />
     <Compile Include="Query.cs" />
     <Compile Include="Entities\Operators.cs" />
-    <Compile Include="Classes.cs" />
+    <Compile Include="ClassNames.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="AdPropertyAttribute.cs" />
     <Compile Include="AdProperties.cs" />

@@ -88,9 +88,9 @@ namespace Dapplo.ActiveDirectory
 		/// <param name="property">The property</param>
 		/// <param name="rule">The property</param>
 		/// <returns>Property</returns>
-		public static Property WithRule(Property property, string rule)
+		public static Property WithRule(Property property, Property rule)
 		{
-			return new Property($"{property}:rule:");
+			return new Property($"{property}:{rule}:");
 		}
 
 
@@ -99,7 +99,7 @@ namespace Dapplo.ActiveDirectory
 		/// </summary>
 		/// <param name="property">The property</param>
 		/// <returns>Property</returns>
-		public static Property DnWithData(string property)
+		public static Property DnWithData(Property property)
 		{
 			return new Property($"{property}:1.2.840.113556.1.4.2253:");
 		}

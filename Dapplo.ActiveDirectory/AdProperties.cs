@@ -34,6 +34,8 @@ namespace Dapplo.ActiveDirectory
 		Id,
 		[EnumMember(Value = "cn")]
 		CommonName,
+		[EnumMember(Value = "ou")]
+		OrganisationUnit,
 		/// <summary>
 		/// This is a constructed attribute, get this e.g. by calling
 		/// <code>directoryEntry.RefreshCache(new[] { AdProperties.AllowedAttributes.EnumValueOf() });</code>
