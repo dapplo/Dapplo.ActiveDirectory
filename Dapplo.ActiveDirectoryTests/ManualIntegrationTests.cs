@@ -32,7 +32,7 @@ namespace Dapplo.ActiveDirectoryTests
 	/// <summary>
 	/// The following tests will only work in a Domain environment, and should not be started automatically
 	/// </summary>
-	//[TestClass]
+	[TestClass]
 	public class ManualIntegrationTests
 	{
 		private static readonly LogSource Log = new LogSource();

@@ -15,8 +15,8 @@
 		<tags>ActiveDirectory</tags>
     </metadata>
 	<files>
-		<file src="bin\release\$id$.pdb" target="lib\net451" />
-		<file src="bin\release\$id$.dll" target="lib\net451" />
+		<file src="bin\release\$id$.pdb" target="lib\net46" />
+		<file src="bin\release\$id$.dll" target="lib\net46" />
 		<file src="**\*.cs" exclude="**\obj\**\*.cs;**\release\**\*.cs" target="src" />
 	</files>
 </package>
