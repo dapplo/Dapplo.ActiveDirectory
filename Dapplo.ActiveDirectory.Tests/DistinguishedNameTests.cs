@@ -22,45 +22,52 @@
  */
 
 using Dapplo.ActiveDirectory;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 using System.Linq;
+using Xunit.Abstractions;
+using Dapplo.ActiveDirectory.Tests;
+using Dapplo.LogFacade;
 
 namespace Dapplo.ActiveDirectoryTests
 {
 	/// <summary>
 	/// Test the DistinguishedName class
 	/// </summary>
-	[TestClass]
 	public class DistinguishedNameTests
 	{
 		private const string TestDnString = "CN=Karen Berge,CN=admin,DC=corp,DC=Fabrikam,DC=COM";
 
-		[TestMethod]
+		public DistinguishedNameTests(ITestOutputHelper testOutputHelper)
+		{
+			XUnitLogger.RegisterLogger(testOutputHelper, LogLevel.Verbose);
+		}
+
+		[Fact]
 		public void TestDistinguishedName()
 		{
 			var dn = DistinguishedName.CreateFrom(TestDnString);
-			Assert.AreEqual(5, dn.RelativeDistinguishedNames.Count);
-			Assert.AreEqual(TestDnString, dn.ToString());
+			Assert.Equal(5, dn.RelativeDistinguishedNames.Count);
+			Assert.Equal(TestDnString, dn.ToString());
 		}
 
-		[TestMethod]
+		[Fact]
 		public void TestBuildDistinguishedName()
 		{
 			var dn = DistinguishedName.Create().CN("Karen Berge").CN("admin").DC("corp").DC("Fabrikam").DC("COM");
 
-			Assert.AreEqual(5, dn.RelativeDistinguishedNames.Count);
-			Assert.AreEqual(TestDnString, dn.ToString());
+			Assert.Equal(5, dn.RelativeDistinguishedNames.Count);
+			Assert.Equal(TestDnString, dn.ToString());
 
 			var dc = string.Join(".", dn.Where(x => x.Key == DistinguishedNameAttributes.DomainComponent).Select(x => x.Value));
-			Assert.AreEqual("corp.Fabrikam.COM", dc);
+			Assert.Equal("corp.Fabrikam.COM", dc);
 		}
 
-		[TestMethod]
+		[Fact]
 		public void TestCastDistinguishedName()
 		{
 			var dn = (DistinguishedName)TestDnString;
-			Assert.AreEqual(5, dn.RelativeDistinguishedNames.Count);
-			Assert.AreEqual(TestDnString, (string)dn);
+			Assert.Equal(5, dn.RelativeDistinguishedNames.Count);
+			Assert.Equal(TestDnString, (string)dn);
 		}
 	}
 }

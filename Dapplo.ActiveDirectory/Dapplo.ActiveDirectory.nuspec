@@ -17,4 +17,8 @@
 			<frameworkAssembly assemblyName="System.DirectoryServices" targetFramework="net46" />
 		</frameworkAssemblies>
     </metadata>
+	<files>
+		<file src="bin\release\$id$.pdb" target="lib\net45" />
+		<file src="bin\release\$id$.dll" target="lib\net45" />
+	</files>
 </package>

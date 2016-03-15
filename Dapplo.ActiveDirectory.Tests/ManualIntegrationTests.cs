@@ -22,27 +22,33 @@
  */
 
 using Dapplo.ActiveDirectory;
+using Dapplo.ActiveDirectory.Tests;
 using Dapplo.LogFacade;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Linq;
+using Xunit;
+using Xunit.Abstractions;
 
 namespace Dapplo.ActiveDirectoryTests
 {
 	/// <summary>
 	/// The following tests will only work in a Domain environment, and should not be started automatically
 	/// </summary>
-	//[TestClass]
 	public class ManualIntegrationTests
 	{
 		private static readonly LogSource Log = new LogSource();
 
-		[TestMethod]
+		public ManualIntegrationTests(ITestOutputHelper testOutputHelper)
+		{
+			XUnitLogger.RegisterLogger(testOutputHelper, LogLevel.Verbose);
+		}
+
+		//[Fact]
 		public void TestActiveDirectoryQuery_Computer()
 		{
 			var query = Query.ForComputer(Environment.MachineName);
 			var computerResult = query.Execute<Computer>(Environment.UserDomainName).ToList();
-			Assert.IsTrue(computerResult.Any());
+			Assert.True(computerResult.Any());
 
 			// Just something to generate some output
 			foreach (var computer in computerResult)
@@ -58,12 +64,12 @@ namespace Dapplo.ActiveDirectoryTests
 			}
 		}
 
-		[TestMethod]
+		//[Fact]
 		public void TestActiveDirectoryQuery_User()
 		{
 			var query = Query.ForUser().WhereAccountEnabled().WhereAny(UserProperties.IpTelephoneNumber).WhereAny(UserProperties.TelephoneNumber);
 			var userResult = query.Execute<User>(Environment.UserDomainName).ToList();
-			Assert.IsTrue(userResult.Any());
+			Assert.True(userResult.Any());
 
 			// Just something to generate some output
 			foreach (var user in userResult)

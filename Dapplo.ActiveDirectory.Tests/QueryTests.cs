@@ -22,44 +22,43 @@
  */
 
 using Dapplo.ActiveDirectory;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using Xunit;
 
 namespace Dapplo.ActiveDirectoryTests
 {
-	[TestClass]
 	public class QueryTests
 	{
-		[TestMethod]
+		[Fact]
 		public void TestQueryBuilder()
 		{
 			var targetFilter = $"(&(objectClass=user)(sAMAccountname={Environment.UserName}))";
 
 			var userFilterComplex = Query.AND.WhereIsUser().WhereEqualTo(UserProperties.Username, Environment.UserName).Build();
-			Assert.AreEqual(targetFilter, userFilterComplex);
+			Assert.Equal(targetFilter, userFilterComplex);
 
 			var userFilterSimple = Query.ForUser(Environment.UserName).Build();
-			Assert.AreEqual(targetFilter, userFilterSimple);
+			Assert.Equal(targetFilter, userFilterSimple);
 		}
 
-		[TestMethod]
+		[Fact]
 		public void TestSubQueryBuilder()
 		{
 			const string targetFilter = "(&(objectClass=person)(|(ou:dn:=ResearchAndDevelopment)(ou:dn:=HumanResources)))";
 
 			var userFilterComplex = Query.AND.WhereEqualTo("objectClass", "person").Or.WhereEqualTo("ou:dn:", "ResearchAndDevelopment").WhereEqualTo("ou:dn:", "HumanResources").Build();
 
-			Assert.AreEqual(targetFilter, userFilterComplex);
+			Assert.Equal(targetFilter, userFilterComplex);
 		}
 
-		[TestMethod]
+		[Fact]
 		public void TestSubQueryBuilder_MoreComplex()
 		{
 			const string targetFilter = "(&(&(!(cn:dn:=jbond))(|(ou:dn:=ResearchAndDevelopment)(ou:dn:=HumanResources)))(objectclass=Person))";
 
 			var userFilterComplex = Query.AND.And.WhereNot("cn:dn:", "jbond").Or.WhereEqualTo("ou:dn:", "ResearchAndDevelopment").WhereEqualTo("ou:dn:", "HumanResources").Parent.Parent.WhereEqualTo("objectclass", "Person");
 
-			Assert.AreEqual(targetFilter, userFilterComplex.Build());
+			Assert.Equal(targetFilter, userFilterComplex.Build());
 		}
 
 	}
