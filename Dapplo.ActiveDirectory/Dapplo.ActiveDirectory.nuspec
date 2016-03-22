@@ -14,7 +14,7 @@
 		<copyright>Copyright © Dapplo 2016</copyright>
 		<tags>ActiveDirectory</tags>
 		<frameworkAssemblies>
-			<frameworkAssembly assemblyName="System.DirectoryServices" targetFramework="net46" />
+			<frameworkAssembly assemblyName="System.DirectoryServices" targetFramework="net45" />
 		</frameworkAssemblies>
     </metadata>
 	<files>
