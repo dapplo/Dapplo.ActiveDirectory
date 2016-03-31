@@ -38,7 +38,7 @@ namespace Dapplo.ActiveDirectory.Tests
 			var targetFilter = $"(&(objectClass=user)(sAMAccountname={Environment.UserName}))";
 
 			var userFilterComplex = Query.AND.WhereIsUser().WhereEqualTo(UserProperties.Username, Environment.UserName).Build();
-			Assert.Equal(targetFilter, userFilterComplex);
+			Assert.Equal(targetFilter.ToLowerInvariant(), userFilterComplex.ToLowerInvariant());
 
 			var userFilterSimple = Query.ForUser(Environment.UserName).Build();
 			Assert.Equal(targetFilter.ToLowerInvariant(), userFilterSimple.ToLowerInvariant());
