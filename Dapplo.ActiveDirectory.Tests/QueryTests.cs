@@ -41,7 +41,7 @@ namespace Dapplo.ActiveDirectory.Tests
 			Assert.Equal(targetFilter, userFilterComplex);
 
 			var userFilterSimple = Query.ForUser(Environment.UserName).Build();
-			Assert.Equal(targetFilter, userFilterSimple);
+			Assert.Equal(targetFilter.ToLowerInvariant(), userFilterSimple.ToLowerInvariant());
 		}
 
 		[Fact]
@@ -51,7 +51,7 @@ namespace Dapplo.ActiveDirectory.Tests
 
 			var userFilterComplex = Query.AND.WhereEqualTo("objectClass", "person").Or.WhereEqualTo("ou:dn:", "ResearchAndDevelopment").WhereEqualTo("ou:dn:", "HumanResources").Build();
 
-			Assert.Equal(targetFilter, userFilterComplex);
+			Assert.Equal(targetFilter.ToLowerInvariant(), userFilterComplex.ToLowerInvariant());
 		}
 
 		[Fact]
@@ -60,9 +60,9 @@ namespace Dapplo.ActiveDirectory.Tests
 			const string targetFilter = "(&(&(!(cn:dn:=jbond))(|(ou:dn:=ResearchAndDevelopment)(ou:dn:=HumanResources)))(objectclass=Person))";
 
 			var userFilterComplex =
-				Query.AND.And.WhereNot("cn:dn:", "jbond").Or.WhereEqualTo("ou:dn:", "ResearchAndDevelopment").WhereEqualTo("ou:dn:", "HumanResources").Parent.Parent.WhereEqualTo("objectclass", "Person");
+				Query.AND.And.WhereNot("cn:dn:", "jbond").Or.WhereEqualTo("ou:dn:", "ResearchAndDevelopment").WhereEqualTo("ou:dn:", "HumanResources").Parent.Parent.WhereEqualTo("objectclass", "Person").Build();
 
-			Assert.Equal(targetFilter, userFilterComplex.Build());
+			Assert.Equal(targetFilter.ToLowerInvariant(), userFilterComplex.ToLowerInvariant());
 		}
 	}
 }
