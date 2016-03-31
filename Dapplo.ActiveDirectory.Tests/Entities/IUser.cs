@@ -21,38 +21,32 @@
 
 #region using
 
-using System;
+using System.Collections.Generic;
+using Dapplo.ActiveDirectory.Entities;
+using Dapplo.ActiveDirectory.Enums;
 
 #endregion
 
-namespace Dapplo.ActiveDirectory
+namespace Dapplo.ActiveDirectory.Tests.Entities
 {
 	/// <summary>
-	///     Attribute to specify which AD property is stored in which property.
+	///     Simple predefined object for user information
 	/// </summary>
-	[AttributeUsage(AttributeTargets.Property)]
-	public class AdPropertyAttribute : Attribute
+	public interface IUser : IAdObject
 	{
-		/// <summary>
-		///     Specify an Enum value, which correspons to an AD propertname, to make maping to this class property possible.
-		/// </summary>
-		/// <param name="adPropertyName"></param>
-		public AdPropertyAttribute(object adPropertyName)
-		{
-			if (adPropertyName == null)
-			{
-				throw new ArgumentNullException(nameof(adPropertyName));
-			}
-			if (!adPropertyName.GetType().IsEnum)
-			{
-				throw new ArgumentException("Should be an enum value", nameof(adPropertyName));
-			}
-			AdProperty = (Enum) adPropertyName;
-		}
+		[AdProperty(UserProperties.DisplayName)]
+		string Displayname { get; set; }
 
-		/// <summary>
-		///     The AD property name for this property
-		/// </summary>
-		public Enum AdProperty { get; }
+		[AdProperty(UserProperties.DistinguishedName)]
+		string DistinguishedName { get; set; }
+
+		[AdProperty(UserProperties.MemberOfGroups)]
+		IList<DistinguishedName> Groups { get; set; }
+
+		[AdProperty(UserProperties.Surname)]
+		string Name { get; set; }
+
+		[AdProperty(UserProperties.Thumbnail)]
+		byte[] Thumbnail { get; set; }
 	}
 }

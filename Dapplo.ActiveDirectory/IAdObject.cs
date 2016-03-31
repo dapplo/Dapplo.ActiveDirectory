@@ -19,40 +19,21 @@
 //  You should have a copy of the GNU Lesser General Public License
 //  along with Dapplo.ActiveDirectory. If not, see <http://www.gnu.org/licenses/lgpl.txt>.
 
-#region using
-
-using System;
-
-#endregion
+using Dapplo.ActiveDirectory.Enums;
 
 namespace Dapplo.ActiveDirectory
 {
 	/// <summary>
-	///     Attribute to specify which AD property is stored in which property.
+	/// Extend your interface / type with this to use in the execute / update
 	/// </summary>
-	[AttributeUsage(AttributeTargets.Property)]
-	public class AdPropertyAttribute : Attribute
+	public interface IAdObject
 	{
 		/// <summary>
-		///     Specify an Enum value, which correspons to an AD propertname, to make maping to this class property possible.
+		/// This is THE unique property in the ADS which can be used
+		/// to find and or update the returned entry.
+		/// Use the AdProperty attribute to specify the properties you want mapped.
 		/// </summary>
-		/// <param name="adPropertyName"></param>
-		public AdPropertyAttribute(object adPropertyName)
-		{
-			if (adPropertyName == null)
-			{
-				throw new ArgumentNullException(nameof(adPropertyName));
-			}
-			if (!adPropertyName.GetType().IsEnum)
-			{
-				throw new ArgumentException("Should be an enum value", nameof(adPropertyName));
-			}
-			AdProperty = (Enum) adPropertyName;
-		}
-
-		/// <summary>
-		///     The AD property name for this property
-		/// </summary>
-		public Enum AdProperty { get; }
+		[AdProperty(AdProperties.Id)]
+		string Id { get; set; }
 	}
 }

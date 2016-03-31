@@ -21,38 +21,25 @@
 
 #region using
 
-using System;
+using System.Runtime.Serialization;
 
 #endregion
 
-namespace Dapplo.ActiveDirectory
+namespace Dapplo.ActiveDirectory.Enums
 {
 	/// <summary>
-	///     Attribute to specify which AD property is stored in which property.
+	///     Ad generic properties, this is what every entry has
 	/// </summary>
-	[AttributeUsage(AttributeTargets.Property)]
-	public class AdPropertyAttribute : Attribute
+	public enum AdProperties
 	{
-		/// <summary>
-		///     Specify an Enum value, which correspons to an AD propertname, to make maping to this class property possible.
-		/// </summary>
-		/// <param name="adPropertyName"></param>
-		public AdPropertyAttribute(object adPropertyName)
-		{
-			if (adPropertyName == null)
-			{
-				throw new ArgumentNullException(nameof(adPropertyName));
-			}
-			if (!adPropertyName.GetType().IsEnum)
-			{
-				throw new ArgumentException("Should be an enum value", nameof(adPropertyName));
-			}
-			AdProperty = (Enum) adPropertyName;
-		}
+		[EnumMember(Value = "adspath")] Id,
+		[EnumMember(Value = "cn")] CommonName,
+		[EnumMember(Value = "ou")] OrganisationUnit,
 
 		/// <summary>
-		///     The AD property name for this property
+		///     This is a constructed attribute, get this e.g. by calling
+		///     <code>directoryEntry.RefreshCache(new[] { AdProperties.AllowedAttributes.EnumValueOf() });</code>
 		/// </summary>
-		public Enum AdProperty { get; }
+		[EnumMember(Value = "allowedAttributesEffective")] AllowedAttributesEffective
 	}
 }

@@ -1,7 +1,7 @@
 # Dapplo.ActiveDirectory
 A library for easy Active Directory access
 
-Although it's not hard to access the Active Directory from .NET, sometimes a little bit of help is nice.
+Although it's not extremely hard to access the Active Directory from .NET, sometimes a little bit of help is nice.
 
 The idea behind this library is that you can build queries via a fluent API (some shortcuts available).
 And you don't need to understand all of the details of the Active Directory.
@@ -47,15 +47,15 @@ Here is an enum example:
 	}
 ```
 
-Now, we can use this enum in the query but also to define a result object like this:
+Now, we can use this enum in the query but also to define a result object (use interfaces) like this:
 ```
-	public class UserInfo
+	public interface IUserInfo : IAdObject
 	{
 		[AdProperty(UserProperties.DisplayName)]
-		public string Name { get; set; }
+		string Name { get; set; }
 
 		[AdProperty(UserProperties.MemberOfGroups)]
-		public IList<DistinguishedName> Groups { get; set; }
+		IList<DistinguishedName> Groups { get; set; }
 		
 		...
 	}
@@ -63,7 +63,7 @@ Now, we can use this enum in the query but also to define a result object like t
 
 Get your user info object from the current domain:
 ```
-	foreach(var user in query.Execute<UserInfo>()) {
+	foreach(var user in query.Execute<IUserInfo>()) {
 		Console.WriteLine(user.Name);
 	}
 ```

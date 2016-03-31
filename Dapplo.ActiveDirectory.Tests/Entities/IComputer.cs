@@ -22,37 +22,33 @@
 #region using
 
 using System;
+using Dapplo.ActiveDirectory.Enums;
 
 #endregion
 
-namespace Dapplo.ActiveDirectory
+namespace Dapplo.ActiveDirectory.Tests.Entities
 {
 	/// <summary>
-	///     Attribute to specify which AD property is stored in which property.
+	///     Simple predefined object for Computer information
 	/// </summary>
-	[AttributeUsage(AttributeTargets.Property)]
-	public class AdPropertyAttribute : Attribute
+	public interface IComputer : IAdObject
 	{
-		/// <summary>
-		///     Specify an Enum value, which correspons to an AD propertname, to make maping to this class property possible.
-		/// </summary>
-		/// <param name="adPropertyName"></param>
-		public AdPropertyAttribute(object adPropertyName)
-		{
-			if (adPropertyName == null)
-			{
-				throw new ArgumentNullException(nameof(adPropertyName));
-			}
-			if (!adPropertyName.GetType().IsEnum)
-			{
-				throw new ArgumentException("Should be an enum value", nameof(adPropertyName));
-			}
-			AdProperty = (Enum) adPropertyName;
-		}
+		[AdProperty(ComputerProperties.Description)]
+		string Description { get; set; }
 
-		/// <summary>
-		///     The AD property name for this property
-		/// </summary>
-		public Enum AdProperty { get; }
+		[AdProperty(ComputerProperties.HostName)]
+		string Hostname { get; set; }
+
+		[AdProperty(ComputerProperties.Location)]
+		string Location { get; set; }
+
+		[AdProperty(ComputerProperties.OperatingSystem)]
+		string OperatingSystem { get; set; }
+
+		[AdProperty(ComputerProperties.OperatingSystemServicePack)]
+		string OperatingSystemServicePack { get; set; }
+
+		[AdProperty(ComputerProperties.WhenCreated)]
+		DateTimeOffset WhenCreated { get; set; }
 	}
 }

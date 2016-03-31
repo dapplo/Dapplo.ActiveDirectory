@@ -21,38 +21,25 @@
 
 #region using
 
-using System;
+using System.Runtime.Serialization;
 
 #endregion
 
-namespace Dapplo.ActiveDirectory
+namespace Dapplo.ActiveDirectory.Enums
 {
 	/// <summary>
-	///     Attribute to specify which AD property is stored in which property.
+	///     See: https://msdn.microsoft.com/en-us/library/windows/desktop/aa366101.aspx
 	/// </summary>
-	[AttributeUsage(AttributeTargets.Property)]
-	public class AdPropertyAttribute : Attribute
+	public enum DistinguishedNameAttributes
 	{
-		/// <summary>
-		///     Specify an Enum value, which correspons to an AD propertname, to make maping to this class property possible.
-		/// </summary>
-		/// <param name="adPropertyName"></param>
-		public AdPropertyAttribute(object adPropertyName)
-		{
-			if (adPropertyName == null)
-			{
-				throw new ArgumentNullException(nameof(adPropertyName));
-			}
-			if (!adPropertyName.GetType().IsEnum)
-			{
-				throw new ArgumentException("Should be an enum value", nameof(adPropertyName));
-			}
-			AdProperty = (Enum) adPropertyName;
-		}
-
-		/// <summary>
-		///     The AD property name for this property
-		/// </summary>
-		public Enum AdProperty { get; }
+		[EnumMember(Value = "DC")] DomainComponent,
+		[EnumMember(Value = "CN")] CommonName,
+		[EnumMember(Value = "OU")] OrganizationalUnitName,
+		[EnumMember(Value = "O")] OrganizationName,
+		[EnumMember(Value = "STREET")] StreetAddress,
+		[EnumMember(Value = "L")] LocalityName,
+		[EnumMember(Value = "ST")] StateOrProvinceName,
+		[EnumMember(Value = "C")] CountryName,
+		[EnumMember(Value = "UID")] Userid
 	}
 }

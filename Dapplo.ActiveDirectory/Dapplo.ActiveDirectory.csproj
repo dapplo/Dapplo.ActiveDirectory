@@ -52,23 +52,23 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ActiveDirectoryExtensions.cs" />
-    <Compile Include="ComputerProperties.cs" />
-    <Compile Include="DistinguishedName.cs" />
-    <Compile Include="DistinguishedNameAttributes.cs" />
+    <Compile Include="Enums\ComputerProperties.cs" />
+    <Compile Include="Entities\DistinguishedName.cs" />
+    <Compile Include="Enums\DistinguishedNameAttributes.cs" />
     <Compile Include="Entities\Comparisons.cs" />
     <Compile Include="Entities\PropertyComparison.cs" />
     <Compile Include="Entities\QueryElement.cs" />
-    <Compile Include="IAdContainer.cs" />
-    <Compile Include="Query.cs" />
+    <Compile Include="IAdObject.cs" />
+    <Compile Include="Entities\Query.cs" />
     <Compile Include="Entities\Operators.cs" />
-    <Compile Include="ClassNames.cs" />
+    <Compile Include="Enums\ClassNames.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="AdPropertyAttribute.cs" />
-    <Compile Include="AdProperties.cs" />
-    <Compile Include="UserAccountControlFlags.cs" />
-    <Compile Include="UserProperties.cs" />
-    <Compile Include="Property.cs" />
-    <Compile Include="Value.cs" />
+    <Compile Include="Enums\AdProperties.cs" />
+    <Compile Include="Enums\UserAccountControlFlags.cs" />
+    <Compile Include="Enums\UserProperties.cs" />
+    <Compile Include="Entities\Property.cs" />
+    <Compile Include="Entities\Value.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

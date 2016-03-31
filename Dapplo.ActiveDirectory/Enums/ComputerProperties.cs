@@ -21,38 +21,26 @@
 
 #region using
 
-using System;
+using System.Runtime.Serialization;
 
 #endregion
 
-namespace Dapplo.ActiveDirectory
+namespace Dapplo.ActiveDirectory.Enums
 {
 	/// <summary>
-	///     Attribute to specify which AD property is stored in which property.
+	///		These are some possible user "attributes".
+	///		If you need your own you can just create an enum like this and use it.
 	/// </summary>
-	[AttributeUsage(AttributeTargets.Property)]
-	public class AdPropertyAttribute : Attribute
+	public enum ComputerProperties
 	{
-		/// <summary>
-		///     Specify an Enum value, which correspons to an AD propertname, to make maping to this class property possible.
-		/// </summary>
-		/// <param name="adPropertyName"></param>
-		public AdPropertyAttribute(object adPropertyName)
-		{
-			if (adPropertyName == null)
-			{
-				throw new ArgumentNullException(nameof(adPropertyName));
-			}
-			if (!adPropertyName.GetType().IsEnum)
-			{
-				throw new ArgumentException("Should be an enum value", nameof(adPropertyName));
-			}
-			AdProperty = (Enum) adPropertyName;
-		}
-
-		/// <summary>
-		///     The AD property name for this property
-		/// </summary>
-		public Enum AdProperty { get; }
+		[EnumMember(Value = "dNSHostName")] HostName,
+		Name,
+		Location,
+		OperatingSystem,
+		OperatingSystemServicePack,
+		OperatingSystemVersion,
+		Description,
+		WhenCreated,
+		WhenChanged
 	}
 }

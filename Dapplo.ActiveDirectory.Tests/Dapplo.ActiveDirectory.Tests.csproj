@@ -64,13 +64,13 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Computer.cs" />
+    <Compile Include="Entities\IComputer.cs" />
     <Compile Include="DistinguishedNameTests.cs" />
     <Compile Include="ManualIntegrationTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="QueryTests.cs" />
-    <Compile Include="User.cs" />
-    <Compile Include="XUnitLogger.cs" />
+    <Compile Include="Entities\IUser.cs" />
+    <Compile Include="Logger\XUnitLogger.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
