@@ -31,8 +31,16 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Dapplo.LogFacade, Version=0.2.20.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Dapplo.LogFacade.0.2.20\lib\net45\Dapplo.LogFacade.dll</HintPath>
+    <Reference Include="Dapplo.InterfaceImpl, Version=0.1.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Dapplo.InterfaceImpl.0.1.1.0\lib\net452\Dapplo.InterfaceImpl.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Dapplo.LogFacade, Version=0.2.21.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Dapplo.LogFacade.0.2.21\lib\net45\Dapplo.LogFacade.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Dapplo.Utils, Version=0.1.4.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Dapplo.Utils.0.1.4\lib\net452\Dapplo.Utils.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -50,6 +58,7 @@
     <Compile Include="Entities\Comparisons.cs" />
     <Compile Include="Entities\PropertyComparison.cs" />
     <Compile Include="Entities\QueryElement.cs" />
+    <Compile Include="IAdContainer.cs" />
     <Compile Include="Query.cs" />
     <Compile Include="Entities\Operators.cs" />
     <Compile Include="ClassNames.cs" />

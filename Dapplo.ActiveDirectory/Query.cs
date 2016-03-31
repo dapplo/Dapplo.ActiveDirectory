@@ -66,7 +66,7 @@ namespace Dapplo.ActiveDirectory
 		/// <returns>Query</returns>
 		public static Query ForComputer(Value hostname = null)
 		{
-			var query = AND.WhereIsUser();
+			var query = AND.WhereIsComputer();
 			if (hostname != null)
 			{
 				query.WhereEqualTo(ComputerProperties.Name, hostname);

@@ -27,6 +27,7 @@ using System.DirectoryServices;
 using System.Linq;
 using Dapplo.LogFacade;
 using System.Reflection;
+using Dapplo.InterfaceImpl;
 
 namespace Dapplo.ActiveDirectory
 {
@@ -44,7 +45,7 @@ namespace Dapplo.ActiveDirectory
 		/// <param name="query">Query</param>
 		/// <param name="domain">Domain for the LDAP server, if null the Environment.UserDomainName is used</param>
 		/// <returns>IEnumerable with the specified type</returns>
-		public static IEnumerable<T> Execute<T>(this Query query, string domain = null) where T : class
+		public static IEnumerable<T> Execute<T>(this Query query, string domain = null) where T : IAdContainer
 		{
 			return Execute<T>(query.Build(), domain);
 		}
@@ -80,13 +81,9 @@ namespace Dapplo.ActiveDirectory
 		/// </summary>
 		/// <typeparam name="TAdContainer">The type of the AD Container object</typeparam>
 		/// <param name="adContainerObject">object which has the values to update</param>
-		public static void Update<TAdContainer>(TAdContainer adContainerObject, string domain = null) where TAdContainer : class
+		public static void Update<TAdContainer>(TAdContainer adContainerObject, string domain = null) where TAdContainer : IAdContainer
 		{
 			var typeMap = ProcessType(typeof(TAdContainer));
-			if (!typeMap.Contains(AdProperties.Id.EnumValueOf()) || typeMap[AdProperties.Id.EnumValueOf()].Count() > 1)
-			{
-				throw new ArgumentException("Doesn't have a property marked with AdProperties.Id", nameof(adContainerObject));
-			}
 			if (typeMap[AdProperties.Id.EnumValueOf()].Count() > 1)
 			{
 				throw new ArgumentException("Only one property can be marked with AdProperties.Id", nameof(adContainerObject));
@@ -119,14 +116,14 @@ namespace Dapplo.ActiveDirectory
 		/// <summary>
 		/// Query the LDAP server for the supplied domain
 		/// </summary>
-		/// <typeparam name="T">Type to fill, use AdPropertyAttribute to specify the mapping</typeparam>
+		/// <typeparam name="TAdContainer">Type to fill, use AdPropertyAttribute to specify the mapping</typeparam>
 		/// <param name="query">Query as string</param>
 		/// <param name="domain">Domain for the LDAP server, if null the Environment.UserDomainName is used</param>
 		/// <returns>IList with the specified type</returns>
-		private static IEnumerable<T> Execute<T>(string query, string domain = null) where T : class
+		private static IEnumerable<TAdContainer> Execute<TAdContainer>(string query, string domain = null) where TAdContainer : IAdContainer
 		{
-			var typeMap = ProcessType(typeof (T));
-			Log.Info().WriteLine("Querying domain {0} with {1} into {2}", domain, query, typeof (T).Name);
+			var typeMap = ProcessType(typeof (TAdContainer));
+			Log.Info().WriteLine("Querying domain {0} with {1} into {2}", domain, query, typeof (TAdContainer).Name);
 			var queryProperties = typeMap.Select(x => x.Key).ToArray();
 			using (var rootDirectory = new DirectoryEntry($"LDAP://{domain ?? Environment.UserDomainName}"))
 			using (var searcher = new DirectorySearcher(rootDirectory, query, queryProperties))
@@ -139,12 +136,20 @@ namespace Dapplo.ActiveDirectory
 					{
 						continue;
 					}
-					var instance = Activator.CreateInstance<T>();
+					TAdContainer instance;
+					if (!typeof(TAdContainer).IsInterface)
+					{
+						instance = Activator.CreateInstance<TAdContainer>();
+					}
+					else
+					{
+						instance = InterceptorFactory.New<TAdContainer>();
+					}
 					foreach (var propertyName in searchResult.Properties.PropertyNames.Cast<string>().Select(x => x.ToLowerInvariant()))
 					{
 						if (!typeMap.Contains(propertyName))
 						{
-							Log.Verbose().WriteLine("No property {0} in {1}", propertyName, typeof(T).Name);
+							Log.Verbose().WriteLine("No property {0} in {1}", propertyName, typeof(TAdContainer).Name);
 							continue;
 						}
 						var propertyInfos = typeMap[propertyName];
@@ -199,7 +204,10 @@ namespace Dapplo.ActiveDirectory
 		/// <returns>ILookup with for each found property (key) an IEnumerable with PropertyInfo objects</returns>
 		private static ILookup<string, PropertyInfo> ProcessType(Type typeToFill)
 		{
-			return typeToFill.GetProperties().Select(x => new KeyValuePair<string, PropertyInfo>(ReadAdProperty(x), x)).Where(x=> x.Key != null).ToLookup(x=> x.Key, x=> x.Value);
+			var properties = from implementingInterface in typeToFill.GetInterfaces().Concat(new[] { typeToFill })
+							 from property in implementingInterface.GetRuntimeProperties()
+							 select property;
+			return properties.Distinct().Select(x => new KeyValuePair<string, PropertyInfo>(ReadAdProperty(x), x)).Where(x=> x.Key != null).ToLookup(x=> x.Key, x=> x.Value);
 		}
 
 		/// <summary>

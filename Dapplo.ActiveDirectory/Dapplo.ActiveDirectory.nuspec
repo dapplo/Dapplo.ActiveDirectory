@@ -14,11 +14,11 @@
 		<copyright>Copyright © Dapplo 2016</copyright>
 		<tags>ActiveDirectory</tags>
 		<frameworkAssemblies>
-			<frameworkAssembly assemblyName="System.DirectoryServices" targetFramework="net45" />
+			<frameworkAssembly assemblyName="System.DirectoryServices" targetFramework="net452" />
 		</frameworkAssemblies>
     </metadata>
 	<files>
-		<file src="bin\release\$id$.pdb" target="lib\net45" />
-		<file src="bin\release\$id$.dll" target="lib\net45" />
+		<file src="bin\release\$id$.pdb" target="lib\net452" />
+		<file src="bin\release\$id$.dll" target="lib\net452" />
 	</files>
 </package>

@@ -64,7 +64,7 @@ namespace Dapplo.ActiveDirectoryTests
 			}
 		}
 
-		//[Fact]
+		´//[Fact]
 		public void TestActiveDirectoryQuery_User()
 		{
 			var query = Query.ForUser().WhereAccountEnabled().WhereAny(UserProperties.IpTelephoneNumber).WhereAny(UserProperties.TelephoneNumber);
@@ -80,7 +80,6 @@ namespace Dapplo.ActiveDirectoryTests
 				Log.Info().WriteLine("Found name: {0}", user.Displayname);
 				Log.Info().WriteLine("Has thumbnail: {0}", user.Thumbnail != null);
 				Log.Info().WriteLine("Is member of {0} groups", user.Groups.Count());
-				ActiveDirectoryExtensions.GetByAdsPath(user.Id);
 			}
 		}
 	}

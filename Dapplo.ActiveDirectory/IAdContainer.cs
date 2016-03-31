@@ -18,32 +18,14 @@
 	GNU General Public License for more details.
 
 	You should have received a copy of the GNU General Public License
-	along with Dapplo.ActiveDirectory. If not, see <http://www.gnu.org/licenses/>.
+	along with Dapplo.ActiveDirectory.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using Dapplo.ActiveDirectory;
-using System.Collections.Generic;
-
-namespace Dapplo.ActiveDirectoryTests
+namespace Dapplo.ActiveDirectory
 {
-	/// <summary>
-	/// Simple predefined object for user information
-	/// </summary>
-	public interface User : IAdContainer
+	public interface IAdContainer
 	{
-		[AdProperty(UserProperties.DistinguishedName)]
-		string DistinguishedName { get; set; }
-
-		[AdProperty(UserProperties.DisplayName)]
-		string Displayname { get; set; }
-
-		[AdProperty(UserProperties.Surname)]
-		string Name { get; set; }
-
-		[AdProperty(UserProperties.MemberOfGroups)]
-		IList<DistinguishedName> Groups { get; set; }
-
-		[AdProperty(UserProperties.Thumbnail)]
-		byte[] Thumbnail { get; set; }
+		[AdProperty(AdProperties.Id)]
+		string Id { get; set; }
 	}
 }

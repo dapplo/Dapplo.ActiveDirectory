@@ -29,27 +29,24 @@ namespace Dapplo.ActiveDirectoryTests
 	/// <summary>
 	/// Simple predefined object for Computer information
 	/// </summary>
-	public class Computer
+	public interface Computer : IAdContainer
 	{
-		[AdProperty(AdProperties.Id)]
-		public string Id { get; set; }
-
 		[AdProperty(ComputerProperties.HostName)]
-		public string Hostname { get; set; }
+		string Hostname { get; set; }
 
 		[AdProperty(ComputerProperties.Description)]
-		public string Description { get; set; }
+		string Description { get; set; }
 
 		[AdProperty(ComputerProperties.OperatingSystem)]
-		public string OperatingSystem { get; set; }
+		string OperatingSystem { get; set; }
 
 		[AdProperty(ComputerProperties.Location)]
-		public string Location { get; set; }
+		string Location { get; set; }
 
 		[AdProperty(ComputerProperties.OperatingSystemServicePack)]
-		public string OperatingSystemServicePack { get; set; }
+		string OperatingSystemServicePack { get; set; }
 
 		[AdProperty(ComputerProperties.WhenCreated)]
-		public DateTimeOffset WhenCreated { get; set; }
+		DateTimeOffset WhenCreated { get; set; }
 	}
 }
