@@ -22,7 +22,7 @@
 #region using
 
 using System;
-using Dapplo.LogFacade;
+using Dapplo.Utils.Extensions;
 
 #endregion
 

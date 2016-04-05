@@ -24,7 +24,7 @@
 using System.Collections.Generic;
 using System.Text;
 using Dapplo.ActiveDirectory.Enums;
-using Dapplo.LogFacade;
+using Dapplo.Utils.Extensions;
 
 #endregion
 
