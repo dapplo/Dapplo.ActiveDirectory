@@ -4,14 +4,14 @@
         <id>$id$</id>
         <version>$version$</version>
         <authors>$author$</authors>
-        <licenseUrl>http://www.gnu.org/licenses/lgpl-3.0.en.html</licenseUrl>
+        <licenseUrl>http://www.gnu.org/licenses/lgpl-3.0.html</licenseUrl>
         <projectUrl>http://www.dapplo.net/blocks/Dapplo.ActiveDirectory</projectUrl>
         <iconUrl>http://www.dapplo.net/favicon.ico</iconUrl>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <description>$description$</description>
 		<summary>A library to access the ActiveDirectory</summary>
         <language>en-us</language>
-		<copyright>Copyright © Dapplo 2016</copyright>
+		<copyright>$author$</copyright>
 		<tags>ActiveDirectory</tags>
 		<frameworkAssemblies>
 			<frameworkAssembly assemblyName="System.DirectoryServices" targetFramework="net452" />
@@ -19,6 +19,7 @@
     </metadata>
 	<files>
 		<file src="bin\release\$id$.pdb" target="lib\net452" />
+		<file src="bin\release\$id$.xml" target="lib\net452" />
 		<file src="bin\release\$id$.dll" target="lib\net452" />
 	</files>
 </package>

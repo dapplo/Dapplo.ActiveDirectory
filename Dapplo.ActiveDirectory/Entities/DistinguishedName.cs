@@ -57,13 +57,24 @@ namespace Dapplo.ActiveDirectory.Entities
 		{
 		}
 
+		/// <summary>
+		/// List of the distinguished names, this is just the collection of all available dn's
+		/// </summary>
 		public IList<KeyValuePair<DistinguishedNameAttributes, string>> RelativeDistinguishedNames { get; } = new List<KeyValuePair<DistinguishedNameAttributes, string>>();
 
+		/// <summary>
+		/// Enumerator for the destinguished names
+		/// </summary>
+		/// <returns>IEnumerator</returns>
 		public IEnumerator<KeyValuePair<DistinguishedNameAttributes, string>> GetEnumerator()
 		{
 			return RelativeDistinguishedNames.GetEnumerator();
 		}
 
+		/// <summary>
+		/// IEnumerable implementation
+		/// </summary>
+		/// <returns>IEnumerator</returns>
 		IEnumerator IEnumerable.GetEnumerator()
 		{
 			return RelativeDistinguishedNames.GetEnumerator();

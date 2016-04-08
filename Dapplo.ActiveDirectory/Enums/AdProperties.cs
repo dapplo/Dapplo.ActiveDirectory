@@ -32,8 +32,19 @@ namespace Dapplo.ActiveDirectory.Enums
 	/// </summary>
 	public enum AdProperties
 	{
+		/// <summary>
+		/// Unique path in the active directory, which can be considered as the ID
+		/// </summary>
 		[EnumMember(Value = "adspath")] Id,
+
+		/// <summary>
+		/// The common name
+		/// </summary>
 		[EnumMember(Value = "cn")] CommonName,
+
+		/// <summary>
+		/// The OU for an element
+		/// </summary>
 		[EnumMember(Value = "ou")] OrganisationUnit,
 
 		/// <summary>

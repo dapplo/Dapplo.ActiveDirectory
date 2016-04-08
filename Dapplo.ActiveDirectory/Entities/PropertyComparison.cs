@@ -42,17 +42,29 @@ namespace Dapplo.ActiveDirectory.Entities
 			Value = value;
 		}
 
+		/// <summary>
+		/// The used comparison
+		/// </summary>
 		public Comparisons Comparison { get; set; }
 
-		public bool Not
-		{
-			get { return Comparison.ToString().StartsWith("Not"); }
-		}
+		/// <summary>
+		/// Returns true if the comparison is a "not"
+		/// </summary>
+		public bool Not => Comparison.ToString().StartsWith("Not");
 
+		/// <summary>
+		/// The property to compare
+		/// </summary>
 		public Property Property { get; set; }
 
+		/// <summary>
+		/// The value to compare
+		/// </summary>
 		public Value Value { get; set; }
 
+		/// <summary>
+		/// Invert the comparison
+		/// </summary>
 		public void Negate()
 		{
 			switch (Comparison)

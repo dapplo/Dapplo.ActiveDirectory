@@ -147,25 +147,23 @@ namespace Dapplo.ActiveDirectory
 		{
 			var directoryEntry = new DirectoryEntry(adsPath);
 
-			if (Log.IsVerboseEnabled())
+			if (!Log.IsVerboseEnabled()) return directoryEntry;
+			Log.Verbose().WriteLine("List of all properties and their value:");
+			foreach (var propertyName in directoryEntry.Properties.PropertyNames.Cast<string>().OrderBy(x => x))
 			{
-				Log.Verbose().WriteLine("List of all properties and their value:");
-				foreach (var propertyName in directoryEntry.Properties.PropertyNames.Cast<string>().OrderBy(x => x))
-				{
-					Log.Verbose().WriteLine($"{propertyName} = {{0}}", directoryEntry.Properties[propertyName].Value); //Cast<object>().ToArray());
-				}
-				directoryEntry.RefreshCache(new[] {AdProperties.AllowedAttributesEffective.EnumValueOf()});
-				Log.Verbose().WriteLine("List of all writable properties:");
-				foreach (var writableProperty in directoryEntry.Properties[AdProperties.AllowedAttributesEffective.EnumValueOf()].Cast<string>().OrderBy(x => x))
-				{
-					Log.Verbose().WriteLine("Writeable property: {0}", writableProperty);
-				}
+				Log.Verbose().WriteLine($"{propertyName} = {{0}}", directoryEntry.Properties[propertyName].Value); //Cast<object>().ToArray());
+			}
+			directoryEntry.RefreshCache(new[] {AdProperties.AllowedAttributesEffective.EnumValueOf()});
+			Log.Verbose().WriteLine("List of all writable properties:");
+			foreach (var writableProperty in directoryEntry.Properties[AdProperties.AllowedAttributesEffective.EnumValueOf()].Cast<string>().OrderBy(x => x))
+			{
+				Log.Verbose().WriteLine("Writeable property: {0}", writableProperty);
 			}
 			return directoryEntry;
 		}
 
 		/// <summary>
-		///     Create a map for properties & the property name from the AD
+		///     Create a map for properties and the property name from the AD
 		/// </summary>
 		/// <param name="typeToFill"></param>
 		/// <returns>ILookup with for each found property (key) an IEnumerable with PropertyInfo objects</returns>

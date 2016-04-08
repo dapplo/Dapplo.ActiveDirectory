@@ -26,7 +26,11 @@ namespace Dapplo.ActiveDirectory.Entities
 	/// </summary>
 	public abstract class QueryElement
 	{
-		public QueryElement(Query parent)
+		/// <summary>
+		/// Constructor for an query element, with a reference to the parent
+		/// </summary>
+		/// <param name="parent">Query</param>
+		protected QueryElement(Query parent)
 		{
 			Parent = parent;
 		}
