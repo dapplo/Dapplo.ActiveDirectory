@@ -24,6 +24,7 @@
 using System;
 using System.Threading;
 using Dapplo.LogFacade;
+using Dapplo.LogFacade.Loggers;
 using Xunit.Abstractions;
 
 #endregion
@@ -36,7 +37,7 @@ namespace Dapplo.ActiveDirectory.Tests.Logger
 	///     This class solves the problem by registering the ITestOutputHelper in the CallContext.
 	///     Every log statement will retrieve the ITestOutputHelper from the context and use it to log.
 	/// </summary>
-	public class XUnitLogger : ILogger
+	public class XUnitLogger : AbstractLogger
 	{
 		private static readonly AsyncLocal<ITestOutputHelper> TestOutputHelperAsyncLocal = new AsyncLocal<ITestOutputHelper>();
 		private static readonly AsyncLocal<LogLevel> LogLevelAsyncLocal = new AsyncLocal<LogLevel>();
@@ -52,16 +53,11 @@ namespace Dapplo.ActiveDirectory.Tests.Logger
 		///     LogLevel, this can give a different result pro xUnit test...
 		///     It will depend on the RegisterLogger value which was used in the current xUnit test
 		/// </summary>
-		public LogLevel Level
+		public override LogLevel Level
 		{
 			get
 			{
-				var logLevel = LogLevelAsyncLocal.Value;
-				if (logLevel != LogLevel.None)
-				{
-					return logLevel;
-				}
-				return LogSettings.DefaultLevel;
+				return LogLevelAsyncLocal.Value;
 			}
 			set { LogLevelAsyncLocal.Value = value; }
 		}
@@ -72,12 +68,12 @@ namespace Dapplo.ActiveDirectory.Tests.Logger
 		/// </summary>
 		/// <param name="level">LogLevel</param>
 		/// <returns>true if the level is enabled</returns>
-		public bool IsLogLevelEnabled(LogLevel level)
+		public override bool IsLogLevelEnabled(LogLevel level)
 		{
 			return level != LogLevel.None && level >= Level;
 		}
 
-		public void Write(LogInfo logInfo, string messageTemplate, params object[] logParameters)
+		public override void Write(LogInfo logInfo, string messageTemplate, params object[] logParameters)
 		{
 			var testOutputHelper = TestOutputHelperAsyncLocal.Value;
 			if (testOutputHelper == null)
@@ -87,15 +83,21 @@ namespace Dapplo.ActiveDirectory.Tests.Logger
 			testOutputHelper.WriteLine($"{logInfo} - {messageTemplate}", logParameters);
 		}
 
-		public void Write(LogInfo logInfo, Exception exception, string messageTemplate, params object[] logParameters)
+		public override void Write(LogInfo logInfo, Exception exception, string messageTemplate = null, params object[] logParameters)
 		{
 			var testOutputHelper = TestOutputHelperAsyncLocal.Value;
 			if (testOutputHelper == null)
 			{
 				throw new ArgumentNullException(nameof(testOutputHelper), "Couldn't find a ITestOutputHelper in the CallContext");
 			}
-			testOutputHelper.WriteLine($"{logInfo} - {messageTemplate}", logParameters);
-			testOutputHelper.WriteLine(exception.ToString());
+			if (messageTemplate != null)
+			{
+				testOutputHelper.WriteLine($"{logInfo} - {messageTemplate}", logParameters);
+			}
+			if (exception != null)
+			{
+				testOutputHelper.WriteLine(exception.ToString());
+			}
 		}
 
 		/// <summary>
@@ -107,7 +109,7 @@ namespace Dapplo.ActiveDirectory.Tests.Logger
 		public static void RegisterLogger(ITestOutputHelper testOutputHelper, LogLevel level = default(LogLevel))
 		{
 			TestOutputHelperAsyncLocal.Value = testOutputHelper;
-			LogLevelAsyncLocal.Value = level;
+			LogLevelAsyncLocal.Value = level == LogLevel.None ? LogSettings.DefaultLevel : level;
 			if (!(LogSettings.Logger is XUnitLogger))
 			{
 				LogSettings.Logger = new XUnitLogger();

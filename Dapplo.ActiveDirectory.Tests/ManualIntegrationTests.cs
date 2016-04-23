@@ -83,7 +83,7 @@ namespace Dapplo.ActiveDirectory.Tests
 				Log.Info().WriteLine("DistinguishedName: {0}", user.DistinguishedName);
 				Log.Info().WriteLine("Found name: {0}", user.Displayname);
 				Log.Info().WriteLine("Has thumbnail: {0}", user.Thumbnail != null);
-				Log.Info().WriteLine("Is member of {0} groups", user.Groups.Count());
+				Log.Info().WriteLine("Is member of {0} groups", user.Groups.Count);
 			}
 		}
 	}
