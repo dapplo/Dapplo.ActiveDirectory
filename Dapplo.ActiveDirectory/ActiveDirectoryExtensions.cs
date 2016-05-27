@@ -49,10 +49,12 @@ namespace Dapplo.ActiveDirectory
 		/// <typeparam name="T">Type to fill, use AdPropertyAttribute to specify the mapping</typeparam>
 		/// <param name="query">Query</param>
 		/// <param name="domain">Domain for the LDAP server, if null the Environment.UserDomainName is used</param>
+		/// <param name="username">Username for the connection, by default the current user is used</param>
+		/// <param name="password">Password for the supplied user</param>
 		/// <returns>IEnumerable with the specified type</returns>
-		public static IEnumerable<T> Execute<T>(this Query query, string domain = null) where T : IAdObject
+		public static IEnumerable<T> Execute<T>(this Query query, string domain = null, string username = null, string password = null) where T : IAdObject
 		{
-			return Execute<T>(query.Build(), domain);
+			return Execute<T>(query.Build(), domain, username, password);
 		}
 
 		/// <summary>
@@ -61,13 +63,15 @@ namespace Dapplo.ActiveDirectory
 		/// <typeparam name="TAdContainer">Type to fill, use AdPropertyAttribute to specify the mapping</typeparam>
 		/// <param name="query">Query as string</param>
 		/// <param name="domain">Domain for the LDAP server, if null the Environment.UserDomainName is used</param>
+		/// <param name="username">Username for the connection, by default the current user is used</param>
+		/// <param name="password">Password for the supplied user</param>
 		/// <returns>IList with the specified type</returns>
-		private static IEnumerable<TAdContainer> Execute<TAdContainer>(string query, string domain = null) where TAdContainer : IAdObject
+		private static IEnumerable<TAdContainer> Execute<TAdContainer>(string query, string domain = null, string username = null, string password = null) where TAdContainer : IAdObject
 		{
 			var typeMap = ProcessType(typeof (TAdContainer));
 			Log.Info().WriteLine("Querying domain {0} with {1} into {2}", domain, query, typeof (TAdContainer).Name);
 			var queryProperties = typeMap.Select(x => x.Key).ToArray();
-			using (var rootDirectory = new DirectoryEntry($"LDAP://{domain ?? Environment.UserDomainName}"))
+			using (var rootDirectory = new DirectoryEntry($"LDAP://{domain ?? Environment.UserDomainName}", username, password))
 			using (var searcher = new DirectorySearcher(rootDirectory, query, queryProperties))
 			using (var results = searcher.FindAll())
 			{
@@ -142,10 +146,12 @@ namespace Dapplo.ActiveDirectory
 		///     string with the AdsPath, this can be retrieved by setting AdProperty(AdProperties.Id) on a string
 		///     property for the type passed to Execute
 		/// </param>
+		/// <param name="username">Username for the connection, by default the current user is used</param>
+		/// <param name="password">Password for the supplied user</param>
 		/// <returns>DirectoryEntry</returns>
-		public static DirectoryEntry GetByAdsPath(string adsPath)
+		public static DirectoryEntry GetByAdsPath(string adsPath, string username = null, string password = null)
 		{
-			var directoryEntry = new DirectoryEntry(adsPath);
+			var directoryEntry = new DirectoryEntry(adsPath, username, password);
 
 			if (!Log.IsVerboseEnabled()) return directoryEntry;
 			Log.Verbose().WriteLine("List of all properties and their value:");
@@ -191,8 +197,10 @@ namespace Dapplo.ActiveDirectory
 		/// </summary>
 		/// <typeparam name="TAdContainer">The type of the AD Container object</typeparam>
 		/// <param name="adContainerObject">object which has the values to update</param>
+		/// <param name="username">Username for the connection, by default the current user is used</param>
+		/// <param name="password">Password for the supplied user</param>
 		/// <param name="domain"></param>
-		public static void Update<TAdContainer>(TAdContainer adContainerObject, string domain = null) where TAdContainer : IAdObject
+		public static void Update<TAdContainer>(this TAdContainer adContainerObject, string domain = null, string username = null, string password = null) where TAdContainer : IAdObject
 		{
 			var typeMap = ProcessType(typeof (TAdContainer));
 			if (typeMap[AdProperties.Id.EnumValueOf()].Count() > 1)
@@ -200,17 +208,22 @@ namespace Dapplo.ActiveDirectory
 				throw new ArgumentException("Only one property can be marked with AdProperties.Id", nameof(adContainerObject));
 			}
 			var adspath = typeMap[AdProperties.Id.EnumValueOf()].First().GetValue(adContainerObject) as string;
-			var directoryEntry = new DirectoryEntry(adspath);
+			var directoryEntry = new DirectoryEntry(adspath, username, password);
 			directoryEntry.RefreshCache(new[] {AdProperties.AllowedAttributesEffective.EnumValueOf()});
 
 			var needsCommit = false;
+			// As the properties are with case, we need to convert them with ToLowerInvariant to make sure that we don't have issues with case sensitivity.
+			var allowedProperties = directoryEntry.Properties["allowedAttributesEffective"].Cast<string>().Select(x => x.ToLowerInvariant()).ToList();
+
 			foreach (var propertyName in typeMap.Select(l => l.Key))
 			{
-				if (!directoryEntry.Properties["allowedAttributesEffective"].Contains(propertyName))
+				// check if it's allowed
+				if (!allowedProperties.Contains(propertyName.ToLowerInvariant()))
 				{
 					Log.Debug().WriteLine("Skipping non writable property {0}", propertyName);
 					continue;
 				}
+				// We chance it, so we will need a commit at the end
 				needsCommit = true;
 				var propertyInfo = typeMap[propertyName].First();
 				var property = directoryEntry.Properties[propertyName];

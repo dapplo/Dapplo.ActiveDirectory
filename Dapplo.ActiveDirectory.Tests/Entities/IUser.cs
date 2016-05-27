@@ -46,6 +46,9 @@ namespace Dapplo.ActiveDirectory.Tests.Entities
 		[AdProperty(UserProperties.Surname)]
 		string Name { get; set; }
 
+		[AdProperty(UserProperties.TelephoneNumber)]
+		string TelephoneNumber { get; set; }
+
 		[AdProperty(UserProperties.Thumbnail)]
 		byte[] Thumbnail { get; set; }
 	}

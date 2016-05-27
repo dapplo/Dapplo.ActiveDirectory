@@ -86,5 +86,19 @@ namespace Dapplo.ActiveDirectory.Tests
 				Log.Info().WriteLine("Is member of {0} groups", user.Groups.Count);
 			}
 		}
+
+		//[Fact]
+		public void TestActiveDirectoryQuery_ChangeUser()
+		{
+			const string username = "meMyselfAndI";
+			const string password = "ItIsI";
+			var query = Query.ForUser(username);
+			var userResult = query.Execute<IUser>(Environment.UserDomainName, username, password).FirstOrDefault();
+			Assert.NotNull(userResult);
+
+			userResult.TelephoneNumber = "911";
+
+			userResult.Update(Environment.UserDomainName, username, password);
+		}
 	}
 }
