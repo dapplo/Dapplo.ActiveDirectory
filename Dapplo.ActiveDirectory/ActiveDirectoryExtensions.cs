@@ -71,70 +71,79 @@ namespace Dapplo.ActiveDirectory
 			var typeMap = ProcessType(typeof (TAdContainer));
 			Log.Info().WriteLine("Querying domain {0} with {1} into {2}", domain, query, typeof (TAdContainer).Name);
 			var queryProperties = typeMap.Select(x => x.Key).ToArray();
+
 			using (var rootDirectory = new DirectoryEntry($"LDAP://{domain ?? Environment.UserDomainName}", username, password))
 			using (var searcher = new DirectorySearcher(rootDirectory, query, queryProperties))
-			using (var results = searcher.FindAll())
 			{
-				foreach (SearchResult searchResult in results)
+				// Set some globals
+				searcher.PageSize = ActiveDirectoryGlobals.PageSize;
+				searcher.SizeLimit = ActiveDirectoryGlobals.SizeLimit; 
+				searcher.CacheResults = ActiveDirectoryGlobals.CacheResults;
+				using (var results = searcher.FindAll())
 				{
-					Log.Verbose().WriteLine("Processing {0}", searchResult.Path);
-					if (searchResult.Properties?.PropertyNames == null)
+					foreach (SearchResult searchResult in results)
 					{
-						continue;
-					}
-					TAdContainer instance;
-					if (!typeof (TAdContainer).IsInterface)
-					{
-						instance = Activator.CreateInstance<TAdContainer>();
-					}
-					else
-					{
-						instance = InterceptorFactory.New<TAdContainer>();
-					}
-					foreach (var propertyName in searchResult.Properties.PropertyNames.Cast<string>().Select(x => x.ToLowerInvariant()))
-					{
-						if (!typeMap.Contains(propertyName))
-						{
-							Log.Verbose().WriteLine("No property {0} in {1}", propertyName, typeof (TAdContainer).Name);
-							continue;
-						}
-						var propertyInfos = typeMap[propertyName];
-						var values = searchResult.Properties[propertyName].Cast<object>().ToArray();
-						var value = values.Length > 1 ? values : values[0];
-						if (value == null)
+						Log.Verbose().WriteLine("Processing {0}", searchResult.Path);
+						var properties = searchResult.Properties;
+						if (properties?.PropertyNames == null)
 						{
 							continue;
 						}
-						var valueType = value.GetType();
-						foreach (var propertyInfo in propertyInfos)
+						TAdContainer instance;
+						if (!typeof(TAdContainer).IsInterface)
 						{
-							if (propertyInfo.PropertyType.IsAssignableFrom(valueType))
+							instance = Activator.CreateInstance<TAdContainer>();
+						}
+						else
+						{
+							instance = InterceptorFactory.New<TAdContainer>();
+						}
+
+						foreach (var propertyName in properties.PropertyNames.Cast<string>().Select(x => x.ToLowerInvariant()))
+						{
+							if (!typeMap.Contains(propertyName))
 							{
-								propertyInfo.SetValue(instance, value);
+								Log.Verbose().WriteLine("No property {0} in {1}", propertyName, typeof(TAdContainer).Name);
+								continue;
 							}
-							else if (valueType == typeof (DateTime) && propertyInfo.PropertyType == typeof (DateTimeOffset))
+							var propertyInfos = typeMap[propertyName];
+							var values = properties[propertyName].Cast<object>().ToArray();
+							var value = values.Length > 1 ? values : values[0];
+							if (value == null)
 							{
-								var dateTime = (DateTime) value;
-								propertyInfo.SetValue(instance, (DateTimeOffset) dateTime);
+								continue;
 							}
-							else if (valueType.IsArray || propertyInfo.PropertyType.IsGenericType)
+							var valueType = value.GetType();
+							foreach (var propertyInfo in propertyInfos)
 							{
-								if (propertyInfo.PropertyType.GenericTypeArguments[0] == typeof (DistinguishedName))
+								if (propertyInfo.PropertyType.IsAssignableFrom(valueType))
 								{
-									propertyInfo.SetValue(instance, values.Select(x => (DistinguishedName) (x as string)).ToList());
+									propertyInfo.SetValue(instance, value);
+								}
+								else if (valueType == typeof(DateTime) && propertyInfo.PropertyType == typeof(DateTimeOffset))
+								{
+									var dateTime = (DateTime)value;
+									propertyInfo.SetValue(instance, (DateTimeOffset)dateTime);
+								}
+								else if (valueType.IsArray || propertyInfo.PropertyType.IsGenericType)
+								{
+									if (propertyInfo.PropertyType.GenericTypeArguments[0] == typeof(DistinguishedName))
+									{
+										propertyInfo.SetValue(instance, values.Select(x => (DistinguishedName)(x as string)).ToList());
+									}
+									else
+									{
+										propertyInfo.SetValue(instance, values.Select(x => Convert.ChangeType(x, propertyInfo.PropertyType)).ToList());
+									}
 								}
 								else
 								{
-									propertyInfo.SetValue(instance, values.Select(x => Convert.ChangeType(x, propertyInfo.PropertyType)).ToList());
+									propertyInfo.SetValue(instance, Convert.ChangeType(value, propertyInfo.PropertyType));
 								}
 							}
-							else
-							{
-								propertyInfo.SetValue(instance, Convert.ChangeType(value, propertyInfo.PropertyType));
-							}
 						}
+						yield return instance;
 					}
-					yield return instance;
 				}
 			}
 		}

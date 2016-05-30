@@ -108,7 +108,7 @@ namespace Dapplo.ActiveDirectory.Entities
 				throw new ArgumentNullException(nameof(relativeDistinguishedName));
 			}
 			var parts = relativeDistinguishedName.Split('=');
-			RelativeDistinguishedNames.Add(new KeyValuePair<DistinguishedNameAttributes, string>(AttributeLookup[parts[0].Trim()], parts[1].Trim()));
+			RelativeDistinguishedNames.Add(new KeyValuePair<DistinguishedNameAttributes, string>(AttributeLookup[parts[0].Trim()],parts[1].Trim()));
 			return this;
 		}
 
@@ -119,7 +119,11 @@ namespace Dapplo.ActiveDirectory.Entities
 		/// <returns>DistinguishedName</returns>
 		public DistinguishedName Cn(string value)
 		{
-			return Add(DistinguishedNameAttributes.CommonName, value);
+			if (value == null)
+			{
+				throw new ArgumentNullException(nameof(value));
+			}
+			return Add(DistinguishedNameAttributes.CommonName, value.Trim());
 		}
 
 		/// <summary>
@@ -151,7 +155,11 @@ namespace Dapplo.ActiveDirectory.Entities
 		/// <returns>DistinguishedName</returns>
 		public DistinguishedName Dc(string value)
 		{
-			return Add(DistinguishedNameAttributes.DomainComponent, value);
+			if (value == null)
+			{
+				throw new ArgumentNullException(nameof(value));
+			}
+			return Add(DistinguishedNameAttributes.DomainComponent, value. Trim());
 		}
 
 		/// <summary>
@@ -179,7 +187,11 @@ namespace Dapplo.ActiveDirectory.Entities
 		/// <returns>DistinguishedName</returns>
 		public DistinguishedName Ou(string value)
 		{
-			return Add(DistinguishedNameAttributes.OrganizationalUnitName, value);
+			if (value == null)
+			{
+				throw new ArgumentNullException(nameof(value));
+			}
+			return Add(DistinguishedNameAttributes.OrganizationalUnitName, value.Trim());
 		}
 
 		/// <summary>

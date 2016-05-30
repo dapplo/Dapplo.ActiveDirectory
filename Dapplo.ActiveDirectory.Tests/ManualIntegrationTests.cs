@@ -71,10 +71,11 @@ namespace Dapplo.ActiveDirectory.Tests
 		//[Fact]
 		public void TestActiveDirectoryQuery_User()
 		{
+			// Limit to 100 items
+			ActiveDirectoryGlobals.SizeLimit = 100;
+			ActiveDirectoryGlobals.PageSize = 0;
 			var query = Query.ForUser().WhereAccountEnabled().WhereAny(UserProperties.IpTelephoneNumber).WhereAny(UserProperties.TelephoneNumber);
-			var userResult = query.Execute<IUser>(Environment.UserDomainName).ToList();
-			Assert.True(userResult.Any());
-
+			var userResult = query.Execute<IUser>(Environment.UserDomainName);
 			// Just something to generate some output
 			foreach (var user in userResult)
 			{
@@ -85,6 +86,7 @@ namespace Dapplo.ActiveDirectory.Tests
 				Log.Info().WriteLine("Has thumbnail: {0}", user.Thumbnail != null);
 				Log.Info().WriteLine("Is member of {0} groups", user.Groups.Count);
 			}
+			Log.Info().WriteLine("Ready");
 		}
 
 		//[Fact]
