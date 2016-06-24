@@ -29,7 +29,7 @@ using System.Reflection;
 using Dapplo.ActiveDirectory.Entities;
 using Dapplo.ActiveDirectory.Enums;
 using Dapplo.InterfaceImpl;
-using Dapplo.LogFacade;
+using Dapplo.Log.Facade;
 using Dapplo.Utils.Extensions;
 
 #endregion
