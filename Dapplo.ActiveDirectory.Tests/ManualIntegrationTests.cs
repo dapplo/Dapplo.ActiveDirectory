@@ -27,7 +27,7 @@ using Dapplo.ActiveDirectory.Entities;
 using Dapplo.ActiveDirectory.Enums;
 using Dapplo.ActiveDirectory.Tests.Entities;
 using Dapplo.Log.XUnit;
-using Dapplo.LogFacade;
+using Dapplo.Log.Facade;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -44,7 +44,7 @@ namespace Dapplo.ActiveDirectory.Tests
 
 		public ManualIntegrationTests(ITestOutputHelper testOutputHelper)
 		{
-			XUnitLogger.RegisterLogger(testOutputHelper, LogLevels.Verbose);
+			LogSettings.RegisterDefaultLogger<XUnitLogger>(LogLevels.Verbose, testOutputHelper);
 		}
 
 		//[Fact]

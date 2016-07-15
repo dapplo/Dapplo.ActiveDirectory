@@ -25,7 +25,7 @@ using System.Linq;
 using Dapplo.ActiveDirectory.Entities;
 using Dapplo.ActiveDirectory.Enums;
 using Dapplo.Log.XUnit;
-using Dapplo.LogFacade;
+using Dapplo.Log.Facade;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -42,7 +42,7 @@ namespace Dapplo.ActiveDirectory.Tests
 
 		public DistinguishedNameTests(ITestOutputHelper testOutputHelper)
 		{
-			XUnitLogger.RegisterLogger(testOutputHelper, LogLevels.Verbose);
+			LogSettings.RegisterDefaultLogger<XUnitLogger>(LogLevels.Verbose, testOutputHelper);
 		}
 
 		[Fact]
