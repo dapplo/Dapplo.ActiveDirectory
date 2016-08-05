@@ -92,15 +92,13 @@ namespace Dapplo.ActiveDirectory.Tests
 		//[Fact]
 		public void TestActiveDirectoryQuery_ChangeUser()
 		{
-			const string username = "meMyselfAndI";
-			const string password = "ItIsI";
-			var query = Query.ForUser(username);
-			var userResult = query.Execute<IUser>(Environment.UserDomainName, username, password).FirstOrDefault();
+			var query = Query.ForUser(Environment.UserName);
+			var userResult = query.Execute<IUser>(Environment.UserDomainName).FirstOrDefault();
 			Assert.NotNull(userResult);
 
 			userResult.TelephoneNumber = "911";
 
-			userResult.Update(Environment.UserDomainName, username, password);
+			userResult.Update(Environment.UserDomainName);
 		}
 	}
 }
