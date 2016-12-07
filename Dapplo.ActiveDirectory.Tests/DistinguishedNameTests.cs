@@ -50,7 +50,7 @@ namespace Dapplo.ActiveDirectory.Tests
 		{
 			var dn = DistinguishedName.Create().Cn("Karen Berge").Cn("admin").Dc("corp").Dc("Fabrikam").Dc("COM");
 
-			Assert.Equal(5, dn.RelativeDistinguishedNames.Count);
+			Assert.Equal(5, dn.RelativeDistinguishedNames.Count());
 			Assert.Equal(TestDnString, dn.ToString());
 
 			var dc = string.Join(".", dn.Where(x => x.Key == DistinguishedNameAttributes.DomainComponent).Select(x => x.Value));
@@ -61,7 +61,7 @@ namespace Dapplo.ActiveDirectory.Tests
 		public void TestCastDistinguishedName()
 		{
 			var dn = (DistinguishedName) TestDnString;
-			Assert.Equal(5, dn.RelativeDistinguishedNames.Count);
+			Assert.Equal(5, dn.RelativeDistinguishedNames.Count());
 			Assert.Equal(TestDnString, dn);
 		}
 
@@ -69,7 +69,7 @@ namespace Dapplo.ActiveDirectory.Tests
 		public void TestDistinguishedName()
 		{
 			var dn = DistinguishedName.CreateFrom(TestDnString);
-			Assert.Equal(5, dn.RelativeDistinguishedNames.Count);
+			Assert.Equal(5, dn.RelativeDistinguishedNames.Count());
 			Assert.Equal(TestDnString, dn.ToString());
 		}
 	}

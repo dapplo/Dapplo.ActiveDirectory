@@ -50,6 +50,8 @@ namespace Dapplo.ActiveDirectory.Entities
 			}
 		}
 
+		private readonly List<KeyValuePair<DistinguishedNameAttributes, string>> _relativeDistinguishedNames = new List<KeyValuePair<DistinguishedNameAttributes, string>>();
+
 		/// <summary>
 		///     Made private to force factory method
 		/// </summary>
@@ -60,7 +62,7 @@ namespace Dapplo.ActiveDirectory.Entities
 		/// <summary>
 		/// List of the distinguished names, this is just the collection of all available dn's
 		/// </summary>
-		public IList<KeyValuePair<DistinguishedNameAttributes, string>> RelativeDistinguishedNames { get; } = new List<KeyValuePair<DistinguishedNameAttributes, string>>();
+		public IEnumerable<KeyValuePair<DistinguishedNameAttributes, string>> RelativeDistinguishedNames => _relativeDistinguishedNames.AsReadOnly();
 
 		/// <summary>
 		/// Enumerator for the destinguished names
@@ -68,7 +70,7 @@ namespace Dapplo.ActiveDirectory.Entities
 		/// <returns>IEnumerator</returns>
 		public IEnumerator<KeyValuePair<DistinguishedNameAttributes, string>> GetEnumerator()
 		{
-			return RelativeDistinguishedNames.GetEnumerator();
+			return _relativeDistinguishedNames.GetEnumerator();
 		}
 
 		/// <summary>
@@ -77,7 +79,7 @@ namespace Dapplo.ActiveDirectory.Entities
 		/// <returns>IEnumerator</returns>
 		IEnumerator IEnumerable.GetEnumerator()
 		{
-			return RelativeDistinguishedNames.GetEnumerator();
+			return _relativeDistinguishedNames.GetEnumerator();
 		}
 
 		/// <summary>
@@ -92,7 +94,7 @@ namespace Dapplo.ActiveDirectory.Entities
 			{
 				throw new ArgumentNullException(nameof(value));
 			}
-			RelativeDistinguishedNames.Add(new KeyValuePair<DistinguishedNameAttributes, string>(distinguishedNameAttribute, value.Trim()));
+			_relativeDistinguishedNames.Add(new KeyValuePair<DistinguishedNameAttributes, string>(distinguishedNameAttribute, value.Trim()));
 			return this;
 		}
 
@@ -108,7 +110,7 @@ namespace Dapplo.ActiveDirectory.Entities
 				throw new ArgumentNullException(nameof(relativeDistinguishedName));
 			}
 			var parts = relativeDistinguishedName.Split('=');
-			RelativeDistinguishedNames.Add(new KeyValuePair<DistinguishedNameAttributes, string>(AttributeLookup[parts[0].Trim()],parts[1].Trim()));
+			_relativeDistinguishedNames.Add(new KeyValuePair<DistinguishedNameAttributes, string>(AttributeLookup[parts[0].Trim()],parts[1].Trim()));
 			return this;
 		}
 
@@ -206,7 +208,7 @@ namespace Dapplo.ActiveDirectory.Entities
 				builder.Append($"{relativeDistinguishedName.Key.EnumValueOf()}={relativeDistinguishedName.Value},");
 			}
 			// Remote trailing ,
-			if (RelativeDistinguishedNames.Count > 0)
+			if (_relativeDistinguishedNames.Any())
 			{
 				builder.Length -= 1;
 			}
