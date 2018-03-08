@@ -100,11 +100,7 @@ namespace Dapplo.ActiveDirectory.Entities
 		/// <returns>string with the complete query</returns>
 		public string Build()
 		{
-			if (Parent != null)
-			{
-				return Parent.Build();
-			}
-			return ToString();
+			return Parent != null ? Parent.Build() : ToString();
 		}
 
 		/// <summary>

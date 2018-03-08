@@ -44,7 +44,7 @@ namespace Dapplo.ActiveDirectory
 		/// 0 means no limit
 		/// If size limit is large than page size, this limit is ignored!!!
 		/// </summary>
-		public static int SizeLimit { get; set; } = 0;
+		public static int SizeLimit { get; set; }
 
 		/// <summary>
 		/// Specify if the search is cached

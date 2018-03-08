@@ -85,19 +85,12 @@ namespace Dapplo.ActiveDirectory
 					{
 						Log.Verbose().WriteLine("Processing {0}", searchResult.Path);
 						var properties = searchResult.Properties;
-						if (properties?.PropertyNames == null)
+						if (properties.PropertyNames == null)
 						{
 							continue;
 						}
-						TAdContainer instance;
-						if (!typeof(TAdContainer).IsInterface)
-						{
-							instance = Activator.CreateInstance<TAdContainer>();
-						}
-						else
-						{
-							instance = InterceptorFactory.New<TAdContainer>();
-						}
+
+						var instance = !typeof(TAdContainer).IsInterface ? Activator.CreateInstance<TAdContainer>() : InterceptorFactory.New<TAdContainer>();
 
 						foreach (var propertyName in properties.PropertyNames.Cast<string>().Select(x => x.ToLowerInvariant()))
 						{
@@ -208,8 +201,7 @@ namespace Dapplo.ActiveDirectory
 		/// <param name="adContainerObject">object which has the values to update</param>
 		/// <param name="username">Username for the connection, by default the current user is used</param>
 		/// <param name="password">Password for the supplied user</param>
-		/// <param name="domain"></param>
-		public static void Update<TAdContainer>(this TAdContainer adContainerObject, string domain = null, string username = null, string password = null) where TAdContainer : IAdObject
+		public static void Update<TAdContainer>(this TAdContainer adContainerObject, string username = null, string password = null) where TAdContainer : IAdObject
 		{
 			var typeMap = ProcessType(typeof (TAdContainer));
 			if (typeMap[AdProperties.Id.EnumValueOf()].Count() > 1)
