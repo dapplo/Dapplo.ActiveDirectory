@@ -10,7 +10,7 @@ branches:
   - /feature.*/
 environment:
   NuGetApiKey:
-    secure: FkbOZI29wVSKdzHuFOq9tY8cq05Sy6vFKwvqYnUhDVamagkTUrjNJElPPoACP8Ov
+    secure: Fu7vXeOuWmvDK7WGNsEbTIV2vhDV4P6PiK5k1+UZOmwldhCfvUvkA4HOkml+ZE/n
   CoverallsRepoToken:
     secure: SAGtlYZ9b6zRDsE+RqXF4ZGcwis09oWUaN3AypN3epwrkerea5Kjo3PGjUot+NfZ
 build_script:
