@@ -30,6 +30,7 @@ using Dapplo.Log.XUnit;
 using Dapplo.Log;
 using Xunit;
 using Xunit.Abstractions;
+using Dapplo.ActiveDirectory.Tests.Entities.Impl;
 
 #endregion
 
@@ -51,7 +52,7 @@ namespace Dapplo.ActiveDirectory.Tests
 		public void TestActiveDirectoryQuery_Computer()
 		{
 			var query = Query.ForComputer(Environment.MachineName);
-			var computerResult = query.Execute<IComputer>(Environment.UserDomainName).ToList();
+			var computerResult = query.Execute<Computer>(Environment.UserDomainName).ToList();
 			Assert.True(computerResult.Any());
 
 			// Just something to generate some output
@@ -75,7 +76,7 @@ namespace Dapplo.ActiveDirectory.Tests
 			ActiveDirectoryGlobals.SizeLimit = 100;
 			ActiveDirectoryGlobals.PageSize = 0;
 			var query = Query.ForUser().WhereAccountEnabled().WhereAny(UserProperties.IpTelephoneNumber).WhereAny(UserProperties.TelephoneNumber);
-			var userResult = query.Execute<IUser>(Environment.UserDomainName);
+			var userResult = query.Execute<User>(Environment.UserDomainName);
 			// Just something to generate some output
 			foreach (var user in userResult)
 			{
@@ -93,7 +94,7 @@ namespace Dapplo.ActiveDirectory.Tests
 		public void TestActiveDirectoryQuery_ChangeUser()
 		{
 			var query = Query.ForUser(Environment.UserName);
-			var userResult = query.Execute<IUser>(Environment.UserDomainName).FirstOrDefault();
+			var userResult = query.Execute<User>(Environment.UserDomainName).FirstOrDefault();
 			Assert.NotNull(userResult);
 
 			userResult.TelephoneNumber = "911";

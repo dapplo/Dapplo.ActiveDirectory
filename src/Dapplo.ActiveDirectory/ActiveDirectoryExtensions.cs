@@ -28,7 +28,6 @@ using System.Linq;
 using System.Reflection;
 using Dapplo.ActiveDirectory.Entities;
 using Dapplo.ActiveDirectory.Enums;
-using Dapplo.InterfaceImpl;
 using Dapplo.Log;
 using Dapplo.Utils.Extensions;
 
@@ -52,7 +51,7 @@ namespace Dapplo.ActiveDirectory
 		/// <param name="username">Username for the connection, by default the current user is used</param>
 		/// <param name="password">Password for the supplied user</param>
 		/// <returns>IEnumerable with the specified type</returns>
-		public static IEnumerable<T> Execute<T>(this Query query, string domain = null, string username = null, string password = null) where T : IAdObject
+		public static IEnumerable<T> Execute<T>(this Query query, string domain = null, string username = null, string password = null) where T : IAdObject, new()
 		{
 			return Execute<T>(query.Build(), domain, username, password);
 		}
@@ -66,7 +65,8 @@ namespace Dapplo.ActiveDirectory
 		/// <param name="username">Username for the connection, by default the current user is used</param>
 		/// <param name="password">Password for the supplied user</param>
 		/// <returns>IList with the specified type</returns>
-		private static IEnumerable<TAdContainer> Execute<TAdContainer>(string query, string domain = null, string username = null, string password = null) where TAdContainer : IAdObject
+		private static IEnumerable<TAdContainer> Execute<TAdContainer>(string query, string domain = null, string username = null, string password = null)
+            where TAdContainer : IAdObject, new()
 		{
 			var typeMap = ProcessType(typeof (TAdContainer));
 			Log.Info().WriteLine("Querying domain {0} with {1} into {2}", domain, query, typeof (TAdContainer).Name);
@@ -90,7 +90,7 @@ namespace Dapplo.ActiveDirectory
 							continue;
 						}
 
-						var instance = !typeof(TAdContainer).IsInterface ? Activator.CreateInstance<TAdContainer>() : InterceptorFactory.New<TAdContainer>();
+						var instance = Activator.CreateInstance<TAdContainer>();
 
 						foreach (var propertyName in properties.PropertyNames.Cast<string>().Select(x => x.ToLowerInvariant()))
 						{
