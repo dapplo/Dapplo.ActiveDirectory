@@ -10,14 +10,14 @@
 	<LangVersion>latest</LangVersion>
   </PropertyGroup>
 
-  <PropertyGroup Condition="!$(MSBuildProjectName.Contains('Test')) And !$(MSBuildProjectName.Contains('Demo'))">
+  <PropertyGroup Condition="!$(MSBuildProjectName.Contains('Test')) And !$(MSBuildProjectName.Contains('Demo')) And !$(MSBuildProjectName.Contains('Finder'))">
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
 	<AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
 	<IsPackable>true</IsPackable>
 	<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
   
-  <PropertyGroup>
+  <PropertyGroup Condition="!$(MSBuildProjectName.Contains('Finder'))">
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>..\Dapplo.ActiveDirectory.snk</AssemblyOriginatorKeyFile>
     <DelaySign>false</DelaySign>
@@ -43,7 +43,7 @@
   </PropertyGroup>
   
   <ItemGroup Condition="!$(MSBuildProjectName.Contains('Test')) And !$(MSBuildProjectName.Contains('Demo'))">
-    <PackageReference Include="Nerdbank.GitVersioning" Version="2.2.33">
+    <PackageReference Include="Nerdbank.GitVersioning" Version="2.3.38">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
