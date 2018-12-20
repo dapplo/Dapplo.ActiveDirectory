@@ -53,6 +53,8 @@
   <ItemGroup>
     <Compile Include="Configuration\Impl\FinderTranslationsImpl.cs" />
     <Compile Include="Configuration\IFinderTranslations.cs" />
+    <Compile Include="Entities\Impl\User.cs" />
+    <Compile Include="Entities\IUser.cs" />
     <Compile Include="FinderAddonModule.cs" />
     <Compile Include="Startup.cs" />
     <Compile Include="Ui\ViewModels\FinderViewModel.cs" />

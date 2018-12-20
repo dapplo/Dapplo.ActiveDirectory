@@ -19,7 +19,13 @@
 // You should have a copy of the GNU Lesser General Public License
 // along with Finder. If not, see <http://www.gnu.org/licenses/lgpl.txt>.
 
+using System;
+using System.Linq;
 using Caliburn.Micro;
+using Dapplo.ActiveDirectory.Entities;
+using Dapplo.ActiveDirectory.Enums;
+using Dapplo.ActiveDirectory.Finder.Entities;
+using Dapplo.ActiveDirectory.Finder.Entities.Impl;
 using Dapplo.CaliburnMicro;
 
 namespace Dapplo.ActiveDirectory.Finder.Ui.ViewModels
@@ -29,11 +35,27 @@ namespace Dapplo.ActiveDirectory.Finder.Ui.ViewModels
     /// </summary>
     public class FinderViewModel : Screen, IShell
     {
+        public IObservableCollection<IUser> Users { get; } = new BindableCollection<IUser>();
+
         /// <summary>
         /// Constructor for the dependencies
         /// </summary>
         public FinderViewModel()
         {
+            // Limit to 100 items
+            ActiveDirectoryGlobals.SizeLimit = 100;
+            ActiveDirectoryGlobals.PageSize = 0;
+            var query = Query.AND.WhereIsUser().WhereEqualTo(UserProperties.Username, Environment.UserName);
+            var userResult = query.Execute<User>(Environment.UserDomainName).FirstOrDefault();
+
+            if (userResult == null)
+            {
+                return;
+            }
+            query = Query.AND.WhereIsUser().WhereEqualTo(UserProperties.Department, userResult.Department);
+            var departmentResult = query.Execute<User>(Environment.UserDomainName);
+            // Just something to generate some output
+            Users.AddRange(departmentResult);
         }
     }
 }
