@@ -34,7 +34,7 @@ namespace Dapplo.ActiveDirectory.Finder.Entities
         }
 
         [AdProperty(UserProperties.DisplayName)]
-        string Displayname
+        string DisplayName
         {
             get;
             set;

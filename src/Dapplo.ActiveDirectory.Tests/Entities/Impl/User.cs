@@ -26,7 +26,7 @@ namespace Dapplo.ActiveDirectory.Tests.Entities.Impl
 {
     public class User : IUser
     {
-        public string Displayname { get; set; }
+        public string DisplayName { get; set; }
         public string DistinguishedName { get; set; }
         public IList<DistinguishedName> Groups { get; set; }
         public string Name { get; set; }

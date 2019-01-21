@@ -25,7 +25,6 @@ using System;
 using System.Linq;
 using Dapplo.ActiveDirectory.Entities;
 using Dapplo.ActiveDirectory.Enums;
-using Dapplo.ActiveDirectory.Tests.Entities;
 using Dapplo.Log.XUnit;
 using Dapplo.Log;
 using Xunit;
@@ -81,9 +80,9 @@ namespace Dapplo.ActiveDirectory.Tests
 			foreach (var user in userResult)
 			{
 				Log.Info().WriteLine("Id: {0}", user.Id);
-				Log.Info().WriteLine("Name: {0}", user.Displayname);
+				Log.Info().WriteLine("Name: {0}", user.DisplayName);
 				Log.Info().WriteLine("DistinguishedName: {0}", user.DistinguishedName);
-				Log.Info().WriteLine("Found name: {0}", user.Displayname);
+				Log.Info().WriteLine("Found name: {0}", user.DisplayName);
 				Log.Info().WriteLine("Has thumbnail: {0}", user.Thumbnail != null);
 				Log.Info().WriteLine("Is member of {0} groups", user.Groups.Count);
 			}

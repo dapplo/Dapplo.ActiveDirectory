@@ -1,7 +1,9 @@
-﻿using Dapplo.Config.Language;
+﻿using System.Diagnostics.CodeAnalysis;
+using Dapplo.Config.Language;
 
 namespace Dapplo.ActiveDirectory.Finder.Configuration.Impl
 {
+    [SuppressMessage("ReSharper", "UnassignedGetOnlyAutoProperty")]
     public class FinderTranslationsImpl : LanguageBase<IFinderTranslations>, IFinderTranslations
     {
         #region Implementation of IConfigTranslations

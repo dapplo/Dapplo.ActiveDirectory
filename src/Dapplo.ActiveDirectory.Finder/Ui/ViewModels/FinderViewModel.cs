@@ -35,6 +35,11 @@ namespace Dapplo.ActiveDirectory.Finder.Ui.ViewModels
     /// </summary>
     public class FinderViewModel : Screen, IShell
     {
+        private IUser _selectedUser;
+
+        /// <summary>
+        /// Used from the View
+        /// </summary>
         public IObservableCollection<IUser> Users { get; } = new BindableCollection<IUser>();
 
         /// <summary>
@@ -56,6 +61,24 @@ namespace Dapplo.ActiveDirectory.Finder.Ui.ViewModels
             var departmentResult = query.Execute<User>(Environment.UserDomainName);
             // Just something to generate some output
             Users.AddRange(departmentResult);
+        }
+
+        /// <summary>
+        /// Used from the View
+        /// </summary>
+        public IUser SelectedUser
+        {
+            get => _selectedUser;
+            set
+            {
+                if (_selectedUser == value)
+                {
+                    return;
+                }
+
+                _selectedUser = value;
+                NotifyOfPropertyChange(nameof(SelectedUser));
+            }
         }
     }
 }

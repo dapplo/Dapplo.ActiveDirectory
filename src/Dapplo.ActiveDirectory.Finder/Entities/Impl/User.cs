@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using Dapplo.ActiveDirectory.Entities;
-using Dapplo.Config;
+﻿using Dapplo.Config;
 
 namespace Dapplo.ActiveDirectory.Finder.Entities.Impl
 {
@@ -15,7 +13,7 @@ namespace Dapplo.ActiveDirectory.Finder.Entities.Impl
         #region Implementation of IUser
 
         public string AgentId { get; set; }
-        public string Displayname { get; set; }
+        public string DisplayName { get; set; }
         public string Firstname { get; set; }
         public string Username { get; set; }
         public string Name { get; set; }

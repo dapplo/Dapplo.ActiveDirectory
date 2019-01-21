@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:viewModels="clr-namespace:Dapplo.ActiveDirectory.Finder.Ui.ViewModels"
+             xmlns:entities="clr-namespace:Dapplo.ActiveDirectory.Finder.Entities"
              d:DataContext="{d:DesignInstance viewModels:FinderViewModel,IsDesignTimeCreatable=True}"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
@@ -20,20 +21,29 @@
         <DataGrid ItemsSource="{Binding Users}" SelectedItem="{Binding SelectedUser, Mode=TwoWay}" IsReadOnly="True" SelectionMode="Single" SelectionUnit="FullRow" AutoGenerateColumns="False" Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="2">
             <DataGrid.Columns>
                 <DataGridTemplateColumn Header="Name" Width="SizeToCells" IsReadOnly="True">
+                    <d:DataGridTemplateColumn.DataContext>
+                        <x:Type Type="entities:IUser" />
+                    </d:DataGridTemplateColumn.DataContext>
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <Label Content="{Binding Displayname}" />
+                            <Label Content="{Binding DisplayName}" />
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
                 <DataGridTemplateColumn Header="Username" Width="SizeToCells" IsReadOnly="True">
+                    <d:DataGridTemplateColumn.DataContext>
+                        <x:Type Type="entities:IUser" />
+                    </d:DataGridTemplateColumn.DataContext>
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <Label Content="{Binding Username}" />
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-                <DataGridTemplateColumn Header="Abteilung" Width="SizeToCells" IsReadOnly="True">
+                <DataGridTemplateColumn Header="Department" Width="SizeToCells" IsReadOnly="True">
+                    <d:DataGridTemplateColumn.DataContext>
+                        <x:Type Type="entities:IUser" />
+                    </d:DataGridTemplateColumn.DataContext>
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <Label Content="{Binding Department}" />
@@ -41,6 +51,9 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
                 <DataGridTemplateColumn Header="Location" Width="SizeToCells" IsReadOnly="True">
+                    <d:DataGridTemplateColumn.DataContext>
+                        <x:Type Type="entities:IUser" />
+                    </d:DataGridTemplateColumn.DataContext>
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <Label Content="{Binding Location}" />
@@ -48,6 +61,9 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
                 <DataGridTemplateColumn Header="Team" Width="SizeToCells" IsReadOnly="True">
+                    <d:DataGridTemplateColumn.DataContext>
+                        <x:Type Type="entities:IUser" />
+                    </d:DataGridTemplateColumn.DataContext>
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <Label Content="{Binding TeamKz}" />
@@ -55,6 +71,9 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
                 <DataGridTemplateColumn Header="Agent Id" Width="SizeToCells" IsReadOnly="True">
+                    <d:DataGridTemplateColumn.DataContext>
+                        <x:Type Type="entities:IUser" />
+                    </d:DataGridTemplateColumn.DataContext>
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <Label Content="{Binding AgentId}" />
@@ -62,6 +81,9 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
                 <DataGridTemplateColumn Header="Photo" Width="SizeToCells" IsReadOnly="True">
+                    <d:DataGridTemplateColumn.DataContext>
+                        <x:Type Type="entities:IUser" />
+                    </d:DataGridTemplateColumn.DataContext>
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <Image Source="{Binding ThumbnailBytes, TargetNullValue={x:Null}}" />

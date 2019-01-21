@@ -35,7 +35,7 @@ namespace Dapplo.ActiveDirectory.Tests.Entities
 	public interface IUser : IAdObject
 	{
 		[AdProperty(UserProperties.DisplayName)]
-		string Displayname { get; set; }
+		string DisplayName { get; set; }
 
 		[AdProperty(UserProperties.DistinguishedName)]
 		string DistinguishedName { get; set; }
