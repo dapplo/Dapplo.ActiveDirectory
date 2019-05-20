@@ -29,7 +29,11 @@ using Dapplo.Addons.Bootstrapper;
 using Dapplo.CaliburnMicro.Dapp;
 using Dapplo.Config.Ini.Converters;
 using Dapplo.Log;
+#if DEBUG
 using Dapplo.Log.Loggers;
+#else
+using Dapplo.Log.LogFile;
+#endif
 #endregion
 
 namespace Dapplo.ActiveDirectory.Finder

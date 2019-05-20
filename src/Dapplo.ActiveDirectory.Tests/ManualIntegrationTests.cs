@@ -46,7 +46,7 @@ namespace Dapplo.ActiveDirectory.Tests
 			LogSettings.RegisterDefaultLogger<XUnitLogger>(LogLevels.Verbose, testOutputHelper);
 		}
 
-		[Fact]
+		//[Fact]
 		public void TestActiveDirectoryQuery_Computer()
 		{
 			var query = Query.ForComputer(Environment.MachineName);
@@ -67,26 +67,6 @@ namespace Dapplo.ActiveDirectory.Tests
 			}
 		}
 
-		[Fact]
-		public void TestActiveDirectoryQuery_User()
-		{
-			// Limit to 100 items
-			ActiveDirectoryGlobals.SizeLimit = 100;
-			ActiveDirectoryGlobals.PageSize = 0;
-			var query = Query.ForUser("GU68WT").WhereAccountEnabled();
-			var userResult = query.Execute<User>("AD.ING.NET");
-			// Just something to generate some output
-			foreach (var user in userResult)
-			{
-				Log.Info().WriteLine("Id: {0}", user.Id);
-				Log.Info().WriteLine("Name: {0}", user.DisplayName);
-				Log.Info().WriteLine("DistinguishedName: {0}", user.DistinguishedName);
-				Log.Info().WriteLine("Found name: {0}", user.DisplayName);
-				Log.Info().WriteLine("Has thumbnail: {0}", user.Thumbnail != null);
-				Log.Info().WriteLine("Is member of {0} groups", user.Groups?.Count);
-			}
-			Log.Info().WriteLine("Ready");
-		}
 
 		//[Fact]
 		public void TestActiveDirectoryQuery_ChangeUser()
