@@ -1,5 +1,5 @@
 ﻿//  Dapplo - building blocks for desktop applications
-//  Copyright (C) 2015-2016 Dapplo
+//  Copyright (C) 2015-2019 Dapplo
 // 
 //  For more information see: http://dapplo.net/
 //  Dapplo repositories are hosted on GitHub: https://github.com/dapplo
@@ -28,8 +28,8 @@ using System.Linq;
 using System.Reflection;
 using Dapplo.ActiveDirectory.Entities;
 using Dapplo.ActiveDirectory.Enums;
+using Dapplo.ActiveDirectory.Extensions;
 using Dapplo.Log;
-using Dapplo.Utils.Extensions;
 
 #endregion
 
@@ -65,15 +65,31 @@ namespace Dapplo.ActiveDirectory
 		/// <param name="username">Username for the connection, by default the current user is used</param>
 		/// <param name="password">Password for the supplied user</param>
 		/// <returns>IList with the specified type</returns>
-		private static IEnumerable<TAdContainer> Execute<TAdContainer>(string query, string domain = null, string username = null, string password = null)
-            where TAdContainer : IAdObject, new()
+		private static IEnumerable<TAdContainer> Execute<TAdContainer>(string query, string domain = null, string username = null, string password = null) where TAdContainer : IAdObject, new()
 		{
-			var typeMap = ProcessType(typeof (TAdContainer));
-			Log.Info().WriteLine("Querying domain {0} with {1} into {2}", domain, query, typeof (TAdContainer).Name);
+			using (var rootDirectory = new DirectoryEntry($"{ActiveDirectoryGlobals.LdapUriPrefix}{domain ?? Environment.UserDomainName}", username, password))
+			{
+				foreach (var result in Execute<TAdContainer>(query, rootDirectory))
+				{
+					yield return result;
+				}
+			}
+		}
+
+        /// <summary>
+        ///     Query the supplied DirectoryEntry
+        /// </summary>
+        /// <typeparam name="TAdContainer">Type to fill, use AdPropertyAttribute to specify the mapping</typeparam>
+        /// <param name="query">Query as string</param>
+        /// <param name="rootDirectory">Domain for the LDAP server, if null the Environment.UserDomainName is used</param>
+        /// <returns>IEnumerable with the specified type</returns>
+        private static IEnumerable<TAdContainer> Execute<TAdContainer>(string query, DirectoryEntry rootDirectory) where TAdContainer : IAdObject, new()
+		{
+			var typeMap = ProcessType(typeof(TAdContainer));
+			Log.Info().WriteLine("Querying domain {0} with {1} into {2}", rootDirectory.Name, query, typeof(TAdContainer).Name);
 			var queryProperties = typeMap.Select(x => x.Key).ToArray();
 
-			using (var rootDirectory = new DirectoryEntry($"LDAP://{domain ?? Environment.UserDomainName}", username, password))
-			using (var searcher = new DirectorySearcher(rootDirectory, query, queryProperties))
+            using (var searcher = new DirectorySearcher(rootDirectory, query, queryProperties))
 			{
 				// Set some globals
 				searcher.PageSize = ActiveDirectoryGlobals.PageSize;
@@ -165,7 +181,7 @@ namespace Dapplo.ActiveDirectory
 			Log.Verbose().WriteLine("List of all writable properties:");
 			foreach (var writableProperty in directoryEntry.Properties[AdProperties.AllowedAttributesEffective.EnumValueOf()].Cast<string>().OrderBy(x => x))
 			{
-				Log.Verbose().WriteLine("Writeable property: {0}", writableProperty);
+				Log.Verbose().WriteLine("Writable property: {0}", writableProperty);
 			}
 			return directoryEntry;
 		}
@@ -191,7 +207,7 @@ namespace Dapplo.ActiveDirectory
 		private static string ReadAdProperty(MemberInfo memberInfo)
 		{
 			var adPropertyAttribute = memberInfo.GetCustomAttribute<AdPropertyAttribute>(true);
-			return adPropertyAttribute?.AdProperty.EnumValueOf().ToLowerInvariant();
+			return adPropertyAttribute?.AdProperty;
 		}
 
 		/// <summary>
@@ -203,13 +219,33 @@ namespace Dapplo.ActiveDirectory
 		/// <param name="password">Password for the supplied user</param>
 		public static void Update<TAdContainer>(this TAdContainer adContainerObject, string username = null, string password = null) where TAdContainer : IAdObject
 		{
+			var typeMap = ProcessType(typeof(TAdContainer));
+			if (typeMap[AdProperties.Id.EnumValueOf()].Count() > 1)
+			{
+				throw new ArgumentException("Only one property can be marked with AdProperties.Id", nameof(adContainerObject));
+			}
+
+			var activeDirectoryPath = typeMap[AdProperties.Id.EnumValueOf()].First().GetValue(adContainerObject) as string;
+
+			var directoryEntry = string.IsNullOrEmpty(username) && string.IsNullOrEmpty(password)
+				? new DirectoryEntry(activeDirectoryPath)
+				: new DirectoryEntry(activeDirectoryPath, username, password);
+			adContainerObject.Update(directoryEntry);
+		}
+
+        /// <summary>
+        ///     If you want to update information, the minimum what the passed container needs is a property with AdProperties.Id
+        /// </summary>
+        /// <typeparam name="TAdContainer">The type of the AD Container object</typeparam>
+        /// <param name="adContainerObject">object which has the values to update</param>
+        /// <param name="directoryEntry">DirectoryEntry</param>
+        public static void Update<TAdContainer>(this TAdContainer adContainerObject, DirectoryEntry directoryEntry) where TAdContainer : IAdObject
+		{
 			var typeMap = ProcessType(typeof (TAdContainer));
 			if (typeMap[AdProperties.Id.EnumValueOf()].Count() > 1)
 			{
 				throw new ArgumentException("Only one property can be marked with AdProperties.Id", nameof(adContainerObject));
 			}
-			var adspath = typeMap[AdProperties.Id.EnumValueOf()].First().GetValue(adContainerObject) as string;
-			var directoryEntry = new DirectoryEntry(adspath, username, password);
 			directoryEntry.RefreshCache(new[] {AdProperties.AllowedAttributesEffective.EnumValueOf()});
 
 			var needsCommit = false;

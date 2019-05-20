@@ -1,5 +1,5 @@
 ﻿//  Dapplo - building blocks for desktop applications
-//  Copyright (C) 2015-2016 Dapplo
+//  Copyright (C) 2015-2019 Dapplo
 // 
 //  For more information see: http://dapplo.net/
 //  Dapplo repositories are hosted on GitHub: https://github.com/dapplo
@@ -22,6 +22,7 @@
 #region using
 
 using System;
+using Dapplo.ActiveDirectory.Extensions;
 
 #endregion
 
@@ -34,7 +35,7 @@ namespace Dapplo.ActiveDirectory
 	public class AdPropertyAttribute : Attribute
 	{
 		/// <summary>
-		///     Specify an Enum value, which correspons to an AD propertname, to make maping to this class property possible.
+		///     Specify an Enum value, which corresponds to an AD property name, to make mapping to this class property possible.
 		/// </summary>
 		/// <param name="adPropertyName"></param>
 		public AdPropertyAttribute(object adPropertyName)
@@ -43,16 +44,17 @@ namespace Dapplo.ActiveDirectory
 			{
 				throw new ArgumentNullException(nameof(adPropertyName));
 			}
-			if (!adPropertyName.GetType().IsEnum)
+			if (adPropertyName.GetType().IsEnum)
 			{
-				throw new ArgumentException("Should be an enum value", nameof(adPropertyName));
+				AdProperty = ((Enum) adPropertyName).EnumValueOf().ToLowerInvariant();
+				return;
 			}
-			AdProperty = (Enum) adPropertyName;
+			AdProperty = adPropertyName.ToString().ToLowerInvariant();
 		}
 
 		/// <summary>
 		///     The AD property name for this property
 		/// </summary>
-		public Enum AdProperty { get; }
+		public string AdProperty { get; }
 	}
 }

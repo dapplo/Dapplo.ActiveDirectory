@@ -1,5 +1,5 @@
 ﻿//  Dapplo - building blocks for desktop applications
-//  Copyright (C) 2015-2016 Dapplo
+//  Copyright (C) 2015-2019 Dapplo
 // 
 //  For more information see: http://dapplo.net/
 //  Dapplo repositories are hosted on GitHub: https://github.com/dapplo
@@ -24,7 +24,6 @@
 using System;
 using System.Linq;
 using Dapplo.ActiveDirectory.Entities;
-using Dapplo.ActiveDirectory.Enums;
 using Dapplo.Log.XUnit;
 using Dapplo.Log;
 using Xunit;
@@ -47,7 +46,7 @@ namespace Dapplo.ActiveDirectory.Tests
 			LogSettings.RegisterDefaultLogger<XUnitLogger>(LogLevels.Verbose, testOutputHelper);
 		}
 
-		//[Fact]
+		[Fact]
 		public void TestActiveDirectoryQuery_Computer()
 		{
 			var query = Query.ForComputer(Environment.MachineName);
@@ -68,14 +67,14 @@ namespace Dapplo.ActiveDirectory.Tests
 			}
 		}
 
-		//[Fact]
+		[Fact]
 		public void TestActiveDirectoryQuery_User()
 		{
 			// Limit to 100 items
 			ActiveDirectoryGlobals.SizeLimit = 100;
 			ActiveDirectoryGlobals.PageSize = 0;
-			var query = Query.ForUser().WhereAccountEnabled().WhereAny(UserProperties.IpTelephoneNumber).WhereAny(UserProperties.TelephoneNumber);
-			var userResult = query.Execute<User>(Environment.UserDomainName);
+			var query = Query.ForUser("GU68WT").WhereAccountEnabled();
+			var userResult = query.Execute<User>("AD.ING.NET");
 			// Just something to generate some output
 			foreach (var user in userResult)
 			{
@@ -84,7 +83,7 @@ namespace Dapplo.ActiveDirectory.Tests
 				Log.Info().WriteLine("DistinguishedName: {0}", user.DistinguishedName);
 				Log.Info().WriteLine("Found name: {0}", user.DisplayName);
 				Log.Info().WriteLine("Has thumbnail: {0}", user.Thumbnail != null);
-				Log.Info().WriteLine("Is member of {0} groups", user.Groups.Count);
+				Log.Info().WriteLine("Is member of {0} groups", user.Groups?.Count);
 			}
 			Log.Info().WriteLine("Ready");
 		}

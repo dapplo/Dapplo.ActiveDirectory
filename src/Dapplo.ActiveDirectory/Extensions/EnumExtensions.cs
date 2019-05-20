@@ -19,18 +19,37 @@
 //  You should have a copy of the GNU Lesser General Public License
 //  along with Dapplo.ActiveDirectory. If not, see <http://www.gnu.org/licenses/lgpl.txt>.
 
-using System;
+#region Usings
 
-namespace Dapplo.ActiveDirectory.Tests.Entities.Impl
+using System;
+using System.Reflection;
+using System.Runtime.Serialization;
+
+#endregion
+
+namespace Dapplo.ActiveDirectory.Extensions
 {
-    public class Computer : IComputer
-    {
-        public string Description { get; set; }
-        public string Hostname { get; set; }
-        public string Location { get; set; }
-        public string OperatingSystem { get; set; }
-        public string OperatingSystemServicePack { get; set; }
-        public DateTimeOffset WhenCreated { get; set; }
-        public string Id { get; set; }
-    }
+	/// <summary>
+	///     Extensions for enums
+	/// </summary>
+	public static class EnumExtensions
+	{
+		/// <summary>
+		///     The returns the Value from the EnumMemberAttribute, or a ToString on the element.
+		///     This can be used to create a lookup from string to enum element
+		/// </summary>
+		/// <param name="enumerationItem">Enum</param>
+		/// <returns>string</returns>
+		public static string EnumValueOf(this Enum enumerationItem)
+		{
+			if (enumerationItem == null)
+			{
+				return null;
+			}
+
+			var enumString = enumerationItem.ToString();
+			var attribute = enumerationItem.GetType().GetRuntimeField(enumString)?.GetAttribute<EnumMemberAttribute>(false);
+			return attribute != null ? attribute.Value : enumString;
+		}
+	}
 }

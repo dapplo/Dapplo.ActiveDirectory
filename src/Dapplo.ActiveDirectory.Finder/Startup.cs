@@ -1,5 +1,5 @@
 ﻿// Dapplo - building blocks for desktop applications
-// Copyright (C) 2017-2018  Dapplo
+// Copyright (C) 2017-2019  Dapplo
 // 
 // For more information see: http://dapplo.net/
 // Dapplo repositories are hosted on GitHub: https://github.com/dapplo
@@ -30,12 +30,6 @@ using Dapplo.CaliburnMicro.Dapp;
 using Dapplo.Config.Ini.Converters;
 using Dapplo.Log;
 using Dapplo.Log.Loggers;
-#if DEBUG
-
-#else
-using Dapplo.Log.LogFile;
-#endif
-
 #endregion
 
 namespace Dapplo.ActiveDirectory.Finder

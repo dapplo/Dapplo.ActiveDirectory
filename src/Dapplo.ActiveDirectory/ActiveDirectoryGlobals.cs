@@ -1,5 +1,5 @@
 ﻿//  Dapplo - building blocks for desktop applications
-//  Copyright (C) 2015-2016 Dapplo
+//  Copyright (C) 2015-2019 Dapplo
 // 
 //  For more information see: http://dapplo.net/
 //  Dapplo repositories are hosted on GitHub: https://github.com/dapplo
@@ -50,5 +50,11 @@ namespace Dapplo.ActiveDirectory
 		/// Specify if the search is cached
 		/// </summary>
 		public static bool CacheResults { get; set; } = false;
+
+		/// <summary>
+		/// The prefix used for the Ldap URI building
+		/// </summary>
+		public static string LdapUriPrefix = "LDAP://";
+
 	}
 }
