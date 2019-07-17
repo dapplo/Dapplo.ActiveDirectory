@@ -21,7 +21,6 @@
 
 using Autofac;
 using Dapplo.ActiveDirectory.Finder.Configuration;
-using Dapplo.ActiveDirectory.Finder.Configuration.Impl;
 using Dapplo.ActiveDirectory.Finder.Ui.ViewModels;
 using Dapplo.Addons;
 using Dapplo.CaliburnMicro;
@@ -44,7 +43,7 @@ namespace Dapplo.ActiveDirectory.Finder
                 .SingleInstance();
 
             builder
-                .RegisterType<FinderTranslationsImpl>()
+                .Register(c => Language<IFinderTranslations>.Create())
                 .As<ILanguage>()
                 .As<IFinderTranslations>()
                 .SingleInstance();

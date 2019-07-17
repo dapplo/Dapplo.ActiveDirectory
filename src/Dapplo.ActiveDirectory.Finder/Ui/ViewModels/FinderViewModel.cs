@@ -25,7 +25,6 @@ using Caliburn.Micro;
 using Dapplo.ActiveDirectory.Entities;
 using Dapplo.ActiveDirectory.Enums;
 using Dapplo.ActiveDirectory.Finder.Entities;
-using Dapplo.ActiveDirectory.Finder.Entities.Impl;
 using Dapplo.CaliburnMicro;
 
 namespace Dapplo.ActiveDirectory.Finder.Ui.ViewModels
@@ -51,14 +50,14 @@ namespace Dapplo.ActiveDirectory.Finder.Ui.ViewModels
             ActiveDirectoryGlobals.SizeLimit = 100;
             ActiveDirectoryGlobals.PageSize = 0;
             var query = Query.AND.WhereIsUser().WhereEqualTo(UserProperties.Username, Environment.UserName);
-            var userResult = query.Execute<User>(Environment.UserDomainName).FirstOrDefault();
+            var userResult = query.Execute<IUser>(Environment.UserDomainName).FirstOrDefault();
 
             if (userResult == null)
             {
                 return;
             }
             query = Query.AND.WhereIsUser().WhereEqualTo(UserProperties.Department, userResult.Department);
-            var departmentResult = query.Execute<User>(Environment.UserDomainName);
+            var departmentResult = query.Execute<IUser>(Environment.UserDomainName);
             // Just something to generate some output
             Users.AddRange(departmentResult);
         }

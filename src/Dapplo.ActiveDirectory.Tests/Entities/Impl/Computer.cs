@@ -23,6 +23,7 @@ using System;
 
 namespace Dapplo.ActiveDirectory.Tests.Entities.Impl
 {
+    /// <inheritdoc />
     public class Computer : IComputer
     {
         public string Description { get; set; }

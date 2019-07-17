@@ -1,19 +1,18 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net461</TargetFrameworks>
-	<Description>A library to access the ActiveDirectory with strong typed queries</Description>
+    <TargetFrameworks>net461;netcoreapp3.0</TargetFrameworks>
+    <Description>A library to access the ActiveDirectory with strong typed queries</Description>
     <AssemblyTitle>Dapplo.ActiveDirectory</AssemblyTitle>
     <AssemblyName>Dapplo.ActiveDirectory</AssemblyName>
     <PackageId>Dapplo.ActiveDirectory</PackageId>
-	<PackageTags>dapplo activedirectory</PackageTags>
-	<Version>1.0.0</Version>
-    <AssemblyVersion>1.0.0</AssemblyVersion>
-    <FileVersion>1.0.0</FileVersion>
+    <PackageTags>dapplo activedirectory</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Dapplo.Log" Version="1.3.21" />
+    <PackageReference Include="System.DirectoryServices" Version="4.5.0" />
+    <PackageReference Include="System.Reflection.DispatchProxy" Version="4.5.1" />
   </ItemGroup>
   
   <ItemGroup Condition=" '$(TargetFramework)' == 'net461' ">
@@ -22,7 +21,6 @@
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
-    <Reference Include="System.DirectoryServices" />
     <Reference Include="System.Runtime.Caching" />
     <Reference Include="System.Runtime.Serialization" />
   </ItemGroup>

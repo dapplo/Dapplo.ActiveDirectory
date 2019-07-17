@@ -23,7 +23,9 @@
 
 using System;
 using System.Linq;
+using System.Reflection;
 using Dapplo.ActiveDirectory.Entities;
+using Dapplo.ActiveDirectory.Tests.Entities;
 using Dapplo.Log.XUnit;
 using Dapplo.Log;
 using Xunit;
@@ -56,6 +58,32 @@ namespace Dapplo.ActiveDirectory.Tests
 			// Just something to generate some output
 			foreach (var computer in computerResult)
 			{
+#pragma warning disable 184
+				Assert.False(computer is DispatchProxy);
+#pragma warning restore 184
+				Log.Info().WriteLine("Id: {0}", computer.Id);
+				Log.Info().WriteLine("Name: {0}", computer.Hostname);
+				Log.Info().WriteLine("Description: {0}", computer.Description);
+				Log.Info().WriteLine("Location: {0}", computer.Location);
+				Log.Info().WriteLine("OperatingSystem: {0}", computer.OperatingSystem);
+				Log.Info().WriteLine("OperatingSystemServicePack: {0}", computer.OperatingSystemServicePack);
+				Log.Info().WriteLine("WhenCreated: {0}", computer.WhenCreated);
+				ActiveDirectoryExtensions.GetByAdsPath(computer.Id);
+			}
+		}
+
+		//[Fact]
+		public void TestActiveDirectoryQuery_IComputer()
+		{
+			var query = Query.ForComputer(Environment.MachineName);
+			var computerResult = query.Execute<IComputer>(Environment.UserDomainName).ToList();
+			Assert.True(computerResult.Any());
+
+			// Just something to generate some output
+			foreach (var computer in computerResult)
+			{
+				// ReSharper disable once SuspiciousTypeConversion.Global
+				Assert.True(computer is DispatchProxy);
 				Log.Info().WriteLine("Id: {0}", computer.Id);
 				Log.Info().WriteLine("Name: {0}", computer.Hostname);
 				Log.Info().WriteLine("Description: {0}", computer.Description);
@@ -68,8 +96,8 @@ namespace Dapplo.ActiveDirectory.Tests
 		}
 
 
-		//[Fact]
-		public void TestActiveDirectoryQuery_ChangeUser()
+        //[Fact]
+        public void TestActiveDirectoryQuery_ChangeUser()
 		{
 			var query = Query.ForUser(Environment.UserName);
 			var userResult = query.Execute<User>(Environment.UserDomainName).FirstOrDefault();
