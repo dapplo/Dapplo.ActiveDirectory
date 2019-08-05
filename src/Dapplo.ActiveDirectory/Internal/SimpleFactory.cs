@@ -19,19 +19,25 @@
 //  You should have a copy of the GNU Lesser General Public License
 //  along with Dapplo.ActiveDirectory. If not, see <http://www.gnu.org/licenses/lgpl.txt>.
 
-using System.Collections.Generic;
-using Dapplo.ActiveDirectory.Entities;
+using System;
 
-namespace Dapplo.ActiveDirectory.Tests.Entities.Impl
+namespace Dapplo.ActiveDirectory.Internal
 {
-    public class User : IUser
+    /// <inheritdoc />
+    internal class SimpleFactory : IAdObjectFactory
     {
-        public string DisplayName { get; set; }
-        public string DistinguishedName { get; set; }
-        public IList<DistinguishedName> Groups { get; set; }
-        public string Name { get; set; }
-        public string TelephoneNumber { get; set; }
-        public byte[] Thumbnail { get; set; }
-        public string Id { get; set; }
+        /// <summary>
+        /// Generate a SimpleDictionaryProxy when only an interface is passed
+        /// </summary>
+        /// <typeparam name="TAdContainer">The type to generate</typeparam>
+        /// <returns>TAdContainer</returns>
+        public TAdContainer Generate<TAdContainer>()
+        {
+            var instance = typeof(TAdContainer).IsInterface ?
+                SimpleDictionaryProxy.Create<TAdContainer>() :
+                Activator.CreateInstance<TAdContainer>();
+
+            return instance;
+        }
     }
 }

@@ -50,14 +50,14 @@ namespace Dapplo.ActiveDirectory.Finder.Ui.ViewModels
             ActiveDirectoryGlobals.SizeLimit = 100;
             ActiveDirectoryGlobals.PageSize = 0;
             var query = Query.AND.WhereIsUser().WhereEqualTo(UserProperties.Username, Environment.UserName);
-            var userResult = query.Execute<IUser>(Environment.UserDomainName).FirstOrDefault();
+            var userResult = query.Execute<IUser>().FirstOrDefault();
 
             if (userResult == null)
             {
                 return;
             }
             query = Query.AND.WhereIsUser().WhereEqualTo(UserProperties.Department, userResult.Department);
-            var departmentResult = query.Execute<IUser>(Environment.UserDomainName);
+            var departmentResult = query.Execute<IUser>();
             // Just something to generate some output
             Users.AddRange(departmentResult);
         }

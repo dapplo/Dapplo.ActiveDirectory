@@ -19,10 +19,7 @@
 //  You should have a copy of the GNU Lesser General Public License
 //  along with Dapplo.ActiveDirectory. If not, see <http://www.gnu.org/licenses/lgpl.txt>.
 
-#region using
-
-
-#endregion
+using Dapplo.ActiveDirectory.Internal;
 
 namespace Dapplo.ActiveDirectory
 {
@@ -55,6 +52,11 @@ namespace Dapplo.ActiveDirectory
 		/// The prefix used for the Ldap URI building
 		/// </summary>
 		public static string LdapUriPrefix = "LDAP://";
+
+		/// <summary>
+		/// This is the factory used to generate all the objects in the result
+		/// </summary>
+		public static IAdObjectFactory Factory { get; set; } = new SimpleFactory();
 
 	}
 }

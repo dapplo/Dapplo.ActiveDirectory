@@ -24,12 +24,12 @@
 using System;
 using System.Collections.Generic;
 using System.DirectoryServices;
+using System.DirectoryServices.ActiveDirectory;
 using System.Linq;
 using System.Reflection;
 using Dapplo.ActiveDirectory.Entities;
 using Dapplo.ActiveDirectory.Enums;
 using Dapplo.ActiveDirectory.Extensions;
-using Dapplo.ActiveDirectory.Internal;
 using Dapplo.Log;
 
 #endregion
@@ -43,32 +43,32 @@ namespace Dapplo.ActiveDirectory
 	{
 		private static readonly LogSource Log = new LogSource();
 
-		/// <summary>
-		///     Use the ActiveDirectory with the supplied domain to query
-		/// </summary>
-		/// <typeparam name="T">Type to fill, use AdPropertyAttribute to specify the mapping</typeparam>
-		/// <param name="query">Query</param>
-		/// <param name="domain">Domain for the LDAP server, if null the Environment.UserDomainName is used</param>
-		/// <param name="username">Username for the connection, by default the current user is used</param>
-		/// <param name="password">Password for the supplied user</param>
-		/// <returns>IEnumerable with the specified type</returns>
-		public static IEnumerable<T> Execute<T>(this Query query, string domain = null, string username = null, string password = null) where T : IAdObject
+        /// <summary>
+        ///     Use the ActiveDirectory with the supplied domain to query
+        /// </summary>
+        /// <typeparam name="T">Type to fill, use AdPropertyAttribute to specify the mapping</typeparam>
+        /// <param name="query">Query</param>
+        /// <param name="domain">Domain for the LDAP server, if null the Domain.GetCurrentDomain().Name is used</param>
+        /// <param name="username">Username for the connection, by default the current user is used</param>
+        /// <param name="password">Password for the supplied user</param>
+        /// <returns>IEnumerable with the specified type</returns>
+        public static IEnumerable<T> Execute<T>(this Query query, string domain = null, string username = null, string password = null) where T : IAdObject
 		{
 			return Execute<T>(query.Build(), domain, username, password);
 		}
 
-		/// <summary>
-		///     Query the LDAP server for the supplied domain
-		/// </summary>
-		/// <typeparam name="TAdContainer">Type to fill, use AdPropertyAttribute to specify the mapping</typeparam>
-		/// <param name="query">Query as string</param>
-		/// <param name="domain">Domain for the LDAP server, if null the Environment.UserDomainName is used</param>
-		/// <param name="username">Username for the connection, by default the current user is used</param>
-		/// <param name="password">Password for the supplied user</param>
-		/// <returns>IList with the specified type</returns>
-		private static IEnumerable<TAdContainer> Execute<TAdContainer>(string query, string domain = null, string username = null, string password = null) where TAdContainer : IAdObject
+        /// <summary>
+        ///     Query the LDAP server for the supplied domain
+        /// </summary>
+        /// <typeparam name="TAdContainer">Type to fill, use AdPropertyAttribute to specify the mapping</typeparam>
+        /// <param name="query">Query as string</param>
+        /// <param name="domain">Domain for the LDAP server, if null the Domain.GetCurrentDomain().Name is used</param>
+        /// <param name="username">Username for the connection, by default the current user is used</param>
+        /// <param name="password">Password for the supplied user</param>
+        /// <returns>IList with the specified type</returns>
+        private static IEnumerable<TAdContainer> Execute<TAdContainer>(string query, string domain = null, string username = null, string password = null) where TAdContainer : IAdObject
 		{
-			using (var rootDirectory = new DirectoryEntry($"{ActiveDirectoryGlobals.LdapUriPrefix}{domain ?? Environment.UserDomainName}", username, password))
+			using (var rootDirectory = new DirectoryEntry($"{ActiveDirectoryGlobals.LdapUriPrefix}{domain ?? Domain.GetCurrentDomain().Name}", username, password))
 			{
 				foreach (var result in Execute<TAdContainer>(query, rootDirectory))
 				{
@@ -82,7 +82,7 @@ namespace Dapplo.ActiveDirectory
         /// </summary>
         /// <typeparam name="TAdContainer">Type to fill, use AdPropertyAttribute to specify the mapping</typeparam>
         /// <param name="query">Query as string</param>
-        /// <param name="rootDirectory">Domain for the LDAP server, if null the Environment.UserDomainName is used</param>
+        /// <param name="rootDirectory">Domain for the LDAP server, if null the Domain.GetCurrentDomain().Name is used</param>
         /// <returns>IEnumerable with the specified type</returns>
         private static IEnumerable<TAdContainer> Execute<TAdContainer>(string query, DirectoryEntry rootDirectory) where TAdContainer : IAdObject
         {
@@ -109,18 +109,10 @@ namespace Dapplo.ActiveDirectory
 							continue;
 						}
 
-						TAdContainer instance;
-						if (adContainerType.IsInterface)
-						{
-							instance = SimpleDictionaryProxy.Create<TAdContainer>();
-						}
-						else
-						{
-							// If the TAdContainer doesn't have a default constructor it generates an exception here
-                            instance = Activator.CreateInstance<TAdContainer>();
-                        }
+						
+						TAdContainer instance = ActiveDirectoryGlobals.Factory.Generate<TAdContainer>();
 
-						foreach (var propertyName in properties.PropertyNames.Cast<string>().Select(x => x.ToLowerInvariant()))
+                        foreach (var propertyName in properties.PropertyNames.Cast<string>().Select(x => x.ToLowerInvariant()))
 						{
 							if (!typeMap.Contains(propertyName))
 							{

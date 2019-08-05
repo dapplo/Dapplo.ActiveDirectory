@@ -65,6 +65,7 @@ namespace Dapplo.ActiveDirectory.Entities
 		///     AND query
 		/// </summary>
 		/// <returns>Query</returns>
+		// ReSharper disable once InconsistentNaming
 		public static Query AND => Create(Operators.And);
 
 		/// <summary>
@@ -86,10 +87,11 @@ namespace Dapplo.ActiveDirectory.Entities
 			}
 		}
 
-		/// <summary>
-		///     OR query
-		/// </summary>
-		/// <returns>Query</returns>
+        /// <summary>
+        ///     OR query
+        /// </summary>
+        /// <returns>Query</returns>
+        // ReSharper disable once InconsistentNaming
 		public static Query OR => Create(Operators.Or);
 
 		/// <summary>

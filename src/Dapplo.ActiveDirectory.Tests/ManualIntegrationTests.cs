@@ -52,7 +52,7 @@ namespace Dapplo.ActiveDirectory.Tests
 		public void TestActiveDirectoryQuery_Computer()
 		{
 			var query = Query.ForComputer(Environment.MachineName);
-			var computerResult = query.Execute<Computer>(Environment.UserDomainName).ToList();
+			var computerResult = query.Execute<Computer>().ToList();
 			Assert.True(computerResult.Any());
 
 			// Just something to generate some output
@@ -76,7 +76,7 @@ namespace Dapplo.ActiveDirectory.Tests
 		public void TestActiveDirectoryQuery_IComputer()
 		{
 			var query = Query.ForComputer(Environment.MachineName);
-			var computerResult = query.Execute<IComputer>(Environment.UserDomainName).ToList();
+			var computerResult = query.Execute<IComputer>().ToList();
 			Assert.True(computerResult.Any());
 
 			// Just something to generate some output
@@ -100,12 +100,12 @@ namespace Dapplo.ActiveDirectory.Tests
         public void TestActiveDirectoryQuery_ChangeUser()
 		{
 			var query = Query.ForUser(Environment.UserName);
-			var userResult = query.Execute<User>(Environment.UserDomainName).FirstOrDefault();
+			var userResult = query.Execute<IUser>().FirstOrDefault();
 			Assert.NotNull(userResult);
 
 			userResult.TelephoneNumber = "911";
 
-			userResult.Update(Environment.UserDomainName);
+			userResult.Update(Environment.UserName);
 		}
 	}
 }
