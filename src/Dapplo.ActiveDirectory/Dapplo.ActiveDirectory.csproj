@@ -11,8 +11,8 @@
 
   <ItemGroup>
     <PackageReference Include="Dapplo.Log" Version="1.3.26" />
-    <PackageReference Include="System.DirectoryServices" Version="4.5.0" />
-    <PackageReference Include="System.Reflection.DispatchProxy" Version="4.5.1" />
+    <PackageReference Include="System.DirectoryServices" Version="4.6.0" />
+    <PackageReference Include="System.Reflection.DispatchProxy" Version="4.6.0" />
   </ItemGroup>
   
   <ItemGroup Condition=" '$(TargetFramework)' == 'net461' ">

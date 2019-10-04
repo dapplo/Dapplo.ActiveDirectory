@@ -231,7 +231,7 @@ namespace Dapplo.ActiveDirectory
 
 			var activeDirectoryPath = typeMap[AdProperties.Id.EnumValueOf()].First().GetValue(adContainerObject) as string;
 
-			var directoryEntry = string.IsNullOrEmpty(username) && string.IsNullOrEmpty(password)
+			using var directoryEntry = string.IsNullOrEmpty(username) && string.IsNullOrEmpty(password)
 				? new DirectoryEntry(activeDirectoryPath)
 				: new DirectoryEntry(activeDirectoryPath, username, password);
 			adContainerObject.Update(directoryEntry);
