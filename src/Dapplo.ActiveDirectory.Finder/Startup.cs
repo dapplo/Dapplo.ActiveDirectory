@@ -72,7 +72,6 @@ namespace Dapplo.ActiveDirectory.Finder
                 .WithApplicationName("Finder")
                 .WithMutex("896482B0-2E32-480C-A9C1-87B1CCF245BF")
                 .WithoutCopyOfEmbeddedAssemblies()
-                .WithoutCopyOfAssembliesToProbingPath()
                 .WithCaliburnMicro()
                 .BuildApplicationConfig();
 
