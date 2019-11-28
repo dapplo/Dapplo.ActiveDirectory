@@ -19,8 +19,6 @@
 //  You should have a copy of the GNU Lesser General Public License
 //  along with Dapplo.ActiveDirectory. If not, see <http://www.gnu.org/licenses/lgpl.txt>.
 
-#region using
-
 using System;
 using System.Collections.Generic;
 using System.DirectoryServices;
@@ -30,9 +28,8 @@ using System.Reflection;
 using Dapplo.ActiveDirectory.Entities;
 using Dapplo.ActiveDirectory.Enums;
 using Dapplo.ActiveDirectory.Extensions;
+using Dapplo.ActiveDirectory.Internal;
 using Dapplo.Log;
-
-#endregion
 
 namespace Dapplo.ActiveDirectory
 {
@@ -68,14 +65,12 @@ namespace Dapplo.ActiveDirectory
         /// <returns>IList with the specified type</returns>
         private static IEnumerable<TAdContainer> Execute<TAdContainer>(string query, string domain = null, string username = null, string password = null) where TAdContainer : IAdObject
 		{
-			using (var rootDirectory = new DirectoryEntry($"{ActiveDirectoryGlobals.LdapUriPrefix}{domain ?? Domain.GetCurrentDomain().Name}", username, password))
-			{
-				foreach (var result in Execute<TAdContainer>(query, rootDirectory))
-				{
-					yield return result;
-				}
-			}
-		}
+            using var rootDirectory = new DirectoryEntry($"{ActiveDirectoryGlobals.LdapUriPrefix}{domain ?? Domain.GetCurrentDomain().Name}", username, password);
+            foreach (var result in Execute<TAdContainer>(query, rootDirectory))
+            {
+                yield return result;
+            }
+        }
 
         /// <summary>
         ///     Query the supplied DirectoryEntry
@@ -92,74 +87,43 @@ namespace Dapplo.ActiveDirectory
 			Log.Info().WriteLine("Querying domain {0} with {1} into {2}", rootDirectory.Name, query, adContainerType.Name);
 			var queryProperties = typeMap.Select(x => x.Key).ToArray();
 
-            using (var searcher = new DirectorySearcher(rootDirectory, query, queryProperties))
-			{
-				// Set some globals
-				searcher.PageSize = ActiveDirectoryGlobals.PageSize;
-				searcher.SizeLimit = ActiveDirectoryGlobals.SizeLimit; 
-				searcher.CacheResults = ActiveDirectoryGlobals.CacheResults;
-				using (var results = searcher.FindAll())
-				{
-					foreach (SearchResult searchResult in results)
-					{
-						Log.Verbose().WriteLine("Processing {0}", searchResult.Path);
-						var properties = searchResult.Properties;
-						if (properties.PropertyNames == null)
-						{
-							continue;
-						}
+            using var searcher = new DirectorySearcher(rootDirectory, query, queryProperties)
+            {
+                // Set some globals
+                PageSize = ActiveDirectoryGlobals.PageSize,
+                SizeLimit = ActiveDirectoryGlobals.SizeLimit,
+                CacheResults = ActiveDirectoryGlobals.CacheResults
+            };
+            using var results = searcher.FindAll();
+            foreach (SearchResult searchResult in results)
+            {
+                Log.Verbose().WriteLine("Processing {0}", searchResult.Path);
+                var directoryEntry = searchResult.GetDirectoryEntry();
 
-						
-						TAdContainer instance = ActiveDirectoryGlobals.Factory.Generate<TAdContainer>();
+                TAdContainer instance = ActiveDirectoryGlobals.Factory.Generate<TAdContainer>();
+                // Copy ID, which is the path
+                instance.Id = directoryEntry.Path;
 
-                        foreach (var propertyName in properties.PropertyNames.Cast<string>().Select(x => x.ToLowerInvariant()))
-						{
-							if (!typeMap.Contains(propertyName))
-							{
-								Log.Verbose().WriteLine("No property {0} in {1}", propertyName, typeof(TAdContainer).Name);
-								continue;
-							}
-							var propertyInfos = typeMap[propertyName];
-							var values = properties[propertyName].Cast<object>().ToArray();
-							var value = values.Length > 1 ? values : values[0];
-							if (value == null)
-							{
-								continue;
-							}
-							var valueType = value.GetType();
-							foreach (var propertyInfo in propertyInfos)
-							{
-								if (propertyInfo.PropertyType.IsAssignableFrom(valueType))
-								{
-									propertyInfo.SetValue(instance, value);
-								}
-								else if (valueType == typeof(DateTime) && propertyInfo.PropertyType == typeof(DateTimeOffset))
-								{
-									var dateTime = (DateTime)value;
-									propertyInfo.SetValue(instance, (DateTimeOffset)dateTime);
-								}
-								else if (valueType.IsArray || propertyInfo.PropertyType.IsGenericType)
-								{
-									if (propertyInfo.PropertyType.GenericTypeArguments[0] == typeof(DistinguishedName))
-									{
-										propertyInfo.SetValue(instance, values.Select(x => (DistinguishedName)(x as string)).ToList());
-									}
-									else
-									{
-										propertyInfo.SetValue(instance, values.Select(x => Convert.ChangeType(x, propertyInfo.PropertyType)).ToList());
-									}
-								}
-								else
-								{
-									propertyInfo.SetValue(instance, Convert.ChangeType(value, propertyInfo.PropertyType));
-								}
-							}
-						}
-						yield return instance;
-					}
-				}
-			}
-		}
+                // Loop over directoryEntry.Properties as we don't know what case they are written in
+                foreach (var propertyName in directoryEntry.Properties.PropertyNames.Cast<string>().Select(x => x.ToLowerInvariant()))
+                {
+                    if (!typeMap.Contains(propertyName))
+                    {
+                        continue;
+                    }
+
+                    var propertyInfos = typeMap[propertyName];
+
+                    // Here comes the logic to map the value of properties in the AD to the instance
+                    foreach (var propertyInfo in propertyInfos)
+                    {
+                        var value = directoryEntry.ConvertProperty(propertyName, propertyInfo.PropertyType);
+                        propertyInfo.SetValue(instance, value);
+                    }
+                }
+                yield return instance;
+            }
+        }
 
 		/// <summary>
 		///     This is more for debugging, with retrieve the complete DirectoryEntry for the AdsPath
@@ -176,11 +140,12 @@ namespace Dapplo.ActiveDirectory
 			var directoryEntry = new DirectoryEntry(adsPath, username, password);
 
 			if (!Log.IsVerboseEnabled()) return directoryEntry;
+
 			Log.Verbose().WriteLine("List of all properties and their value:");
 			foreach (var propertyName in directoryEntry.Properties.PropertyNames.Cast<string>().OrderBy(x => x))
 			{
-				Log.Verbose().WriteLine($"{propertyName} = {{0}}", directoryEntry.Properties[propertyName].Value); //Cast<object>().ToArray());
-			}
+                Log.Verbose().WriteLine($"{propertyName} = {{0}}", directoryEntry.ConvertProperty(propertyName));
+            }
 			directoryEntry.RefreshCache(new[] {AdProperties.AllowedAttributesEffective.EnumValueOf()});
 			Log.Verbose().WriteLine("List of all writable properties:");
 			foreach (var writableProperty in directoryEntry.Properties[AdProperties.AllowedAttributesEffective.EnumValueOf()].Cast<string>().OrderBy(x => x))
@@ -189,6 +154,23 @@ namespace Dapplo.ActiveDirectory
 			}
 			return directoryEntry;
 		}
+
+        /// <summary>
+        /// Convert a property in the AD to a string
+        /// </summary>
+        /// <param name="directoryEntry">DirectoryEntry</param>
+        /// <param name="propertyName">string</param>
+        /// <returns>string</returns>
+        private static string ToDisplayString(DirectoryEntry directoryEntry, string propertyName)
+        {
+            return directoryEntry.Properties[propertyName].Value switch
+            {
+                IAdsLargeInteger largeInteger => largeInteger.ToDateTimeOffset()?.ToString() ?? "empty",
+                object[] objects => string.Join(",", objects.Select(o => o.ToString())),
+                byte[] bytes => string.Join(",", bytes),
+                _ => directoryEntry.Properties[propertyName].Value?.ToString(),
+            };
+        }
 
 		/// <summary>
 		///     Create a map for properties and the property name from the AD
@@ -200,7 +182,10 @@ namespace Dapplo.ActiveDirectory
 			var properties = from implementingInterface in typeToFill.GetInterfaces().Concat(new[] {typeToFill})
 				from property in implementingInterface.GetRuntimeProperties()
 				select property;
-			return properties.Distinct().Select(x => new KeyValuePair<string, PropertyInfo>(ReadAdProperty(x), x)).Where(x => x.Key != null).ToLookup(x => x.Key, x => x.Value);
+			return properties.Distinct()
+                .Select(x => new KeyValuePair<string, PropertyInfo>(ReadAdProperty(x), x))
+                .Where(x => x.Key != null)
+                .ToLookup(x => x.Key, x => x.Value);
 		}
 
 		/// <summary>

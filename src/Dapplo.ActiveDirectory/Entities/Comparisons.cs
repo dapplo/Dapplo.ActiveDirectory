@@ -21,11 +21,7 @@
 
 #pragma warning disable 1591
 
-#region using
-
 using System.Runtime.Serialization;
-
-#endregion
 
 namespace Dapplo.ActiveDirectory.Entities
 {

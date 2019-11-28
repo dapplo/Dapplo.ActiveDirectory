@@ -19,8 +19,6 @@
 //  You should have a copy of the GNU Lesser General Public License
 //  along with Dapplo.ActiveDirectory. If not, see <http://www.gnu.org/licenses/lgpl.txt>.
 
-#region using
-
 using System;
 using System.Linq;
 using System.Reflection;
@@ -32,12 +30,10 @@ using Xunit;
 using Xunit.Abstractions;
 using Dapplo.ActiveDirectory.Tests.Entities.Impl;
 
-#endregion
-
 namespace Dapplo.ActiveDirectory.Tests
 {
 	/// <summary>
-	///     The following tests will only work in a Domain environment, and should not be started automatically
+	///	 The following tests will only work in a Domain environment, and should not be started automatically
 	/// </summary>
 	public class ManualIntegrationTests
 	{
@@ -46,6 +42,24 @@ namespace Dapplo.ActiveDirectory.Tests
 		public ManualIntegrationTests(ITestOutputHelper testOutputHelper)
 		{
 			LogSettings.RegisterDefaultLogger<XUnitLogger>(LogLevels.Verbose, testOutputHelper);
+		}
+
+		//[Fact]
+		public void TestActiveDirectoryQuery_User()
+		{
+			var query = Query.ForUser(Environment.UserName);
+			var userResult = query.Execute<IUser>().ToList();
+			Assert.True(userResult.Any());
+
+			// Just something to generate some output
+			foreach (var user in userResult)
+			{
+				Assert.True(user is DispatchProxy);
+				Log.Info().WriteLine("Id: {0}", user.Id);
+				Log.Info().WriteLine("Name: {0}", user.Name);
+				Log.Info().WriteLine("Account expires: {0}", user.AccountExpires);
+				ActiveDirectoryExtensions.GetByAdsPath(user.Id);
+			}
 		}
 
 		//[Fact]
@@ -96,8 +110,8 @@ namespace Dapplo.ActiveDirectory.Tests
 		}
 
 
-        //[Fact]
-        public void TestActiveDirectoryQuery_ChangeUser()
+		//[Fact]
+		public void TestActiveDirectoryQuery_ChangeUser()
 		{
 			var query = Query.ForUser(Environment.UserName);
 			var userResult = query.Execute<IUser>().FirstOrDefault();

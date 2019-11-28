@@ -19,8 +19,6 @@
 // You should have a copy of the GNU Lesser General Public License
 // along with Finder. If not, see <http://www.gnu.org/licenses/lgpl.txt>.
 
-#region Usings
-
 using System;
 using System.Globalization;
 using System.Threading;
@@ -34,7 +32,6 @@ using Dapplo.Log.Loggers;
 #else
 using Dapplo.Log.LogFile;
 #endif
-#endregion
 
 namespace Dapplo.ActiveDirectory.Finder
 {

@@ -19,8 +19,6 @@
 //  You should have a copy of the GNU Lesser General Public License
 //  along with Dapplo.ActiveDirectory. If not, see <http://www.gnu.org/licenses/lgpl.txt>.
 
-#region using
-
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -28,8 +26,6 @@ using System.Linq;
 using System.Text;
 using Dapplo.ActiveDirectory.Enums;
 using Dapplo.ActiveDirectory.Extensions;
-
-#endregion
 
 namespace Dapplo.ActiveDirectory.Entities
 {

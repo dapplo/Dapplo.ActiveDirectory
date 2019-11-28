@@ -19,13 +19,10 @@
 //  You should have a copy of the GNU Lesser General Public License
 //  along with Dapplo.ActiveDirectory. If not, see <http://www.gnu.org/licenses/lgpl.txt>.
 
-#region using
-
+using System;
 using System.Collections.Generic;
 using Dapplo.ActiveDirectory.Entities;
 using Dapplo.ActiveDirectory.Enums;
-
-#endregion
 
 namespace Dapplo.ActiveDirectory.Tests.Entities
 {
@@ -51,5 +48,8 @@ namespace Dapplo.ActiveDirectory.Tests.Entities
 
 		[AdProperty(UserProperties.Thumbnail)]
 		byte[] Thumbnail { get; set; }
+
+		[AdProperty(UserProperties.AccountExpires)]
+		DateTimeOffset? AccountExpires { get; set; }
 	}
 }

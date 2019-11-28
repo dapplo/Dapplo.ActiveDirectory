@@ -19,19 +19,35 @@
 //  You should have a copy of the GNU Lesser General Public License
 //  along with Dapplo.ActiveDirectory. If not, see <http://www.gnu.org/licenses/lgpl.txt>.
 
-#pragma warning disable 1591
+using System.Runtime.InteropServices;
+using System.Security;
 
-using System.Runtime.Serialization;
-
-namespace Dapplo.ActiveDirectory.Entities
+namespace Dapplo.ActiveDirectory.Internal
 {
-	/// <summary>
-	///     the operators which are used inside a query
-	/// </summary>
-	public enum Operators
-	{
-		[EnumMember(Value = "")] None,
-		[EnumMember(Value = "&")] And,
-		[EnumMember(Value = "|")] Or
-	}
+    /// <summary>
+    /// Com interface for the IAdsLargeInteger
+    /// </summary>
+    [ComImport, Guid("9068270b-0939-11d1-8be1-00c04fd8d503"), InterfaceType(ComInterfaceType.InterfaceIsDual)]
+    public interface IAdsLargeInteger
+    {
+        /// <summary>
+        /// Get the high part of the large integer
+        /// </summary>
+        long HighPart
+        {
+            [SuppressUnmanagedCodeSecurity]
+            get; [SuppressUnmanagedCodeSecurity]
+            set;
+        }
+
+        /// <summary>
+        /// Get the log part of the large integer
+        /// </summary>
+        long LowPart
+        {
+            [SuppressUnmanagedCodeSecurity]
+            get; [SuppressUnmanagedCodeSecurity]
+            set;
+        }
+    }
 }

@@ -20,13 +20,9 @@
 // along with Finder. If not, see <http://www.gnu.org/licenses/lgpl.txt>.
 // 
 
-#region Usings
-
 using System.ComponentModel;
 using Dapplo.CaliburnMicro.Translations;
 using Dapplo.Config.Language;
-
-#endregion
 
 namespace Dapplo.ActiveDirectory.Finder.Configuration
 {

@@ -21,10 +21,6 @@
 
 #pragma warning disable 1591
 
-#region using
-
-#endregion
-
 namespace Dapplo.ActiveDirectory.Enums
 {
 	/// <summary>
