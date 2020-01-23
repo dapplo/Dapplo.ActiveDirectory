@@ -92,6 +92,8 @@ stages:
         git checkout -b docfx
         rem Remove the .gitignore to make sure this doesn't cause issues
         del .gitignore
+        rem Create something to mark the documentation as static only
+        echo "" >> doc/_site/.nojekyll
         rem Add all the files from the generated document, ignore warnings
         git add doc/_site
         git commit -m "Generated documentation for %BuildNumber%"
