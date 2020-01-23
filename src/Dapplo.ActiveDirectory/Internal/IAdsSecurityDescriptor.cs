@@ -1,23 +1,5 @@
-﻿//  Dapplo - building blocks for desktop applications
-//  Copyright (C) 2015-2019 Dapplo
-// 
-//  For more information see: http://dapplo.net/
-//  Dapplo repositories are hosted on GitHub: https://github.com/dapplo
-// 
-//  This file is part of Dapplo.ActiveDirectory
-// 
-//  Dapplo.ActiveDirectory is free software: you can redistribute it and/or modify
-//  it under the terms of the GNU Lesser General Public License as published by
-//  the Free Software Foundation, either version 3 of the License, or
-//  (at your option) any later version.
-// 
-//  Dapplo.ActiveDirectory is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//  GNU Lesser General Public License for more details.
-// 
-//  You should have a copy of the GNU Lesser General Public License
-//  along with Dapplo.ActiveDirectory. If not, see <http://www.gnu.org/licenses/lgpl.txt>.
+﻿// Copyright (c) Dapplo and contributors. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -27,11 +9,14 @@ namespace Dapplo.ActiveDirectory.Internal
     /// <summary>
     /// Com interface for the IAdsLargeInteger
     /// </summary>
-    // , TypeLibType(TypeLibTypeFlags.FDual | TypeLibTypeFlags.FDispatchable)
+    [TypeLibType(TypeLibTypeFlags.FDual | TypeLibTypeFlags.FDispatchable)]
     [Guid("B8C787CA-9BDD-11D0-852C-00C04FD8D503")]
     [ComImport]
     public interface IADsSecurityDescriptor
     {
+        /// <summary>
+        /// the revision number assigned to the security descriptor.
+        /// </summary>
         [DispId(2)]
         int Revision
         {
@@ -43,6 +28,9 @@ namespace Dapplo.ActiveDirectory.Internal
             set;
         }
 
+        /// <summary>
+        /// the Security_Descriptor_Control flag
+        /// </summary>
         [DispId(3)]
         int Control
         {
@@ -54,6 +42,9 @@ namespace Dapplo.ActiveDirectory.Internal
             set;
         }
 
+        /// <summary>
+        /// the owner of the object associated with the security descriptor
+        /// </summary>
         [DispId(4)]
         string Owner
         {
@@ -67,6 +58,9 @@ namespace Dapplo.ActiveDirectory.Internal
             set;
         }
 
+        /// <summary>
+        /// the flag that indicates if the owner data is derived by a default mechanism
+        /// </summary>
         [DispId(5)]
         bool OwnerDefaulted
         {
@@ -78,6 +72,9 @@ namespace Dapplo.ActiveDirectory.Internal
             set;
         }
 
+        /// <summary>
+        /// the group that owns the object associated with the security descriptor
+        /// </summary>
         [DispId(6)]
         string Group
         {
@@ -91,6 +88,9 @@ namespace Dapplo.ActiveDirectory.Internal
             set;
         }
 
+        /// <summary>
+        /// the flag that indicates if the group data is derived by a default mechanism
+        /// </summary>
         [DispId(7)]
         bool GroupDefaulted
         {
@@ -102,6 +102,9 @@ namespace Dapplo.ActiveDirectory.Internal
             set;
         }
 
+        /// <summary>
+        /// the discretionary ACL associated with the security descriptor
+        /// </summary>
         [DispId(8)]
         object DiscretionaryAcl
         {
@@ -115,6 +118,9 @@ namespace Dapplo.ActiveDirectory.Internal
             set;
         }
 
+        /// <summary>
+        /// the flag that indicates if the DACL is derived from a default mechanism
+        /// </summary>
         [DispId(9)]
         bool DaclDefaulted
         {
@@ -126,6 +132,9 @@ namespace Dapplo.ActiveDirectory.Internal
             set;
         }
 
+        /// <summary>
+        /// the system ACL associated with the security descriptor
+        /// </summary>
         [DispId(10)]
         object SystemAcl
         {
@@ -139,6 +148,9 @@ namespace Dapplo.ActiveDirectory.Internal
             set;
         }
 
+        /// <summary>
+        /// the flag that indicates if the SACL is derived from a default mechanism
+        /// </summary>
         [DispId(11)]
         bool SaclDefaulted
         {
@@ -150,6 +162,10 @@ namespace Dapplo.ActiveDirectory.Internal
             set;
         }
 
+        /// <summary>
+        /// Copies the security descriptor
+        /// </summary>
+        /// <returns>object</returns>
         [DispId(12)]
         [MethodImpl(MethodImplOptions.InternalCall)]
         [return: MarshalAs(UnmanagedType.IDispatch)]
