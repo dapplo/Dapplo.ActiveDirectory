@@ -3,19 +3,16 @@
   <PropertyGroup>
     <TargetFrameworks>net471;netcoreapp3.1;net5.0-windows</TargetFrameworks>
     <Description>A library to access the ActiveDirectory with strong typed queries</Description>
-    <AssemblyTitle>Dapplo.ActiveDirectory</AssemblyTitle>
-    <AssemblyName>Dapplo.ActiveDirectory</AssemblyName>
-    <PackageId>Dapplo.ActiveDirectory</PackageId>
     <PackageTags>dapplo activedirectory</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Dapplo.Log" Version="1.4.1" />
+    <PackageReference Include="Dapplo.Log" Version="(1.3.3,)" />
     <PackageReference Include="System.DirectoryServices" Version="5.0.0" />
     <PackageReference Include="System.Reflection.DispatchProxy" Version="4.7.1" />
   </ItemGroup>
   
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net471' ">
+  <ItemGroup Condition="$(TargetFramework.StartsWith('net4'))">
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="System" />

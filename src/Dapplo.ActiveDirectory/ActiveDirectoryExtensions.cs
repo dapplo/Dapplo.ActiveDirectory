@@ -20,34 +20,37 @@ namespace Dapplo.ActiveDirectory
 	/// </summary>
 	public static class ActiveDirectoryExtensions
 	{
-		private static readonly LogSource Log = new LogSource();
+		private static readonly LogSource Log = new();
 
-        /// <summary>
-        ///     Use the ActiveDirectory with the supplied domain to query
-        /// </summary>
-        /// <typeparam name="T">Type to fill, use AdPropertyAttribute to specify the mapping</typeparam>
-        /// <param name="query">Query</param>
-        /// <param name="domain">Domain for the LDAP server, if null the Domain.GetCurrentDomain().Name is used</param>
-        /// <param name="username">Username for the connection, by default the current user is used</param>
-        /// <param name="password">Password for the supplied user</param>
-        /// <returns>IEnumerable with the specified type</returns>
-        public static IEnumerable<T> Execute<T>(this Query query, string domain = null, string username = null, string password = null) where T : IAdObject
+		/// <summary>
+		///     Use the ActiveDirectory with the supplied domain to query
+		/// </summary>
+		/// <typeparam name="T">Type to fill, use AdPropertyAttribute to specify the mapping</typeparam>
+		/// <param name="query">Query</param>
+		/// <param name="domain">Domain for the LDAP server, if null the Domain.GetCurrentDomain().Name is used</param>
+		/// <param name="username">Username for the connection, by default the current user is used</param>
+		/// <param name="password">Password for the supplied user</param>
+		/// <param name="authenticationType">AuthenticationTypes used to specify the AuthenticationType, null to use the value from ActiveDirectoryGlobals.AuthenticationType</param>
+		/// <returns>IEnumerable with the specified type</returns>
+		public static IEnumerable<T> Execute<T>(this Query query, string domain = null, string username = null, string password = null, AuthenticationTypes? authenticationType = null) where T : IAdObject
 		{
-			return Execute<T>(query.Build(), domain, username, password);
+			return Execute<T>(query.Build(), domain, username, password, authenticationType);
 		}
 
-        /// <summary>
-        ///     Query the LDAP server for the supplied domain
-        /// </summary>
-        /// <typeparam name="TAdContainer">Type to fill, use AdPropertyAttribute to specify the mapping</typeparam>
-        /// <param name="query">Query as string</param>
-        /// <param name="domain">Domain for the LDAP server, if null the Domain.GetCurrentDomain().Name is used</param>
-        /// <param name="username">Username for the connection, by default the current user is used</param>
-        /// <param name="password">Password for the supplied user</param>
-        /// <returns>IList with the specified type</returns>
-        private static IEnumerable<TAdContainer> Execute<TAdContainer>(string query, string domain = null, string username = null, string password = null) where TAdContainer : IAdObject
+		/// <summary>
+		///     Query the LDAP server for the supplied domain
+		/// </summary>
+		/// <typeparam name="TAdContainer">Type to fill, use AdPropertyAttribute to specify the mapping</typeparam>
+		/// <param name="query">Query as string</param>
+		/// <param name="domain">Domain for the LDAP server, if null the Domain.GetCurrentDomain().Name is used</param>
+		/// <param name="username">Username for the connection, by default the current user is used</param>
+		/// <param name="password">Password for the supplied user</param>
+		/// <param name="authenticationType">AuthenticationTypes used to specify the AuthenticationType, null to use the value from ActiveDirectoryGlobals.AuthenticationType</param>
+		/// <returns>IList with the specified type</returns>
+		private static IEnumerable<TAdContainer> Execute<TAdContainer>(string query, string domain = null, string username = null, string password = null, AuthenticationTypes? authenticationType = null) where TAdContainer : IAdObject
 		{
-            using var rootDirectory = new DirectoryEntry($"{ActiveDirectoryGlobals.LdapUriPrefix}{domain ?? Domain.GetCurrentDomain().Name}", username, password);
+			var domainServerPath = string.Format(ActiveDirectoryGlobals.LdapUriFormat, domain ?? Domain.GetCurrentDomain().Name);
+            using var rootDirectory = new DirectoryEntry(domainServerPath, username, password, authenticationType ?? ActiveDirectoryGlobals.AuthenticationType);
             foreach (var result in Execute<TAdContainer>(query, rootDirectory))
             {
                 yield return result;
@@ -143,7 +146,7 @@ namespace Dapplo.ActiveDirectory
         /// <param name="directoryEntry">DirectoryEntry</param>
         /// <param name="propertyName">string</param>
         /// <returns>string</returns>
-        private static string ToDisplayString(DirectoryEntry directoryEntry, string propertyName)
+        public static string ToDisplayString(this DirectoryEntry directoryEntry, string propertyName)
         {
             return directoryEntry.Properties[propertyName].Value switch
             {

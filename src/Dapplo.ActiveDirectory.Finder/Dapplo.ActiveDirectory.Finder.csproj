@@ -1,38 +1,24 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
   <PropertyGroup>
-    <AssemblyTitle>Dapplo.ActiveDirectory.Finder</AssemblyTitle>
-    <AssemblyName>Dapplo.ActiveDirectory.Finder</AssemblyName>
     <TargetFrameworks>net471;netcoreapp3.1;net5.0-windows</TargetFrameworks>
     <OutputType>WinExe</OutputType>
     <ApplicationManifest>app.manifest</ApplicationManifest>
-	<UseWindowsForms>true</UseWindowsForms>
+    <UseWindowsForms>true</UseWindowsForms>
     <UseWPF>true</UseWPF>
-	<GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
+    <GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\Dapplo.ActiveDirectory\Dapplo.ActiveDirectory.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Dapplo.CaliburnMicro.Configuration">
-      <Version>2.1.10</Version>
-    </PackageReference>
-    <PackageReference Include="Dapplo.CaliburnMicro.Dapp">
-      <Version>2.1.10</Version>
-    </PackageReference>
-    <PackageReference Include="Dapplo.CaliburnMicro.Translations">
-      <Version>2.1.10</Version>
-    </PackageReference>
-    <PackageReference Include="Dapplo.Log">
-      <Version>1.4.1</Version>
-    </PackageReference>
-    <PackageReference Include="Dapplo.Log.LogFile">
-      <Version>1.4.1</Version>
-    </PackageReference>
-    <PackageReference Include="Dapplo.Log.Loggers">
-      <Version>1.4.1</Version>
-    </PackageReference>
+    <PackageReference Include="Dapplo.CaliburnMicro.Configuration" Version="2.1.10" />
+    <PackageReference Include="Dapplo.CaliburnMicro.Dapp" Version="2.1.10" />
+    <PackageReference Include="Dapplo.CaliburnMicro.Translations" Version="2.1.10" />
+    <PackageReference Include="Dapplo.Log" Version="1.4.1" />
+    <PackageReference Include="Dapplo.Log.LogFile" Version="1.4.1" />
+    <PackageReference Include="Dapplo.Log.Loggers" Version="1.4.1" />
   </ItemGroup>
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net471' ">
+  <ItemGroup Condition="$(TargetFramework.StartsWith('net4'))">
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />

@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Dapplo and contributors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System.DirectoryServices;
 using Dapplo.ActiveDirectory.Internal;
 
 namespace Dapplo.ActiveDirectory
@@ -31,9 +32,15 @@ namespace Dapplo.ActiveDirectory
 		public static bool CacheResults { get; set; } = false;
 
 		/// <summary>
-		/// The prefix used for the Ldap URI building
+		/// The format used for the LDAP URI building
 		/// </summary>
-		public static string LdapUriPrefix = "LDAP://";
+		public static string LdapUriFormat { get; set; } = @"LDAP://{0}";
+
+		/// <summary>
+		/// Specify the value for AuthenticationTypes to be used when none is supplied.
+		/// The default according to <a href="https://docs.microsoft.com/en-us/dotnet/api/system.directoryservices.authenticationtypes">here</a> is Secure
+		/// </summary>
+		public static AuthenticationTypes AuthenticationType { get; set; } = AuthenticationTypes.Secure;
 
 		/// <summary>
 		/// This is the factory used to generate all the objects in the result
