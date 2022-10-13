@@ -5,22 +5,21 @@
 
 using System.Runtime.Serialization;
 
-namespace Dapplo.ActiveDirectory.Enums
+namespace Dapplo.ActiveDirectory.Enums;
+
+/// <summary>
+///		These are some possible user "attributes".
+///		If you need your own you can just create an enum like this and use it.
+/// </summary>
+public enum ComputerProperties
 {
-	/// <summary>
-	///		These are some possible user "attributes".
-	///		If you need your own you can just create an enum like this and use it.
-	/// </summary>
-	public enum ComputerProperties
-	{
-		[EnumMember(Value = "dNSHostName")] HostName,
-		Name,
-		Location,
-		OperatingSystem,
-		OperatingSystemServicePack,
-		OperatingSystemVersion,
-		Description,
-		WhenCreated,
-		WhenChanged
-	}
+	[EnumMember(Value = "dNSHostName")] HostName,
+	Name,
+	Location,
+	OperatingSystem,
+	OperatingSystemServicePack,
+	OperatingSystemVersion,
+	Description,
+	WhenCreated,
+	WhenChanged
 }

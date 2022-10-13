@@ -3,32 +3,31 @@
 
 using System.Runtime.Serialization;
 
-namespace Dapplo.ActiveDirectory.Enums
+namespace Dapplo.ActiveDirectory.Enums;
+
+/// <summary>
+///     Ad generic properties, this is what every entry has
+/// </summary>
+public enum AdProperties
 {
 	/// <summary>
-	///     Ad generic properties, this is what every entry has
+	/// Unique path in the active directory, which can be considered as the ID
 	/// </summary>
-	public enum AdProperties
-	{
-		/// <summary>
-		/// Unique path in the active directory, which can be considered as the ID
-		/// </summary>
-		[EnumMember(Value = "adspath")] Id,
+	[EnumMember(Value = "adspath")] Id,
 
-		/// <summary>
-		/// The common name
-		/// </summary>
-		[EnumMember(Value = "cn")] CommonName,
+	/// <summary>
+	/// The common name
+	/// </summary>
+	[EnumMember(Value = "cn")] CommonName,
 
-		/// <summary>
-		/// The OU for an element
-		/// </summary>
-		[EnumMember(Value = "ou")] OrganisationUnit,
+	/// <summary>
+	/// The OU for an element
+	/// </summary>
+	[EnumMember(Value = "ou")] OrganisationUnit,
 
-		/// <summary>
-		///     This is a constructed attribute, get this e.g. by calling
-		///     <code>directoryEntry.RefreshCache(new[] { AdProperties.AllowedAttributes.EnumValueOf() });</code>
-		/// </summary>
-		[EnumMember(Value = "allowedAttributesEffective")] AllowedAttributesEffective
-	}
+	/// <summary>
+	///     This is a constructed attribute, get this e.g. by calling
+	///     <code>directoryEntry.RefreshCache(new[] { AdProperties.AllowedAttributes.EnumValueOf() });</code>
+	/// </summary>
+	[EnumMember(Value = "allowedAttributesEffective")] AllowedAttributesEffective
 }

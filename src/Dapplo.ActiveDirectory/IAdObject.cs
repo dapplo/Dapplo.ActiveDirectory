@@ -3,19 +3,18 @@
 
 using Dapplo.ActiveDirectory.Enums;
 
-namespace Dapplo.ActiveDirectory
+namespace Dapplo.ActiveDirectory;
+
+/// <summary>
+/// Extend your interface / type with this to use in the execute / update
+/// </summary>
+public interface IAdObject
 {
 	/// <summary>
-	/// Extend your interface / type with this to use in the execute / update
+	/// This is THE unique property in the ADS which can be used
+	/// to find and or update the returned entry.
+	/// Use the AdProperty attribute to specify the properties you want mapped.
 	/// </summary>
-	public interface IAdObject
-	{
-		/// <summary>
-		/// This is THE unique property in the ADS which can be used
-		/// to find and or update the returned entry.
-		/// Use the AdProperty attribute to specify the properties you want mapped.
-		/// </summary>
-		[AdProperty(AdProperties.Id)]
-		string Id { get; set; }
-	}
+	[AdProperty(AdProperties.Id)]
+	string Id { get; set; }
 }

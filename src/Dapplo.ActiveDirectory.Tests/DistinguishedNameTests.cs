@@ -9,46 +9,45 @@ using Dapplo.Log;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace Dapplo.ActiveDirectory.Tests
+namespace Dapplo.ActiveDirectory.Tests;
+
+/// <summary>
+///     Test the DistinguishedName class
+/// </summary>
+public class DistinguishedNameTests
 {
-	/// <summary>
-	///     Test the DistinguishedName class
-	/// </summary>
-	public class DistinguishedNameTests
+	private const string TestDnString = "CN=Karen Berge,CN=admin,DC=corp,DC=Fabrikam,DC=COM";
+
+	public DistinguishedNameTests(ITestOutputHelper testOutputHelper)
 	{
-		private const string TestDnString = "CN=Karen Berge,CN=admin,DC=corp,DC=Fabrikam,DC=COM";
+		LogSettings.RegisterDefaultLogger<XUnitLogger>(LogLevels.Verbose, testOutputHelper);
+	}
 
-		public DistinguishedNameTests(ITestOutputHelper testOutputHelper)
-		{
-			LogSettings.RegisterDefaultLogger<XUnitLogger>(LogLevels.Verbose, testOutputHelper);
-		}
+	[Fact]
+	public void TestBuildDistinguishedName()
+	{
+		var dn = DistinguishedName.Create().Cn("Karen Berge").Cn("admin").Dc("corp").Dc("Fabrikam").Dc("COM");
 
-		[Fact]
-		public void TestBuildDistinguishedName()
-		{
-			var dn = DistinguishedName.Create().Cn("Karen Berge").Cn("admin").Dc("corp").Dc("Fabrikam").Dc("COM");
+		Assert.Equal(5, dn.RelativeDistinguishedNames.Count());
+		Assert.Equal(TestDnString, dn.ToString());
 
-			Assert.Equal(5, dn.RelativeDistinguishedNames.Count());
-			Assert.Equal(TestDnString, dn.ToString());
+		var dc = string.Join(".", dn.Where(x => x.Key == DistinguishedNameAttributes.DomainComponent).Select(x => x.Value));
+		Assert.Equal("corp.Fabrikam.COM", dc);
+	}
 
-			var dc = string.Join(".", dn.Where(x => x.Key == DistinguishedNameAttributes.DomainComponent).Select(x => x.Value));
-			Assert.Equal("corp.Fabrikam.COM", dc);
-		}
+	[Fact]
+	public void TestCastDistinguishedName()
+	{
+		var dn = (DistinguishedName) TestDnString;
+		Assert.Equal(5, dn.RelativeDistinguishedNames.Count());
+		Assert.Equal(TestDnString, dn);
+	}
 
-		[Fact]
-		public void TestCastDistinguishedName()
-		{
-			var dn = (DistinguishedName) TestDnString;
-			Assert.Equal(5, dn.RelativeDistinguishedNames.Count());
-			Assert.Equal(TestDnString, dn);
-		}
-
-		[Fact]
-		public void TestDistinguishedName()
-		{
-			var dn = DistinguishedName.CreateFrom(TestDnString);
-			Assert.Equal(5, dn.RelativeDistinguishedNames.Count());
-			Assert.Equal(TestDnString, dn.ToString());
-		}
+	[Fact]
+	public void TestDistinguishedName()
+	{
+		var dn = DistinguishedName.CreateFrom(TestDnString);
+		Assert.Equal(5, dn.RelativeDistinguishedNames.Count());
+		Assert.Equal(TestDnString, dn.ToString());
 	}
 }

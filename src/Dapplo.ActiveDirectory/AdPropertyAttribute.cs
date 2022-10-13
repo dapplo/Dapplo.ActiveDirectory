@@ -4,35 +4,34 @@
 using System;
 using Dapplo.ActiveDirectory.Extensions;
 
-namespace Dapplo.ActiveDirectory
+namespace Dapplo.ActiveDirectory;
+
+/// <summary>
+///     Attribute to specify which AD property is stored in which property.
+/// </summary>
+[AttributeUsage(AttributeTargets.Property)]
+public class AdPropertyAttribute : Attribute
 {
 	/// <summary>
-	///     Attribute to specify which AD property is stored in which property.
+	///     Specify an Enum value, which corresponds to an AD property name, to make mapping to this class property possible.
 	/// </summary>
-	[AttributeUsage(AttributeTargets.Property)]
-	public class AdPropertyAttribute : Attribute
+	/// <param name="adPropertyName"></param>
+	public AdPropertyAttribute(object adPropertyName)
 	{
-		/// <summary>
-		///     Specify an Enum value, which corresponds to an AD property name, to make mapping to this class property possible.
-		/// </summary>
-		/// <param name="adPropertyName"></param>
-		public AdPropertyAttribute(object adPropertyName)
+		if (adPropertyName == null)
 		{
-			if (adPropertyName == null)
-			{
-				throw new ArgumentNullException(nameof(adPropertyName));
-			}
-			if (adPropertyName.GetType().IsEnum)
-			{
-				AdProperty = ((Enum) adPropertyName).EnumValueOf().ToLowerInvariant();
-				return;
-			}
-			AdProperty = adPropertyName.ToString().ToLowerInvariant();
+			throw new ArgumentNullException(nameof(adPropertyName));
 		}
-
-		/// <summary>
-		///     The AD property name for this property
-		/// </summary>
-		public string AdProperty { get; }
+		if (adPropertyName.GetType().IsEnum)
+		{
+			AdProperty = ((Enum) adPropertyName).EnumValueOf().ToLowerInvariant();
+			return;
+		}
+		AdProperty = adPropertyName.ToString().ToLowerInvariant();
 	}
+
+	/// <summary>
+	///     The AD property name for this property
+	/// </summary>
+	public string AdProperty { get; }
 }

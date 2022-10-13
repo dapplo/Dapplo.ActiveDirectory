@@ -4,56 +4,55 @@
 using Dapplo.ActiveDirectory.Internal;
 using System;
 
-namespace Dapplo.ActiveDirectory.Extensions
+namespace Dapplo.ActiveDirectory.Extensions;
+
+/// <summary>
+/// Extensions to help with AD date time objects
+/// </summary>
+public static class AdDateTimeExtensions
 {
     /// <summary>
-    /// Extensions to help with AD date time objects
+    /// Convert an IAdsLargeInteger to a long
     /// </summary>
-    public static class AdDateTimeExtensions
+    /// <param name="largeInteger">IAdsLargeInteger</param>
+    /// <returns>long?</returns>
+    public static long? ToLong(this IAdsLargeInteger largeInteger)
     {
-        /// <summary>
-        /// Convert an IAdsLargeInteger to a long
-        /// </summary>
-        /// <param name="largeInteger">IAdsLargeInteger</param>
-        /// <returns>long?</returns>
-        public static long? ToLong(this IAdsLargeInteger largeInteger)
+        long dateLong = (largeInteger.HighPart << 32) + largeInteger.LowPart;
+        if (dateLong <= 0 || dateLong == 9223372036854775807)
         {
-            long dateLong = (largeInteger.HighPart << 32) + largeInteger.LowPart;
-            if (dateLong <= 0 || dateLong == 9223372036854775807)
-            {
-                return null;
-            }
-            return dateLong;
+            return null;
         }
+        return dateLong;
+    }
 
-        /// <summary>
-        /// Convert an IAdsLargeInteger to a DateTimeOffset
-        /// </summary>
-        /// <param name="largeInteger">IAdsLargeInteger</param>
-        /// <returns>DateTimeOffset?</returns>
-        public static DateTimeOffset? ToDateTimeOffset(this IAdsLargeInteger largeInteger)
+    /// <summary>
+    /// Convert an IAdsLargeInteger to a DateTimeOffset
+    /// </summary>
+    /// <param name="largeInteger">IAdsLargeInteger</param>
+    /// <returns>DateTimeOffset?</returns>
+    public static DateTimeOffset? ToDateTimeOffset(this IAdsLargeInteger largeInteger)
+    {
+        var dateLong = largeInteger.ToLong();
+        if (!dateLong.HasValue)
         {
-            var dateLong = largeInteger.ToLong();
-            if (!dateLong.HasValue)
-            {
-                return null;
-            }
-            return DateTimeOffset.FromFileTime(dateLong.Value);
+            return null;
         }
+        return DateTimeOffset.FromFileTime(dateLong.Value);
+    }
 
-        /// <summary>
-        /// Convert an IAdsLargeInteger to a DateTime
-        /// </summary>
-        /// <param name="largeInteger">IAdsLargeInteger</param>
-        /// <returns>DateTime?</returns>
-        public static DateTime? ToDateTime(this IAdsLargeInteger largeInteger)
+    /// <summary>
+    /// Convert an IAdsLargeInteger to a DateTime
+    /// </summary>
+    /// <param name="largeInteger">IAdsLargeInteger</param>
+    /// <returns>DateTime?</returns>
+    public static DateTime? ToDateTime(this IAdsLargeInteger largeInteger)
+    {
+        var dateLong = largeInteger.ToLong();
+        if (!dateLong.HasValue)
         {
-            var dateLong = largeInteger.ToLong();
-            if (!dateLong.HasValue)
-            {
-                return null;
-            }
-            return DateTime.FromFileTimeUtc(dateLong.Value);
+            return null;
         }
+        return DateTime.FromFileTimeUtc(dateLong.Value);
     }
 }

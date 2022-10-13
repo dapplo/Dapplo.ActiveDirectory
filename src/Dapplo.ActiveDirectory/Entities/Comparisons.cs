@@ -5,18 +5,17 @@
 
 using System.Runtime.Serialization;
 
-namespace Dapplo.ActiveDirectory.Entities
+namespace Dapplo.ActiveDirectory.Entities;
+
+/// <summary>
+///     The comparisons for a property
+/// </summary>
+public enum Comparisons
 {
-	/// <summary>
-	///     The comparisons for a property
-	/// </summary>
-	public enum Comparisons
-	{
-		[EnumMember(Value = "=")] EqualTo,
-		[EnumMember(Value = ">=")] GreaterThanOrEqualTo,
-		[EnumMember(Value = "<=")] LessThanOrEqualTo,
-		[EnumMember(Value = "=")] NotEqualTo,
-		[EnumMember(Value = ">=")] NotGreaterOrEquals,
-		[EnumMember(Value = "<=")] NotLessOrEquals
-	}
+	[EnumMember(Value = "=")] EqualTo,
+	[EnumMember(Value = ">=")] GreaterThanOrEqualTo,
+	[EnumMember(Value = "<=")] LessThanOrEqualTo,
+	[EnumMember(Value = "=")] NotEqualTo,
+	[EnumMember(Value = ">=")] NotGreaterOrEquals,
+	[EnumMember(Value = "<=")] NotLessOrEquals
 }

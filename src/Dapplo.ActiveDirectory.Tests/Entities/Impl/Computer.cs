@@ -3,17 +3,16 @@
 
 using System;
 
-namespace Dapplo.ActiveDirectory.Tests.Entities.Impl
+namespace Dapplo.ActiveDirectory.Tests.Entities.Impl;
+
+/// <inheritdoc />
+public class Computer : IComputer
 {
-    /// <inheritdoc />
-    public class Computer : IComputer
-    {
-        public string Description { get; set; }
-        public string Hostname { get; set; }
-        public string Location { get; set; }
-        public string OperatingSystem { get; set; }
-        public string OperatingSystemServicePack { get; set; }
-        public DateTimeOffset WhenCreated { get; set; }
-        public string Id { get; set; }
-    }
+    public string Description { get; set; }
+    public string Hostname { get; set; }
+    public string Location { get; set; }
+    public string OperatingSystem { get; set; }
+    public string OperatingSystemServicePack { get; set; }
+    public DateTimeOffset WhenCreated { get; set; }
+    public string Id { get; set; }
 }

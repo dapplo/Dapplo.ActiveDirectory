@@ -5,15 +5,14 @@
 
 using System.Runtime.Serialization;
 
-namespace Dapplo.ActiveDirectory.Entities
+namespace Dapplo.ActiveDirectory.Entities;
+
+/// <summary>
+///     the operators which are used inside a query
+/// </summary>
+public enum Operators
 {
-	/// <summary>
-	///     the operators which are used inside a query
-	/// </summary>
-	public enum Operators
-	{
-		[EnumMember(Value = "")] None,
-		[EnumMember(Value = "&")] And,
-		[EnumMember(Value = "|")] Or
-	}
+	[EnumMember(Value = "")] None,
+	[EnumMember(Value = "&")] And,
+	[EnumMember(Value = "|")] Or
 }

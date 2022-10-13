@@ -9,57 +9,56 @@ using Dapplo.ActiveDirectory.Enums;
 using Dapplo.ActiveDirectory.Finder.Entities;
 using Dapplo.CaliburnMicro;
 
-namespace Dapplo.ActiveDirectory.Finder.Ui.ViewModels
+namespace Dapplo.ActiveDirectory.Finder.Ui.ViewModels;
+
+/// <summary>
+/// The ViewModel for the Finder
+/// </summary>
+public class FinderViewModel : Screen, IShell
 {
+    private IUser _selectedUser;
+
     /// <summary>
-    /// The ViewModel for the Finder
+    /// Used from the View
     /// </summary>
-    public class FinderViewModel : Screen, IShell
+    public IObservableCollection<IUser> Users { get; } = new BindableCollection<IUser>();
+
+    /// <summary>
+    /// Constructor for the dependencies
+    /// </summary>
+    public FinderViewModel()
     {
-        private IUser _selectedUser;
+        // Limit to 100 items
+        ActiveDirectoryGlobals.SizeLimit = 100;
+        ActiveDirectoryGlobals.PageSize = 0;
+        var query = Query.AND.WhereIsUser().WhereEqualTo(UserProperties.Username, Environment.UserName);
+        var userResult = query.Execute<IUser>().FirstOrDefault();
 
-        /// <summary>
-        /// Used from the View
-        /// </summary>
-        public IObservableCollection<IUser> Users { get; } = new BindableCollection<IUser>();
-
-        /// <summary>
-        /// Constructor for the dependencies
-        /// </summary>
-        public FinderViewModel()
+        if (userResult == null)
         {
-            // Limit to 100 items
-            ActiveDirectoryGlobals.SizeLimit = 100;
-            ActiveDirectoryGlobals.PageSize = 0;
-            var query = Query.AND.WhereIsUser().WhereEqualTo(UserProperties.Username, Environment.UserName);
-            var userResult = query.Execute<IUser>().FirstOrDefault();
+            return;
+        }
+        query = Query.AND.WhereIsUser().WhereEqualTo(UserProperties.Department, userResult.Department);
+        var departmentResult = query.Execute<IUser>();
+        // Just something to generate some output
+        Users.AddRange(departmentResult);
+    }
 
-            if (userResult == null)
+    /// <summary>
+    /// Used from the View
+    /// </summary>
+    public IUser SelectedUser
+    {
+        get => _selectedUser;
+        set
+        {
+            if (_selectedUser == value)
             {
                 return;
             }
-            query = Query.AND.WhereIsUser().WhereEqualTo(UserProperties.Department, userResult.Department);
-            var departmentResult = query.Execute<IUser>();
-            // Just something to generate some output
-            Users.AddRange(departmentResult);
-        }
 
-        /// <summary>
-        /// Used from the View
-        /// </summary>
-        public IUser SelectedUser
-        {
-            get => _selectedUser;
-            set
-            {
-                if (_selectedUser == value)
-                {
-                    return;
-                }
-
-                _selectedUser = value;
-                NotifyOfPropertyChange(nameof(SelectedUser));
-            }
+            _selectedUser = value;
+            NotifyOfPropertyChange(nameof(SelectedUser));
         }
     }
 }

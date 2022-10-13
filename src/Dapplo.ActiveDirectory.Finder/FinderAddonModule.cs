@@ -10,25 +10,25 @@ using Dapplo.CaliburnMicro.Configuration;
 using Dapplo.CaliburnMicro.Menu;
 using Dapplo.Config.Language;
 
-namespace Dapplo.ActiveDirectory.Finder
+namespace Dapplo.ActiveDirectory.Finder;
+
+/// <inheritdoc />
+public class FinderAddonModule : AddonModule
 {
     /// <inheritdoc />
-    public class FinderAddonModule : AddonModule
+    protected override void Load(ContainerBuilder builder)
     {
-        /// <inheritdoc />
-        protected override void Load(ContainerBuilder builder)
-        {
-            // All IMenuItem with the context they belong to
-            builder.RegisterAssemblyTypes(ThisAssembly)
-                .AssignableTo<IMenuItem>()
-                .As<IMenuItem>()
-                .SingleInstance();
+        // All IMenuItem with the context they belong to
+        builder.RegisterAssemblyTypes(ThisAssembly)
+            .AssignableTo<IMenuItem>()
+            .As<IMenuItem>()
+            .SingleInstance();
 
-            builder
-                .Register(c => Language<IFinderTranslations>.Create())
-                .As<ILanguage>()
-                .As<IFinderTranslations>()
-                .SingleInstance();
+        builder
+            .Register(c => Language<IFinderTranslations>.Create())
+            .As<ILanguage>()
+            .As<IFinderTranslations>()
+            .SingleInstance();
 
 /*
 
@@ -39,11 +39,11 @@ namespace Dapplo.ActiveDirectory.Finder
                 .SingleInstance();*/
 
 
-            // All config screens
-            builder.RegisterAssemblyTypes(ThisAssembly)
-                .AssignableTo<IConfigScreen>()
-                .As<IConfigScreen>()
-                .SingleInstance();
+        // All config screens
+        builder.RegisterAssemblyTypes(ThisAssembly)
+            .AssignableTo<IConfigScreen>()
+            .As<IConfigScreen>()
+            .SingleInstance();
 
 /*
             
@@ -53,11 +53,10 @@ namespace Dapplo.ActiveDirectory.Finder
                 .WithAttributeFiltering()
                 .SingleInstance();*/
 
-            builder
-                .RegisterType<FinderViewModel>()
-                .As<IShell>()
-                .AsSelf()
-                .SingleInstance();
-        }
+        builder
+            .RegisterType<FinderViewModel>()
+            .As<IShell>()
+            .AsSelf()
+            .SingleInstance();
     }
 }

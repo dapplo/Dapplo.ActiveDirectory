@@ -5,21 +5,20 @@
 
 using System.Runtime.Serialization;
 
-namespace Dapplo.ActiveDirectory.Enums
+namespace Dapplo.ActiveDirectory.Enums;
+
+/// <summary>
+///     See: https://msdn.microsoft.com/en-us/library/windows/desktop/aa366101.aspx
+/// </summary>
+public enum DistinguishedNameAttributes
 {
-	/// <summary>
-	///     See: https://msdn.microsoft.com/en-us/library/windows/desktop/aa366101.aspx
-	/// </summary>
-	public enum DistinguishedNameAttributes
-	{
-		[EnumMember(Value = "DC")] DomainComponent,
-		[EnumMember(Value = "CN")] CommonName,
-		[EnumMember(Value = "OU")] OrganizationalUnitName,
-		[EnumMember(Value = "O")] OrganizationName,
-		[EnumMember(Value = "STREET")] StreetAddress,
-		[EnumMember(Value = "L")] LocalityName,
-		[EnumMember(Value = "ST")] StateOrProvinceName,
-		[EnumMember(Value = "C")] CountryName,
-		[EnumMember(Value = "UID")] Userid
-	}
+	[EnumMember(Value = "DC")] DomainComponent,
+	[EnumMember(Value = "CN")] CommonName,
+	[EnumMember(Value = "OU")] OrganizationalUnitName,
+	[EnumMember(Value = "O")] OrganizationName,
+	[EnumMember(Value = "STREET")] StreetAddress,
+	[EnumMember(Value = "L")] LocalityName,
+	[EnumMember(Value = "ST")] StateOrProvinceName,
+	[EnumMember(Value = "C")] CountryName,
+	[EnumMember(Value = "UID")] Userid
 }
