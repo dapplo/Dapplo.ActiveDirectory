@@ -1,0 +1,190 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Dapplo.ActiveDirectory | Dapplo.ActiveDirectory </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="Dapplo.ActiveDirectory | Dapplo.ActiveDirectory ">
+    <meta name="generator" content="docfx 2.59.4.0">
+    
+    <link rel="shortcut icon" href="../images/favicon.ico">
+    <link rel="stylesheet" href="../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../styles/docfx.css">
+    <link rel="stylesheet" href="../styles/main.css">
+    <meta property="docfx:navrel" content="../toc">
+    <meta property="docfx:tocrel" content="toc">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../index.html">
+                <img id="logo" class="svg" src="../images/d.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+                <ul class="nav level1 navbar-nav">
+                  <li class="active">
+                    <a href="../articles/intro.html" title="Articles" class="active">Articles</a>
+                  </li>
+                  <li class="">
+                    <a href="../api/index.html" title="Api Documentation" class="">Api Documentation</a>
+                  </li>
+                </ul>
+            </div>
+          </div>
+        </nav>        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div>
+              <div class="sidefilter">
+                <form class="toc-filter">
+                  <span class="glyphicon glyphicon-filter filter-icon"></span>
+                  <input type="text" id="toc_filter_input" placeholder="Enter here to filter..." onkeypress="if(event.keyCode==13) {return false;}">
+                </form>
+              </div>
+              <div class="sidetoc">
+                <div class="toc" id="toc">
+                  
+                  <ul class="nav level1">
+                    <li class="active">
+                      <a href="intro.html" title="Introduction" class="active">Introduction</a>
+                    </li>
+                  </ul>        </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="">
+<h1 id="dapploactivedirectory">Dapplo.ActiveDirectory</h1>
+
+<div class="WARNING"><h5>Warning</h5><p>This is still work in progress</p>
+</div>
+<p>A library for easy Active Directory access</p>
+<p>Although it&#39;s not extremely hard to access the Active Directory from .NET, sometimes a little bit of help is nice.</p>
+<p>The idea behind this library is that you can build queries via a fluent API (some shortcuts available).
+And you don&#39;t need to understand all of the details of the Active Directory.</p>
+<p>Fluent API:</p>
+<pre><code>    var query = Query.AND.Where(&quot;objectClass&quot;, &quot;user&quot;, Comparisons.EqualTo).Where(UserProperties.Username, Environment.UserName, Comparisons.EqualTo);
+</code></pre><p>Easier readable:</p>
+<pre><code>    var query = Query.AND.WhereIsUser().WhereEqualTo(UserProperties.Username, Environment.UserName);
+</code></pre><p>Shortest version:</p>
+<pre><code>    var query = Query.ForUser(Environment.UserName);
+</code></pre><p>Or query for at all the active users that have a telephone number:
+Complete version</p>
+<pre><code>    var query = Query.AND.Where(&quot;objectClass&quot;, &quot;user&quot;, Comparisons.EqualTo).WhereNot(Property.BitAnd(UserProperties.UserAccountControl), (int)UserAccountControlFlags.AccountDisabled).Where(UserProperties.TelephoneNumber, Value.Any, Comparisons.EqualTo);
+</code></pre><p>Shortest version:</p>
+<pre><code>    var query = Query.ForUser().WhereAccountEnabled().WhereAny(UserProperties.TelephoneNumber);
+</code></pre><p>The properties are defined via enums, some are already pre-defined in the library, but you can use any enum you like.
+Either the Enum value is the property name in the AD, or you can use EnumValue attribute on your enum value to mark the property name.</p>
+<p>Here is an enum example:</p>
+<pre><code>    public enum UserProperties
+    {
+        [EnumMember(Value = &quot;displayName&quot;)]
+        DisplayName,
+        [EnumMember(Value = &quot;memberOf&quot;)]
+        MemberOfGroups,
+        [EnumMember(Value = &quot;sAMAccountname&quot;)]
+        Username,
+
+        ...
+    }
+</code></pre><p>Now, we can use this enum in the query but also to define a result object (use interfaces) like this:</p>
+<pre><code>    public interface IUserInfo : IAdObject
+    {
+        [AdProperty(UserProperties.DisplayName)]
+        string Name { get; set; }
+
+        [AdProperty(UserProperties.MemberOfGroups)]
+        IList&lt;DistinguishedName&gt; Groups { get; set; }
+
+        ...
+    }
+</code></pre><p>Get your user info object from the current domain:</p>
+<pre><code>    foreach(var user in query.Execute&lt;IUserInfo&gt;()) {
+        Console.WriteLine(user.Name);
+    }
+</code></pre><p>Short explanation: Execute is called, as an extensions method, on the query and the result type is specified.
+To be able to tell the AD what it needs to return, it will take the properties from the type.
+The result from the AD, with use of the properties, is than mapped into instances of your result type.</p>
+<p>Changing values in the active directory is possible, but is far from completed, and works as follows:
+Add ONE property marked with [AdProperty(AdProperties.Id)] to your result object.
+Query for the information you want to change, change the properties and call the ActiveDirectoryExtensions.Update(object, string domain) method.
+It will update all the values that are writable, but there is no conversion in the code yet so it will not always work.</p>
+<p>Notes:
+There is no support yet for a single value query, but this should not be used anyway for performance reasons.
+The property names and values are specials classes with implicit cast from enum &amp; string, said differently: you can use enums and strings mixed.
+These classes can help with using special values, like Value.StartsWith and Value.Endwith...</p>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                  <li>
+                    <a href="https://github.com/dapplo/Dapplo.ActiveDirectory/blob/master/doc/articles/intro.md/#L1" class="contribution-link">Improve this Doc</a>
+                  </li>
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            Copyright © Dapplo
+            
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../styles/docfx.js"></script>
+    <script type="text/javascript" src="../styles/main.js"></script>
+  </body>
+</html>
