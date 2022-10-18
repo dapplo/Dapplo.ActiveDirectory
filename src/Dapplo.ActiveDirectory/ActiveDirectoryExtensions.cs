@@ -20,18 +20,33 @@ namespace Dapplo.ActiveDirectory;
 public static class ActiveDirectoryExtensions
 {
 	private static readonly LogSource Log = new();
-
+	
 	/// <summary>
-	///     Use the ActiveDirectory with the supplied domain to query
+	///     Use the ActiveDirectory with the supplied domain to query.
+	///     The AuthenticationTypes for the connection is specified in ActiveDirectoryGlobals.AuthenticationType, or use the Execute where you can pass this.
 	/// </summary>
 	/// <typeparam name="T">Type to fill, use AdPropertyAttribute to specify the mapping</typeparam>
 	/// <param name="query">Query</param>
 	/// <param name="domain">Domain for the LDAP server, if null the Domain.GetCurrentDomain().Name is used</param>
 	/// <param name="username">Username for the connection, by default the current user is used</param>
 	/// <param name="password">Password for the supplied user</param>
-	/// <param name="authenticationType">AuthenticationTypes used to specify the AuthenticationType, null to use the value from ActiveDirectoryGlobals.AuthenticationType</param>
 	/// <returns>IEnumerable with the specified type</returns>
-	public static IEnumerable<T> Execute<T>(this Query query, string domain = null, string username = null, string password = null, AuthenticationTypes? authenticationType = null) where T : IAdObject
+	public static IEnumerable<T> Execute<T>(this Query query, string domain = null, string username = null, string password = null) where T : IAdObject
+	{
+		return Execute<T>(query.Build(), domain, username, password, null);
+	}
+
+	/// <summary>
+	///     Use the ActiveDirectory with the supplied domain to query, using the specified AuthenticationTypes
+	/// </summary>
+	/// <typeparam name="T">Type to fill, use AdPropertyAttribute to specify the mapping</typeparam>
+	/// <param name="query">Query</param>
+	/// <param name="authenticationType">AuthenticationTypes used to specify the AuthenticationType, null to use the value from ActiveDirectoryGlobals.AuthenticationType</param>
+	/// <param name="domain">Domain for the LDAP server, if null the Domain.GetCurrentDomain().Name is used</param>
+	/// <param name="username">Username for the connection, by default the current user is used</param>
+	/// <param name="password">Password for the supplied user</param>
+	/// <returns>IEnumerable with the specified type</returns>
+	public static IEnumerable<T> Execute<T>(this Query query, AuthenticationTypes authenticationType, string domain = null, string username = null, string password = null) where T : IAdObject
 	{
 		return Execute<T>(query.Build(), domain, username, password, authenticationType);
 	}
